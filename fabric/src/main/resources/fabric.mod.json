@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "defaulted",
+  "version": "${version}",
+  "name": "Defaulted",
+  "description": "Minecraft mod to enable in-game modification of default item components.",
+  "authors": [
+    "Alexandra"
+  ],
+  "contact": {
+    "sources": "https://github.com/Alexandra-Myers/Defaulted",
+    "issues": "https://github.com/Alexandra-Myers/Defaulted/issues"
+  },
+  "license": "CC0-1.0",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.atlas.defaulted.fabric.DefaultedFabric"
+    ],
+    "client": [
+      "net.atlas.defaulted.fabric.client.DefaultedFabricClient"
+    ]
+  },
+  "mixins": [
+    "defaulted.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.10",
+    "minecraft": "~1.21.4",
+    "java": ">=21",
+    "fabric-api": "*"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}

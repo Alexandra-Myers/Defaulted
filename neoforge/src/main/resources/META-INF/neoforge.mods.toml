@@ -1,0 +1,31 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+#issueTrackerURL = ""
+license = "CC0-1.0"
+
+[[mods]]
+modId = "defaulted"
+version = "${version}"
+displayName = "Defaulted"
+authors = "Alexandra"
+description = '''
+Minecraft mod to enable in-game modification of default item components.
+'''
+#logoFile = ""
+
+[[dependencies.defaulted]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21.4,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.defaulted]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21.4,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[mixins]]
+config = "defaulted.mixins.json"
