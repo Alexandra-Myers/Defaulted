@@ -19,7 +19,11 @@ public final class Defaulted {
     public static final Map<Holder<Item>, DataComponentMap> originalComponents = new HashMap<>();
     public static final String MOD_ID = "defaulted";
     public static final ResourceKey<Registry<ItemPatches>> ITEM_PATCHES = ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MOD_ID, "default_component_patches"));
-    public static final LootDataType<ItemPatches> PATCHES_LOOT_DATA_TYPE = new LootDataType<>(ITEM_PATCHES, ItemPatches.DIRECT_CODEC, (validationContext, resourceKey, object) -> {});
+    public static final LootDataType<ItemPatches> PATCHES_LOOT_DATA_TYPE = DefaultedExpectPlatform.createLootDataType(ITEM_PATCHES, ItemPatches.DIRECT_CODEC, (validationContext, resourceKey, object) -> {});
+    /**
+     * {@link ArrayList} of {@link Consumer}s to run on the sorted collection of {@link ItemPatches} after a reload or resource loading.
+     * NOTE: All consumers must be triggered on **server start**.
+     */
     public static final List<Consumer<Collection<ItemPatches>>> EXECUTE_ON_RELOAD = new ArrayList<>();
 
     public static void init() {

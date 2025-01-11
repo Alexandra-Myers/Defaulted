@@ -1,6 +1,7 @@
 package net.atlas.defaulted.fabric;
 
 import net.atlas.defaulted.component.ItemPatches;
+import net.atlas.defaulted.networking.ClientboundDefaultComponentsSyncPacket;
 import net.fabricmc.api.ModInitializer;
 
 import net.atlas.defaulted.Defaulted;
@@ -9,16 +10,9 @@ import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -32,6 +26,7 @@ public final class DefaultedFabric implements ModInitializer {
         // Run our common setup.
         Defaulted.init();
 
+        PayloadTypeRegistry.playS2C().register(ClientboundDefaultComponentsSyncPacket.TYPE, ClientboundDefaultComponentsSyncPacket.CODEC);
         ServerLifecycleEvents.SERVER_STARTED.register(server -> Defaulted.EXECUTE_ON_RELOAD.add(itemPatches -> {
             if (!itemPatches.isEmpty())
                 for (ServerPlayer player : server.getPlayerList().getPlayers()) {
@@ -51,16 +46,5 @@ public final class DefaultedFabric implements ModInitializer {
                 ServerPlayNetworking.send(player, new ClientboundDefaultComponentsSyncPacket(new ArrayList<>(reg)));
             }
         });
-        PayloadTypeRegistry.playS2C().register(ClientboundDefaultComponentsSyncPacket.TYPE, ClientboundDefaultComponentsSyncPacket.CODEC);
-    }
-
-    public record ClientboundDefaultComponentsSyncPacket(ArrayList<ItemPatches> list) implements CustomPacketPayload {
-        public static final Type<ClientboundDefaultComponentsSyncPacket> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath("defaulted", "update_status"));
-        public static final StreamCodec<FriendlyByteBuf, ClientboundDefaultComponentsSyncPacket> CODEC = ByteBufCodecs.collection(ArrayList::new, ItemPatches.STREAM_CODEC).map(ClientboundDefaultComponentsSyncPacket::new, ClientboundDefaultComponentsSyncPacket::list).mapStream(buf -> (RegistryFriendlyByteBuf) buf);
-
-        @Override
-        public @NotNull Type<?> type() {
-            return TYPE;
-        }
     }
 }
