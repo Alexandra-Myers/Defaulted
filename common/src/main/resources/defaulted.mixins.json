@@ -8,7 +8,11 @@
   "mixins": [
     "ItemAccessor",
     "ItemStackMixin",
-    "PatchedDataComponentMapAccessor"
+    "LootDataTypeMixin",
+    "PatchedDataComponentMapAccessor",
+    "RegistryMixin",
+    "ReloadableServerRegistriesMixin",
+    "ReloadableServerResourcesMixin"
   ],
   "injectors": {
     "defaultRequire": 1

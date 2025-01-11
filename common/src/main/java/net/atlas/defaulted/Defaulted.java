@@ -10,14 +10,17 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.storage.loot.LootDataType;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Consumer;
 
 public final class Defaulted {
     public static final Map<Holder<Item>, DataComponentMap> originalComponents = new HashMap<>();
     public static final String MOD_ID = "defaulted";
     public static final ResourceKey<Registry<ItemPatches>> ITEM_PATCHES = ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MOD_ID, "default_component_patches"));
+    public static final LootDataType<ItemPatches> PATCHES_LOOT_DATA_TYPE = new LootDataType<>(ITEM_PATCHES, ItemPatches.DIRECT_CODEC, (validationContext, resourceKey, object) -> {});
+    public static final List<Consumer<Collection<ItemPatches>>> EXECUTE_ON_RELOAD = new ArrayList<>();
 
     public static void init() {
         // Write common init code here.
@@ -31,6 +34,7 @@ public final class Defaulted {
             else Defaulted.originalComponents.put(itemHolder, originalPrototype);
             PatchedDataComponentMap newMap = new PatchedDataComponentMap(originalPrototype);
             reg.forEach(itemPatches -> itemPatches.apply(item, newMap));
+            if (newMap.asPatch().isEmpty()) continue;
             ((ItemAccessor) item).setComponents(newMap);
         }
     }
