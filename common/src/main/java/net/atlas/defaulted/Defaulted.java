@@ -34,7 +34,10 @@ public final class Defaulted {
         for (Item item : BuiltInRegistries.ITEM) {
             Holder<Item> itemHolder = item.builtInRegistryHolder();
             DataComponentMap originalPrototype = item.components();
-            if (Defaulted.originalComponents.containsKey(itemHolder)) originalPrototype = Defaulted.originalComponents.get(itemHolder);
+            if (Defaulted.originalComponents.containsKey(itemHolder)) {
+                originalPrototype = Defaulted.originalComponents.get(itemHolder);
+                ((ItemAccessor) item).setComponents(originalPrototype);
+            }
             else Defaulted.originalComponents.put(itemHolder, originalPrototype);
             PatchedDataComponentMap newMap = new PatchedDataComponentMap(originalPrototype);
             reg.forEach(itemPatches -> itemPatches.apply(item, newMap));
