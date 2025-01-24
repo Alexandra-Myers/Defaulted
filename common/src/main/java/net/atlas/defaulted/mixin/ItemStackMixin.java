@@ -1,13 +1,11 @@
 package net.atlas.defaulted.mixin;
 
 import net.atlas.defaulted.DefaultedExpectPlatform;
-import net.atlas.defaulted.component.DefaultedDataComponentMap;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -65,10 +63,10 @@ public abstract class ItemStackMixin {
         public void wrapEncode(RegistryFriendlyByteBuf registryFriendlyByteBuf, ItemStack itemStack, Operation<Void> original) {
             if (!itemStack.isEmpty()) {
                 DataComponentMap prototype = PatchedDataComponentMapAccessor.class.cast(itemStack.getComponents()).getPrototype();
-                if (DefaultedExpectPlatform.isSyncingPlayerUnmodded() && prototype instanceof DefaultedDataComponentMap defaultedDataComponentMap) {
+                if (DefaultedExpectPlatform.isSyncingPlayerUnmodded() && prototype instanceof PatchedDataComponentMap prototypeDataComponentMap) {
                     ItemStack newStack = itemStack.copy();
                     if (newStack.getComponents() instanceof PatchedDataComponentMap patchedDataComponentMap) {
-                        patchedDataComponentMap.restorePatch(defaultedDataComponentMap.asPatch());
+                        patchedDataComponentMap.restorePatch(prototypeDataComponentMap.asPatch());
                         patchedDataComponentMap.applyPatch(itemStack.getComponentsPatch());
                     }
                 }
