@@ -40,7 +40,7 @@ public abstract class ItemStackMixin {
 
     @Inject(method = "inventoryTick", at = @At("HEAD"))
     public void updatePrototypeTick(Level level, Entity entity, int i, boolean bl, CallbackInfo ci) {
-        if (entity.tickCount % 40 == 0) {
+        if (entity.tickCount % 20 == 0) {
             defaulted$updatePrototype();
         }
     }
