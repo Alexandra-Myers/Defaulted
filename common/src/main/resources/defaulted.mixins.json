@@ -8,6 +8,7 @@
   "mixins": [
     "ItemAccessor",
     "ItemStackMixin",
+    "ItemStackMixin$StreamCodecMixin",
     "LootDataTypeMixin",
     "PatchedDataComponentMapAccessor",
     "RegistryMixin",

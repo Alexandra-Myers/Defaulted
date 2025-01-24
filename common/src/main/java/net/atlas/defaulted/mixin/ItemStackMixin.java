@@ -65,8 +65,11 @@ public abstract class ItemStackMixin {
         public void wrapEncode(RegistryFriendlyByteBuf registryFriendlyByteBuf, ItemStack itemStack, Operation<Void> original) {
             DataComponentMap prototype = PatchedDataComponentMapAccessor.class.cast(itemStack.getComponents()).getPrototype();
             if (DefaultedExpectPlatform.isSyncingPlayerUnmodded() && prototype instanceof DefaultedDataComponentMap defaultedDataComponentMap) {
-                itemStack = itemStack.copy();
-                itemStack.applyComponentsAndValidate(defaultedDataComponentMap.asPatch());
+                ItemStack newStack = itemStack.copy();
+                if (newStack.getComponents() instanceof PatchedDataComponentMap patchedDataComponentMap) {
+                    patchedDataComponentMap.restorePatch(defaultedDataComponentMap.asPatch());
+                    patchedDataComponentMap.applyPatch(itemStack.getComponentsPatch());
+                }
             }
             original.call(registryFriendlyByteBuf, itemStack);
         }
