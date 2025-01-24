@@ -63,12 +63,14 @@ public abstract class ItemStackMixin {
     public static class StreamCodecMixin {
         @WrapMethod(method = "encode")
         public void wrapEncode(RegistryFriendlyByteBuf registryFriendlyByteBuf, ItemStack itemStack, Operation<Void> original) {
-            DataComponentMap prototype = PatchedDataComponentMapAccessor.class.cast(itemStack.getComponents()).getPrototype();
-            if (DefaultedExpectPlatform.isSyncingPlayerUnmodded() && prototype instanceof DefaultedDataComponentMap defaultedDataComponentMap) {
-                ItemStack newStack = itemStack.copy();
-                if (newStack.getComponents() instanceof PatchedDataComponentMap patchedDataComponentMap) {
-                    patchedDataComponentMap.restorePatch(defaultedDataComponentMap.asPatch());
-                    patchedDataComponentMap.applyPatch(itemStack.getComponentsPatch());
+            if (!itemStack.isEmpty()) {
+                DataComponentMap prototype = PatchedDataComponentMapAccessor.class.cast(itemStack.getComponents()).getPrototype();
+                if (DefaultedExpectPlatform.isSyncingPlayerUnmodded() && prototype instanceof DefaultedDataComponentMap defaultedDataComponentMap) {
+                    ItemStack newStack = itemStack.copy();
+                    if (newStack.getComponents() instanceof PatchedDataComponentMap patchedDataComponentMap) {
+                        patchedDataComponentMap.restorePatch(defaultedDataComponentMap.asPatch());
+                        patchedDataComponentMap.applyPatch(itemStack.getComponentsPatch());
+                    }
                 }
             }
             original.call(registryFriendlyByteBuf, itemStack);
