@@ -30,7 +30,7 @@ public record ItemPatches(HolderSet<Item> items, List<TagKey<Item>> tags, DataCo
         DataComponentPatch.STREAM_CODEC, ItemPatches::dataComponentPatch, ItemPatches::new);
 
     public void apply(Item item, PatchedDataComponentMap newMap) {
-        if (items.size() != 0 && !tags.isEmpty()) {
+        if (items.size() != 0 || !tags.isEmpty()) {
             Holder<Item> itemHolder = item.builtInRegistryHolder();
             List<TagKey<Item>> matchedTags = tags.stream().filter(tagKey -> itemHolder.is(tagKey)).toList();
             if (!(items.contains(itemHolder) || !matchedTags.isEmpty())) return;
