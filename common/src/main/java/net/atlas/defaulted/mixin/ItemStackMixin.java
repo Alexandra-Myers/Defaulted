@@ -69,6 +69,7 @@ public abstract class ItemStackMixin {
                         patchedDataComponentMap.restorePatch(prototypeDataComponentMap.asPatch());
                         patchedDataComponentMap.applyPatch(itemStack.getComponentsPatch());
                     }
+                    itemStack = newStack;
                 }
             }
             original.call(registryFriendlyByteBuf, itemStack);
