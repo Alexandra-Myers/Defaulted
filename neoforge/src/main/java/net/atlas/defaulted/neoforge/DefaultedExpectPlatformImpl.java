@@ -11,4 +11,7 @@ public class DefaultedExpectPlatformImpl {
     public static <T> LootDataType<T> createLootDataType(ResourceKey<Registry<T>> registryKey, Codec<T> codec, LootDataType.Validator<T> validator) {
         return new LootDataType<>(registryKey, codec, validator, null, ConditionalOps.createConditionalCodec(codec), (it, id) -> {});
     }
+    public static boolean isSyncingPlayerUnmodded() {
+        return false;
+    }
 }

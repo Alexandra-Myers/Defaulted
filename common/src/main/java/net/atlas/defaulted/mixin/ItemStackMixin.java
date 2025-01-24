@@ -1,9 +1,13 @@
 package net.atlas.defaulted.mixin;
 
+import net.atlas.defaulted.DefaultedExpectPlatform;
+import net.atlas.defaulted.component.DefaultedDataComponentMap;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.PatchedDataComponentMap;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -15,6 +19,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 
 import java.util.List;
 
@@ -50,6 +57,18 @@ public abstract class ItemStackMixin {
             PatchedDataComponentMap newMap = new PatchedDataComponentMap(getPrototype());
             newMap.applyPatch(getComponentsPatch());
             components = newMap;
+        }
+    }
+    @Mixin(targets = {"net.minecraft.world.item.ItemStack$1"})
+    public static class StreamCodecMixin {
+        @WrapMethod(method = "encode")
+        public void wrapEncode(RegistryFriendlyByteBuf registryFriendlyByteBuf, ItemStack itemStack, Operation<Void> original) {
+            DataComponentMap prototype = PatchedDataComponentMapAccessor.class.cast(itemStack.getComponents()).getPrototype();
+            if (DefaultedExpectPlatform.isSyncingPlayerUnmodded() && prototype instanceof DefaultedDataComponentMap defaultedDataComponentMap) {
+                itemStack = itemStack.copy();
+                itemStack.applyComponentsAndValidate(defaultedDataComponentMap.asPatch());
+            }
+            original.call(registryFriendlyByteBuf, itemStack);
         }
     }
 }

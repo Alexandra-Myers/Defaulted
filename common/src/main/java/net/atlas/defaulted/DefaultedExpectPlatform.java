@@ -10,4 +10,9 @@ public interface DefaultedExpectPlatform {
     @ExpectPlatform
     static <T> LootDataType<T> createLootDataType(ResourceKey<Registry<T>> registryKey, Codec<T> codec, LootDataType.Validator<T> validator) {
         throw new AssertionError();
-    }}
+    }
+    @ExpectPlatform
+    static boolean isSyncingPlayerUnmodded() {
+        throw new AssertionError();
+    }
+}

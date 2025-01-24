@@ -1,5 +1,6 @@
 package net.atlas.defaulted;
 
+import net.atlas.defaulted.component.DefaultedDataComponentMap;
 import net.atlas.defaulted.component.ItemPatches;
 import net.atlas.defaulted.mixin.ItemAccessor;
 import net.minecraft.core.Holder;
@@ -42,7 +43,7 @@ public final class Defaulted {
             PatchedDataComponentMap newMap = new PatchedDataComponentMap(originalPrototype);
             reg.forEach(itemPatches -> itemPatches.apply(item, newMap));
             if (newMap.asPatch().isEmpty()) continue;
-            ((ItemAccessor) item).setComponents(newMap);
+            ((ItemAccessor) item).setComponents(new DefaultedDataComponentMap(newMap));
         }
     }
 }

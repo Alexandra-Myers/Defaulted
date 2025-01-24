@@ -7,6 +7,7 @@ import net.fabricmc.api.ModInitializer;
 import net.atlas.defaulted.Defaulted;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
@@ -17,6 +18,7 @@ import net.minecraft.server.level.ServerPlayer;
 import java.util.*;
 
 public final class DefaultedFabric implements ModInitializer {
+	public static final List<UUID> unmoddedPlayers = new ArrayList<>();
     @Override
     public void onInitialize() {
         // This code runs as soon as Minecraft is in a mod-load-ready state.
@@ -27,6 +29,16 @@ public final class DefaultedFabric implements ModInitializer {
         Defaulted.init();
 
         PayloadTypeRegistry.playS2C().register(ClientboundDefaultComponentsSyncPacket.TYPE, ClientboundDefaultComponentsSyncPacket.CODEC);
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            if (!ServerPlayNetworking.canSend(handler.getPlayer(), ClientboundDefaultComponentsSyncPacket.TYPE)) {
+                unmoddedPlayers.add(handler.getPlayer().getUUID());
+            }
+        });
+        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
+            if (unmoddedPlayers.contains(handler.getPlayer().getUUID())) {
+                unmoddedPlayers.remove(handler.getPlayer().getUUID());
+            }
+        });
         ServerLifecycleEvents.SERVER_STARTED.register(server -> Defaulted.EXECUTE_ON_RELOAD.add(itemPatches -> {
             if (!itemPatches.isEmpty())
                 for (ServerPlayer player : server.getPlayerList().getPlayers()) {
