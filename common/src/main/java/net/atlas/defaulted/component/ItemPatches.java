@@ -29,7 +29,7 @@ public record ItemPatches(HolderSet<Item> items, List<TagKey<Item>> tags, List<P
                     ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("priority", 1000).forGetter(ItemPatches::priority)).apply(instance, ItemPatches::new));
     public static final StreamCodec<RegistryFriendlyByteBuf, ItemPatches> STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.holderSet(Registries.ITEM), ItemPatches::items,
         ByteBufCodecs.collection(ArrayList::new, TagKey.streamCodec(Registries.ITEM)), ItemPatches::tags,
-        ByteBufCodecs.collection(ArrayList::new, ByteBufCodecs.fromCodecTrusted(PatchGenerator.CODEC)), ItemPatches::generators,
+        ByteBufCodecs.collection(ArrayList::new, ByteBufCodecs.fromCodecWithRegistriesTrusted(PatchGenerator.CODEC)), ItemPatches::generators,
         DataComponentPatch.STREAM_CODEC, ItemPatches::dataComponentPatch,
         ByteBufCodecs.VAR_INT, ItemPatches::priority, ItemPatches::new);
     @Override
