@@ -2,6 +2,7 @@ package net.atlas.defaulted.component.generators;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -13,16 +14,19 @@ import net.atlas.defaulted.component.PatchGenerator;
 import net.atlas.defaulted.component.ToolMaterialWrapper;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.PatchedDataComponentMap;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 
-public record WeaponStatsGenerator(List<WeaponLevelBasedValue> damage, List<WeaponLevelBasedValue> speed, List<ItemAttributeModifiers.Entry> additionalModifiers, boolean tieredDamage, boolean persistPrevious) implements PatchGenerator {
+public record WeaponStatsGenerator(List<WeaponLevelBasedValue> damage, List<WeaponLevelBasedValue> speed, Optional<ResourceLocation> damageIdOverride, Optional<ResourceLocation> speedIdOverride, List<ItemAttributeModifiers.Entry> additionalModifiers, boolean tieredDamage, boolean persistPrevious) implements PatchGenerator {
     public static final MapCodec<WeaponStatsGenerator> CODEC = RecordCodecBuilder.mapCodec(instance ->
         instance.group(WeaponLevelBasedValue.CODEC.optionalFieldOf("attack_damage", Collections.emptyList()).forGetter(WeaponStatsGenerator::damage),
             WeaponLevelBasedValue.CODEC.optionalFieldOf("attack_speed", Collections.emptyList()).forGetter(WeaponStatsGenerator::speed),
+            ResourceLocation.CODEC.optionalFieldOf("damage_id_override").forGetter(WeaponStatsGenerator::damageIdOverride),
+            ResourceLocation.CODEC.optionalFieldOf("speed_id_override").forGetter(WeaponStatsGenerator::speedIdOverride),
             ItemAttributeModifiers.Entry.CODEC.listOf().optionalFieldOf("additional_modifiers", Collections.emptyList()).forGetter(WeaponStatsGenerator::additionalModifiers),
             Codec.BOOL.optionalFieldOf("apply_tier_to_damage", true).forGetter(WeaponStatsGenerator::tieredDamage),
             Codec.BOOL.fieldOf("persist_previous").forGetter(WeaponStatsGenerator::persistPrevious)).apply(instance, WeaponStatsGenerator::new));
@@ -32,8 +36,8 @@ public record WeaponStatsGenerator(List<WeaponLevelBasedValue> damage, List<Weap
         ItemAttributeModifiers oldModifiers = patchedDataComponentMap.get(DataComponents.ATTRIBUTE_MODIFIERS);
         ToolMaterialWrapper toolMaterialWrapper = patchedDataComponentMap.getOrDefault(DefaultedExpectPlatform.getToolMaterialComponentType(), Defaulted.DEFAULT_WRAPPER);
         ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
-        AttributeModifier attackDamage = new AttributeModifier(Item.BASE_ATTACK_DAMAGE_ID, getTierModifier(toolMaterialWrapper, true), AttributeModifier.Operation.ADD_VALUE);
-        AttributeModifier attackSpeed = new AttributeModifier(Item.BASE_ATTACK_SPEED_ID, getTierModifier(toolMaterialWrapper, false), AttributeModifier.Operation.ADD_VALUE);
+        AttributeModifier attackDamage = new AttributeModifier(damageIdOverride.orElse(Item.BASE_ATTACK_DAMAGE_ID), getTierModifier(toolMaterialWrapper, true), AttributeModifier.Operation.ADD_VALUE);
+        AttributeModifier attackSpeed = new AttributeModifier(speedIdOverride.orElse(Item.BASE_ATTACK_SPEED_ID), getTierModifier(toolMaterialWrapper, false), AttributeModifier.Operation.ADD_VALUE);
         
 		for (ItemAttributeModifiers.Entry entry : additionalModifiers)
 			if (!(entry.matches(Attributes.ATTACK_DAMAGE, attackDamage.id()) || entry.matches(Attributes.ATTACK_SPEED, attackSpeed.id()))) builder.add(entry.attribute(), entry.modifier(), entry.slot());

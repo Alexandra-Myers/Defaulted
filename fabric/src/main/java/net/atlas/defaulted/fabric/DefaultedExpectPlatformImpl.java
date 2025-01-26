@@ -3,7 +3,6 @@ package net.atlas.defaulted.fabric;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 
-import dev.architectury.transformer.shadowed.impl.org.checkerframework.checker.units.qual.s;
 import net.atlas.defaulted.component.PatchGenerator;
 import net.atlas.defaulted.component.ToolMaterialWrapper;
 import net.atlas.defaulted.fabric.component.DefaultedDataComponents;
