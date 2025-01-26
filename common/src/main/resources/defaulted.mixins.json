@@ -1,7 +1,6 @@
 {
   "required": true,
   "package": "net.atlas.defaulted.mixin",
-  "plugin": "net.atlas.defaulted.mixin.MixinPlugin",
   "compatibilityLevel": "JAVA_21",
   "minVersion": "0.8",
   "client": [
