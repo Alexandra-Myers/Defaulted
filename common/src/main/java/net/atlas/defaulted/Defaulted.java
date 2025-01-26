@@ -25,9 +25,9 @@ import com.google.common.collect.HashBiMap;
 import com.mojang.serialization.MapCodec;
 
 public final class Defaulted {
+    public static final BiMap<String, ToolMaterial> baseTiers = HashBiMap.create();
     public static final ToolMaterialWrapper DEFAULT_WRAPPER = new ToolMaterialWrapper(ToolMaterial.DIAMOND, 3);
     public static final Map<Holder<Item>, DataComponentMap> originalComponents = new HashMap<>();
-    public static final BiMap<String, ToolMaterial> baseTiers = HashBiMap.create();
     public static final String MOD_ID = "defaulted";
 	public static final ResourceKey<Registry<MapCodec<? extends PatchGenerator>>> PATCH_GENERATOR_TYPE = ResourceKey.createRegistryKey(id("patch_generator"));
     public static final ResourceKey<Registry<ItemPatches>> ITEM_PATCHES = ResourceKey.createRegistryKey(id("default_component_patches"));
