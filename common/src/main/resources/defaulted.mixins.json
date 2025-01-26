@@ -8,6 +8,7 @@
   ],
   "mixins": [
     "ItemAccessor",
+    "ItemMixin",
     "ItemStackMixin",
     "ItemStackMixin$StreamCodecMixin",
     "LootDataTypeMixin",

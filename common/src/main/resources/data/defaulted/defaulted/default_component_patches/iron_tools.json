@@ -2,11 +2,13 @@
     "tag": [
         "defaulted:iron_tools"
     ],
-    "patch": {
-        "defaulted:tool_material": {
+    "patch_generators": [
+        {
+            "generator": "defaulted:tool_material",
             "weapon_level": 2,
             "base_tier": "iron"
         }
-    },
+    ],
+    "patch": {},
     "priority": 800
 }

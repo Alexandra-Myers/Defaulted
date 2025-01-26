@@ -9,7 +9,6 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.atlas.defaulted.Defaulted;
-import net.atlas.defaulted.DefaultedExpectPlatform;
 import net.atlas.defaulted.component.PatchGenerator;
 import net.atlas.defaulted.component.ToolMaterialWrapper;
 import net.minecraft.core.component.DataComponents;
@@ -34,7 +33,8 @@ public record WeaponStatsGenerator(List<WeaponLevelBasedValue> damage, List<Weap
     @Override
     public void patchDataComponentMap(Item item, PatchedDataComponentMap patchedDataComponentMap) {
         ItemAttributeModifiers oldModifiers = patchedDataComponentMap.get(DataComponents.ATTRIBUTE_MODIFIERS);
-        ToolMaterialWrapper toolMaterialWrapper = patchedDataComponentMap.getOrDefault(DefaultedExpectPlatform.getToolMaterialComponentType(), Defaulted.DEFAULT_WRAPPER);
+        ToolMaterialWrapper toolMaterialWrapper = item.defaulted$getToolMaterial();
+        if (toolMaterialWrapper == null) toolMaterialWrapper = Defaulted.DEFAULT_WRAPPER;
         ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
         AttributeModifier attackDamage = new AttributeModifier(damageIdOverride.orElse(Item.BASE_ATTACK_DAMAGE_ID), getTierModifier(toolMaterialWrapper, true), AttributeModifier.Operation.ADD_VALUE);
         AttributeModifier attackSpeed = new AttributeModifier(speedIdOverride.orElse(Item.BASE_ATTACK_SPEED_ID), getTierModifier(toolMaterialWrapper, false), AttributeModifier.Operation.ADD_VALUE);

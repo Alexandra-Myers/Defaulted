@@ -2,11 +2,13 @@
     "tag": [
         "defaulted:diamond_tools"
     ],
-    "patch": {
-        "defaulted:tool_material": {
+    "patch_generators": [
+        {
+            "generator": "defaulted:tool_material",
             "weapon_level": 3,
             "base_tier": "diamond"
         }
-    },
+    ],
+    "patch": {},
     "priority": 800
 }

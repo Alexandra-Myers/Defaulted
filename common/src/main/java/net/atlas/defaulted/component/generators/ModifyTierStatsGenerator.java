@@ -9,7 +9,6 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.atlas.defaulted.Defaulted;
-import net.atlas.defaulted.DefaultedExpectPlatform;
 import net.atlas.defaulted.component.PatchGenerator;
 import net.atlas.defaulted.component.ToolMaterialWrapper;
 import net.minecraft.core.component.DataComponents;
@@ -34,7 +33,7 @@ public record ModifyTierStatsGenerator(List<TierComponents> components,  Optiona
     @SuppressWarnings("deprecation")
     @Override
     public void patchDataComponentMap(Item item, PatchedDataComponentMap patchedDataComponentMap) {
-        ToolMaterialWrapper tier = patchedDataComponentMap.get(DefaultedExpectPlatform.getToolMaterialComponentType());
+        ToolMaterialWrapper tier = item.defaulted$getToolMaterial();
         if (tier != null) {
             if (components.contains(TierComponents.DURABILITY)) {
                 int maxDamage = tier.durability();

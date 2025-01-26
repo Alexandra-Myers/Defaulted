@@ -10,7 +10,7 @@ import net.minecraft.world.item.Item;
 public interface PatchGenerator {
 	Codec<PatchGenerator> CODEC = DefaultedExpectPlatform.getPatchGenRegistry()
         .byNameCodec()
-        .dispatch(PatchGenerator::codec, mapCodec -> mapCodec);
+        .dispatch("generator", PatchGenerator::codec, mapCodec -> mapCodec);
     public void patchDataComponentMap(Item item, PatchedDataComponentMap patchedDataComponentMap);
     public MapCodec<? extends PatchGenerator> codec();
 }

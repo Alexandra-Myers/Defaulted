@@ -5,7 +5,6 @@ import com.mojang.serialization.MapCodec;
 
 import net.atlas.defaulted.component.PatchGenerator;
 import net.atlas.defaulted.component.ToolMaterialWrapper;
-import net.atlas.defaulted.neoforge.component.DefaultedDataComponents;
 import net.atlas.defaulted.neoforge.component.DefaultedRegistries;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
@@ -24,9 +23,6 @@ public class DefaultedExpectPlatformImpl {
     }
     public static Registry<MapCodec<? extends PatchGenerator>> getPatchGenRegistry() {
         return DefaultedRegistries.PATCH_GENERATOR_TYPE_REG;
-    }
-    public static DataComponentType<ToolMaterialWrapper> getToolMaterialComponentType() {
-        return DefaultedDataComponents.TOOL_MATERIAL.get();
     }
     public static boolean isModLoaded(String modId) {
         return ModList.get().isLoaded(modId);

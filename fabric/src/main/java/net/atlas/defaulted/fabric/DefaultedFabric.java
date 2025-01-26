@@ -1,7 +1,6 @@
 package net.atlas.defaulted.fabric;
 
 import net.atlas.defaulted.component.ItemPatches;
-import net.atlas.defaulted.fabric.component.DefaultedDataComponents;
 import net.atlas.defaulted.fabric.component.DefaultedRegistries;
 import net.atlas.defaulted.networking.ClientboundDefaultComponentsSyncPacket;
 import net.fabricmc.api.ModInitializer;
@@ -29,7 +28,6 @@ public final class DefaultedFabric implements ModInitializer {
 
         // Run our common setup.
         Defaulted.init();
-        DefaultedDataComponents.registerDataComponents();
         DefaultedRegistries.init();
 
         PayloadTypeRegistry.playS2C().register(ClientboundDefaultComponentsSyncPacket.TYPE, ClientboundDefaultComponentsSyncPacket.CODEC);

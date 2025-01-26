@@ -6,6 +6,7 @@ import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.component.PatchGenerator;
 import net.atlas.defaulted.component.generators.ArmourStatsGenerator;
 import net.atlas.defaulted.component.generators.AttributeModifiersGenerator;
+import net.atlas.defaulted.component.generators.ChangeTierGenerator;
 import net.atlas.defaulted.component.generators.ConditionalPatch;
 import net.atlas.defaulted.component.generators.EditUseDurationGenerator;
 import net.atlas.defaulted.component.generators.EnchantmentModifierGenerator;
@@ -26,8 +27,9 @@ public class DefaultedRegistries {
         PATCH_GENERATOR_TYPES.register("conditional", () -> ConditionalPatch.CODEC);
         PATCH_GENERATOR_TYPES.register("modify_attribute_modifiers", () -> AttributeModifiersGenerator.CODEC);
         PATCH_GENERATOR_TYPES.register("modify_enchantments", () -> EnchantmentModifierGenerator.CODEC);
-        PATCH_GENERATOR_TYPES.register("modify_from_tier", () -> ModifyTierStatsGenerator.CODEC);
+        PATCH_GENERATOR_TYPES.register("modify_from_tool_material", () -> ModifyTierStatsGenerator.CODEC);
         PATCH_GENERATOR_TYPES.register("modify_use_seconds", () -> EditUseDurationGenerator.CODEC);
+        PATCH_GENERATOR_TYPES.register("tool_material", () -> ChangeTierGenerator.CODEC);
         PATCH_GENERATOR_TYPES.register("vanilla_weapon_stats", () -> WeaponStatsGenerator.CODEC);
         PATCH_GENERATOR_TYPES.register(modBus);
     }

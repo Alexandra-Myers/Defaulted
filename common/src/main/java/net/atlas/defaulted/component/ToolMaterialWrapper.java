@@ -1,7 +1,9 @@
 package net.atlas.defaulted.component;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.atlas.defaulted.Defaulted;
@@ -16,7 +18,7 @@ import java.util.Optional;
 
 public record ToolMaterialWrapper(ToolMaterial toolMaterial, int weaponLevel) {
 	public static Codec<ToolMaterial> TOOL_MATERIAL_CODEC = Codec.STRING.validate(s -> Defaulted.baseTiers.containsKey(s) ? DataResult.success(s) : DataResult.error(() -> "Given base tier does not exist!")).xmap(s -> Defaulted.baseTiers.get(s.toLowerCase()), Defaulted.baseTiers.inverse()::get);
-	public static Codec<ToolMaterialWrapper> BASE_CODEC = RecordCodecBuilder.create(instance ->
+	public static MapCodec<ToolMaterialWrapper> BASE_CODEC = RecordCodecBuilder.mapCodec(instance ->
 		instance.group(ExtraCodecs.NON_NEGATIVE_INT.fieldOf("weapon_level").forGetter(ToolMaterialWrapper::weaponLevel),
 				ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("enchant_level").forGetter(toolMaterialWrapper -> Optional.of(toolMaterialWrapper.enchantmentValue())),
 				ExtraCodecs.POSITIVE_INT.optionalFieldOf("uses").forGetter(toolMaterialWrapper -> Optional.of(toolMaterialWrapper.durability())),
@@ -27,7 +29,7 @@ public record ToolMaterialWrapper(ToolMaterial toolMaterial, int weaponLevel) {
 				TOOL_MATERIAL_CODEC.fieldOf("base_tier").forGetter(ToolMaterialWrapper::toolMaterial))
 			.apply(instance, ToolMaterialWrapper::create));
 
-	public static Codec<ToolMaterialWrapper> FULL_CODEC = RecordCodecBuilder.create(instance ->
+	public static MapCodec<ToolMaterialWrapper> FULL_CODEC = RecordCodecBuilder.mapCodec(instance ->
 		instance.group(ExtraCodecs.NON_NEGATIVE_INT.fieldOf("weapon_level").forGetter(ToolMaterialWrapper::weaponLevel),
 				ExtraCodecs.NON_NEGATIVE_INT.fieldOf("enchant_level").forGetter(ToolMaterialWrapper::enchantmentValue),
 				ExtraCodecs.POSITIVE_INT.fieldOf("uses").forGetter(ToolMaterialWrapper::durability),
@@ -37,7 +39,10 @@ public record ToolMaterialWrapper(ToolMaterial toolMaterial, int weaponLevel) {
 				TagKey.codec(Registries.BLOCK).fieldOf("incorrect_blocks").forGetter(ToolMaterialWrapper::incorrectBlocksForDrops))
 			.apply(instance, ToolMaterialWrapper::create));
 
-	public static Codec<ToolMaterialWrapper> CODEC = Codec.withAlternative(FULL_CODEC, BASE_CODEC);
+	public static MapCodec<ToolMaterialWrapper> CODEC = Codec.mapEither(FULL_CODEC, BASE_CODEC).xmap(
+            Either::unwrap,
+            Either::left
+        );
 	public static ToolMaterialWrapper create(Integer weaponLevel, Optional<Integer> enchantLevel, Optional<Integer> uses, Optional<Float> damage, Optional<Float> speed, Optional<TagKey<Item>> repairItems, Optional<TagKey<Block>> incorrect, ToolMaterial baseTier) {
 		return create(weaponLevel, enchantLevel.orElse(baseTier.enchantmentValue()), uses.orElse(baseTier.durability()), damage.orElse(baseTier.attackDamageBonus()), speed.orElse(baseTier.speed()), repairItems.orElse(baseTier.repairItems()), incorrect.orElse(baseTier.incorrectBlocksForDrops()));
 	}

@@ -22,8 +22,7 @@
     ]
   },
   "mixins": [
-    "defaulted.mixins.json",
-    "defaulted-fabric.mixins.json"
+    "defaulted.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.16.10",
