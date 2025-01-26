@@ -1,0 +1,12 @@
+{
+    "tag": [
+        "defaulted:wooden_tools"
+    ],
+    "patch": {
+        "defaulted:tool_material": {
+            "weapon_level": 0,
+            "base_tier": "wood"
+        }
+    },
+    "priority": 800
+}

@@ -1,0 +1,14 @@
+{
+    "required": true,
+    "package": "net.atlas.defaulted.fabric.mixin",
+    "plugin": "net.atlas.defaulted.mixin.MixinPlugin",
+    "compatibilityLevel": "JAVA_21",
+    "minVersion": "0.8",
+    "client": [],
+    "mixins": [
+        "FabricRegistrySyncMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}

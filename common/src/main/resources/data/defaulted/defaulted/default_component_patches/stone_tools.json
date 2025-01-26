@@ -1,0 +1,12 @@
+{
+    "tag": [
+        "defaulted:stone_tools"
+    ],
+    "patch": {
+        "defaulted:tool_material": {
+            "weapon_level": 1,
+            "base_tier": "stone"
+        }
+    },
+    "priority": 800
+}

@@ -1,0 +1,37 @@
+package net.atlas.defaulted.fabric.component;
+
+import com.mojang.serialization.MapCodec;
+
+import net.atlas.defaulted.Defaulted;
+import net.atlas.defaulted.component.PatchGenerator;
+import net.atlas.defaulted.component.generators.ArmourStatsGenerator;
+import net.atlas.defaulted.component.generators.AttributeModifiersGenerator;
+import net.atlas.defaulted.component.generators.ConditionalPatch;
+import net.atlas.defaulted.component.generators.EditUseDurationGenerator;
+import net.atlas.defaulted.component.generators.EnchantmentModifierGenerator;
+import net.atlas.defaulted.component.generators.ModifyTierStatsGenerator;
+import net.atlas.defaulted.component.generators.WeaponStatsGenerator;
+import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
+import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
+
+public class DefaultedRegistries {
+	public static final Registry<MapCodec<? extends PatchGenerator>> PATCH_GENERATOR_TYPE_REG = FabricRegistryBuilder.createSimple(
+		Defaulted.PATCH_GENERATOR_TYPE
+	).attribute(RegistryAttribute.OPTIONAL).buildAndRegister();
+
+    public static void registerPatchGenerator(String path, MapCodec<? extends PatchGenerator> mapCodec) {
+        Registry.register(PATCH_GENERATOR_TYPE_REG, ResourceKey.create(Defaulted.PATCH_GENERATOR_TYPE, Defaulted.id(path)), mapCodec);
+    }
+
+    public static void init() {
+        registerPatchGenerator("armor_stats", ArmourStatsGenerator.CODEC);
+        registerPatchGenerator("conditional", ConditionalPatch.CODEC);
+        registerPatchGenerator("modify_attribute_modifiers", AttributeModifiersGenerator.CODEC);
+        registerPatchGenerator("modify_enchantments", EnchantmentModifierGenerator.CODEC);
+        registerPatchGenerator("modify_from_tier", ModifyTierStatsGenerator.CODEC);
+        registerPatchGenerator("modify_use_seconds", EditUseDurationGenerator.CODEC);
+        registerPatchGenerator("vanilla_weapon_stats", WeaponStatsGenerator.CODEC);
+    }
+}

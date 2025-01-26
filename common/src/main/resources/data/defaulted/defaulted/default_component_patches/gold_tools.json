@@ -1,0 +1,12 @@
+{
+    "tag": [
+        "defaulted:golden_tools"
+    ],
+    "patch": {
+        "defaulted:tool_material": {
+            "weapon_level": 0,
+            "base_tier": "gold"
+        }
+    },
+    "priority": 800
+}

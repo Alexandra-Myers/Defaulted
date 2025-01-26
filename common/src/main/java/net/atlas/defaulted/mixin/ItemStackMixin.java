@@ -68,6 +68,9 @@ public abstract class ItemStackMixin {
                     if (newStack.getComponents() instanceof PatchedDataComponentMap patchedDataComponentMap) {
                         patchedDataComponentMap.restorePatch(prototypeDataComponentMap.asPatch());
                         patchedDataComponentMap.applyPatch(itemStack.getComponentsPatch());
+                        if (patchedDataComponentMap.has(DefaultedExpectPlatform.getToolMaterialComponentType())) {
+                            patchedDataComponentMap.remove(DefaultedExpectPlatform.getToolMaterialComponentType());
+                        }
                     }
                     itemStack = newStack;
                 }

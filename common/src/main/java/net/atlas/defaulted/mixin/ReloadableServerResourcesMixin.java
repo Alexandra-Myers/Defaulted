@@ -31,6 +31,7 @@ public class ReloadableServerResourcesMixin {
                     .sorted(Comparator.nullsFirst(Comparator.naturalOrder())).filter(Objects::nonNull)
                     .map(resourceLocation -> getter.getOrThrow(ResourceKey.create(Defaulted.ITEM_PATCHES, resourceLocation)))
                     .map(Holder::value)
+                    .sorted(Comparator.naturalOrder())
                     .toList();
             Defaulted.patchItemComponents(reg);
             Defaulted.EXECUTE_ON_RELOAD.forEach(collectionConsumer -> collectionConsumer.accept(reg));

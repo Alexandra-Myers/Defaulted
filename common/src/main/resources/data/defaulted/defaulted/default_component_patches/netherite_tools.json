@@ -1,0 +1,12 @@
+{
+    "tag": [
+        "defaulted:netherite_tools"
+    ],
+    "patch": {
+        "defaulted:tool_material": {
+            "weapon_level": 4,
+            "base_tier": "netherite"
+        }
+    },
+    "priority": 800
+}

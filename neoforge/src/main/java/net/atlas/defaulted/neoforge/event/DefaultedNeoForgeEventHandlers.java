@@ -28,6 +28,7 @@ public class DefaultedNeoForgeEventHandlers {
                     .sorted(Comparator.nullsFirst(Comparator.naturalOrder())).filter(Objects::nonNull)
                     .map(resourceLocation -> getter.getOrThrow(ResourceKey.create(Defaulted.ITEM_PATCHES, resourceLocation)))
                     .map(Holder::value)
+                    .sorted(Comparator.naturalOrder())
                     .toList();
             PacketDistributor.sendToPlayer(player, new ClientboundDefaultComponentsSyncPacket(new ArrayList<>(reg)));
         });

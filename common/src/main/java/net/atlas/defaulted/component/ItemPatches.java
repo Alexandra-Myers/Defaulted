@@ -20,21 +20,40 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.Item;
 
-public record ItemPatches(HolderSet<Item> items, List<TagKey<Item>> tags, DataComponentPatch dataComponentPatch) {
+public record ItemPatches(HolderSet<Item> items, List<TagKey<Item>> tags, List<PatchGenerator> generators, DataComponentPatch dataComponentPatch, int priority) implements Comparable<ItemPatches> {
     public static final Codec<ItemPatches> DIRECT_CODEC = RecordCodecBuilder.create(instance ->
             instance.group(ExtraCodecs.nonEmptyHolderSet(RegistryCodecs.homogeneousList(Registries.ITEM)).optionalFieldOf("items", HolderSet.empty()).forGetter(ItemPatches::items),
                     TagKey.codec(Registries.ITEM).listOf().optionalFieldOf("tags", Collections.emptyList()).forGetter(ItemPatches::tags),
-                    DataComponentPatch.CODEC.fieldOf("patch").forGetter(ItemPatches::dataComponentPatch)).apply(instance, ItemPatches::new));
+                    PatchGenerator.CODEC.listOf().fieldOf("patch_generators").forGetter(ItemPatches::generators),
+                    DataComponentPatch.CODEC.fieldOf("patch").forGetter(ItemPatches::dataComponentPatch),
+                    ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("priority", 1000).forGetter(ItemPatches::priority)).apply(instance, ItemPatches::new));
     public static final StreamCodec<RegistryFriendlyByteBuf, ItemPatches> STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.holderSet(Registries.ITEM), ItemPatches::items,
         ByteBufCodecs.collection(ArrayList::new, TagKey.streamCodec(Registries.ITEM)), ItemPatches::tags,
-        DataComponentPatch.STREAM_CODEC, ItemPatches::dataComponentPatch, ItemPatches::new);
+        ByteBufCodecs.collection(ArrayList::new, ByteBufCodecs.fromCodecTrusted(PatchGenerator.CODEC)), ItemPatches::generators,
+        DataComponentPatch.STREAM_CODEC, ItemPatches::dataComponentPatch,
+        ByteBufCodecs.VAR_INT, ItemPatches::priority, ItemPatches::new);
+    @Override
+    public int compareTo(ItemPatches o) {
+        return priority - o.priority;
+    }
 
     public void apply(Item item, PatchedDataComponentMap newMap) {
+        if (!matchItem(item)) return;
+        newMap.applyPatch(dataComponentPatch);
+    }
+    
+    public void applyGenerators(Item item, PatchedDataComponentMap newMap) {
+        if (!matchItem(item)) return;
+        generators.forEach(patchGenerator -> patchGenerator.patchDataComponentMap(item, newMap));
+    }
+
+    @SuppressWarnings("deprecation")
+    public boolean matchItem(Item item) {
         if (items.size() != 0 || !tags.isEmpty()) {
             Holder<Item> itemHolder = item.builtInRegistryHolder();
             List<TagKey<Item>> matchedTags = tags.stream().filter(tagKey -> itemHolder.is(tagKey)).toList();
-            if (!(items.contains(itemHolder) || !matchedTags.isEmpty())) return;
+            if (!(items.contains(itemHolder) || !matchedTags.isEmpty())) return false;
         }
-        newMap.applyPatch(dataComponentPatch);
+        return true;
     }
 }

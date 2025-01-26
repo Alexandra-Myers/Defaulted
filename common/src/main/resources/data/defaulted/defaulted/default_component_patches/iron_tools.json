@@ -1,0 +1,12 @@
+{
+    "tag": [
+        "defaulted:iron_tools"
+    ],
+    "patch": {
+        "defaulted:tool_material": {
+            "weapon_level": 2,
+            "base_tier": "iron"
+        }
+    },
+    "priority": 800
+}
