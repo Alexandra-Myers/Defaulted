@@ -73,8 +73,4 @@ public record ToolMaterialWrapper(ToolMaterial toolMaterial, int weaponLevel) {
 	public TagKey<Item> repairItems() {
 		return toolMaterial.repairItems();
 	}
-
-	public int weaponLevel() {
-		return weaponLevel();
-	}
 }
