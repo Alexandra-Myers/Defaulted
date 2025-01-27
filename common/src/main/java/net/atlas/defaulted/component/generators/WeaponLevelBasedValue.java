@@ -6,8 +6,6 @@ import java.util.List;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.util.ExtraCodecs;
-
 public interface WeaponLevelBasedValue {
     public Codec<List<WeaponLevelBasedValue>> CODEC = Codec.withAlternative(MatchingLevel.CODEC.xmap(matchingLevel -> (WeaponLevelBasedValue) matchingLevel, weaponLevelBasedValue -> (MatchingLevel) weaponLevelBasedValue).listOf(), Codec.FLOAT.xmap(Unconditional::new, Unconditional::value).xmap(unconditional -> (WeaponLevelBasedValue) unconditional, weaponLevelBasedValue -> (Unconditional) weaponLevelBasedValue), Collections::singletonList);
     float getResult(int weaponLevel, boolean applyTier);
@@ -27,7 +25,7 @@ public interface WeaponLevelBasedValue {
     }
     public static record MatchingLevel(float value, LevelCondition levelCondition) implements WeaponLevelBasedValue {
         public static final Codec<MatchingLevel> CODEC = RecordCodecBuilder.create(instance ->
-            instance.group(ExtraCodecs.POSITIVE_FLOAT.fieldOf("value").forGetter(MatchingLevel::value),
+            instance.group(Codec.FLOAT.fieldOf("value").forGetter(MatchingLevel::value),
                 LevelCondition.CODEC.fieldOf("condition").forGetter(MatchingLevel::levelCondition)).apply(instance, MatchingLevel::new));
         @Override
         public float getResult(int weaponLevel, boolean applyTier) {

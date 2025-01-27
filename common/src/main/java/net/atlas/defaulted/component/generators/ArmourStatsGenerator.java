@@ -65,13 +65,13 @@ public record ArmourStatsGenerator(ArmourVariable<Integer> durability, ArmourVar
 		}
 		if (toughness != null) {
             addedEntries.add(Attributes.ARMOR_TOUGHNESS);
-			builder.add(Attributes.ARMOR_TOUGHNESS,
+			if (toughness > 0) builder.add(Attributes.ARMOR_TOUGHNESS,
 				new AttributeModifier(resourceLocation, toughness, AttributeModifier.Operation.ADD_VALUE),
 				slotGroup);
 		}
 		if (kbRes != null) {
 			addedEntries.add(Attributes.KNOCKBACK_RESISTANCE);
-			builder.add(Attributes.KNOCKBACK_RESISTANCE,
+			if (kbRes > 0) builder.add(Attributes.KNOCKBACK_RESISTANCE,
 				new AttributeModifier(resourceLocation, kbRes, AttributeModifier.Operation.ADD_VALUE),
 				slotGroup);
 		}
