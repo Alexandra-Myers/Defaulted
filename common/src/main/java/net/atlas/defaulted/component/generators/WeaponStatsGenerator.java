@@ -36,20 +36,30 @@ public record WeaponStatsGenerator(List<WeaponLevelBasedValue> damage, List<Weap
         ToolMaterialWrapper toolMaterialWrapper = item.defaulted$getToolMaterial();
         if (toolMaterialWrapper == null) toolMaterialWrapper = Defaulted.DEFAULT_WRAPPER;
         ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
+        ResourceLocation damageID = damageIdOverride.orElse(Item.BASE_ATTACK_DAMAGE_ID);
+        ResourceLocation speedID = speedIdOverride.orElse(Item.BASE_ATTACK_SPEED_ID);
         AttributeModifier attackDamage = null;
-        if (!damage.isEmpty()) attackDamage = new AttributeModifier(damageIdOverride.orElse(Item.BASE_ATTACK_DAMAGE_ID), getTierModifier(toolMaterialWrapper, true), AttributeModifier.Operation.ADD_VALUE);
+        boolean hasDamage = false;
+        if (!damage.isEmpty()) {
+            hasDamage = true;
+            attackDamage = new AttributeModifier(damageID, getTierModifier(toolMaterialWrapper, true), AttributeModifier.Operation.ADD_VALUE);
+        }
         AttributeModifier attackSpeed = null;
-        if (!speed.isEmpty()) attackSpeed = new AttributeModifier(speedIdOverride.orElse(Item.BASE_ATTACK_SPEED_ID), getTierModifier(toolMaterialWrapper, false), AttributeModifier.Operation.ADD_VALUE);
-        if (attackDamage == null && attackSpeed == null) return;
+        boolean hasSpeed = false;
+        if (!speed.isEmpty()) {
+            hasSpeed = true;
+            attackSpeed = new AttributeModifier(speedID, getTierModifier(toolMaterialWrapper, false), AttributeModifier.Operation.ADD_VALUE);
+        }
+        if (!(hasDamage || hasSpeed)) return;
         
 		for (ItemAttributeModifiers.Entry entry : additionalModifiers)
-			if (!((attackDamage == null || entry.matches(Attributes.ATTACK_DAMAGE, attackDamage.id())) || (attackSpeed == null || entry.matches(Attributes.ATTACK_SPEED, attackSpeed.id())))) builder.add(entry.attribute(), entry.modifier(), entry.slot());
+			if (!(!(hasDamage && entry.matches(Attributes.ATTACK_DAMAGE, damageID)) || !(hasSpeed && entry.matches(Attributes.ATTACK_SPEED, speedID)))) builder.add(entry.attribute(), entry.modifier(), entry.slot());
         if (persistPrevious && oldModifiers != null)
             for (ItemAttributeModifiers.Entry entry : oldModifiers.modifiers())
-                if (!((attackDamage == null || entry.matches(Attributes.ATTACK_DAMAGE, attackDamage.id())) || (attackSpeed == null || entry.matches(Attributes.ATTACK_SPEED, attackSpeed.id())))) builder.add(entry.attribute(), entry.modifier(), entry.slot());
+                if (!(!(hasDamage && entry.matches(Attributes.ATTACK_DAMAGE, damageID)) || !(hasSpeed && entry.matches(Attributes.ATTACK_SPEED, speedID)))) builder.add(entry.attribute(), entry.modifier(), entry.slot());
 
-        if (damage != null) builder.add(Attributes.ATTACK_DAMAGE, attackDamage, EquipmentSlotGroup.MAINHAND);
-        if (speed != null) builder.add(Attributes.ATTACK_SPEED, attackSpeed, EquipmentSlotGroup.MAINHAND);
+        if (hasDamage) builder.add(Attributes.ATTACK_DAMAGE, attackDamage, EquipmentSlotGroup.MAINHAND);
+        if (hasSpeed) builder.add(Attributes.ATTACK_SPEED, attackSpeed, EquipmentSlotGroup.MAINHAND);
         patchedDataComponentMap.set(DataComponents.ATTRIBUTE_MODIFIERS, builder.build());
     }
     
