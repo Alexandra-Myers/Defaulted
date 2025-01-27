@@ -7,7 +7,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public interface WeaponLevelBasedValue {
-    public Codec<List<WeaponLevelBasedValue>> CODEC = Codec.withAlternative(MatchingLevel.CODEC.xmap(matchingLevel -> (WeaponLevelBasedValue) matchingLevel, weaponLevelBasedValue -> (MatchingLevel) weaponLevelBasedValue).listOf(), Codec.FLOAT.xmap(Unconditional::new, Unconditional::value).xmap(unconditional -> (WeaponLevelBasedValue) unconditional, weaponLevelBasedValue -> (Unconditional) weaponLevelBasedValue), Collections::singletonList);
+    public Codec<List<WeaponLevelBasedValue>> CODEC = Codec.withAlternative(MatchingLevel.CODEC.listOf(), Codec.FLOAT.xmap(Unconditional::new, Unconditional::value), Collections::singletonList);
     float getResult(int weaponLevel, boolean applyTier);
     public static record LevelCondition(int min, int max) {
         public static final Codec<LevelCondition> CODEC = Codec.withAlternative(RecordCodecBuilder.create(instance ->
