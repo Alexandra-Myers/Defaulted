@@ -3,6 +3,7 @@ package net.atlas.defaulted;
 import net.atlas.defaulted.component.ItemPatches;
 import net.atlas.defaulted.component.PatchGenerator;
 import net.atlas.defaulted.component.ToolMaterialWrapper;
+import net.atlas.defaulted.component.generators.WeaponLevelBasedValue;
 import net.atlas.defaulted.component.generators.condition.PatchConditions;
 import net.atlas.defaulted.mixin.ItemAccessor;
 import net.minecraft.core.Holder;
@@ -47,6 +48,7 @@ public final class Defaulted {
         baseTiers.put("diamond", ToolMaterial.DIAMOND);
         baseTiers.put("netherite", ToolMaterial.NETHERITE);
         PatchConditions.bootstrap();
+        WeaponLevelBasedValue.bootstrap();
     }
 
     public static ResourceLocation id(String path) {
