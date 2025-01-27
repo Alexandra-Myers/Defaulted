@@ -70,8 +70,8 @@ public final class Defaulted {
             }
             else Defaulted.originalComponents.put(itemHolder, originalPrototype);
             PatchedDataComponentMap newMap = new PatchedDataComponentMap(originalPrototype);
-            reg.forEach(itemPatches -> itemPatches.applyGenerators(item, newMap));
             reg.forEach(itemPatches -> itemPatches.apply(item, newMap));
+            reg.forEach(itemPatches -> itemPatches.applyGenerators(item, newMap));
             if (newMap.asPatch().isEmpty()) continue;
             ((ItemAccessor) item).setComponents(newMap);
         }
