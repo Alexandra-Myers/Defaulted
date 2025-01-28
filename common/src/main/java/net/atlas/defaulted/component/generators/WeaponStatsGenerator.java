@@ -53,10 +53,10 @@ public record WeaponStatsGenerator(List<WeaponLevelBasedValue> damage, List<Weap
         if (!(hasDamage || hasSpeed)) return;
         
 		for (ItemAttributeModifiers.Entry entry : additionalModifiers)
-			if (!(!(hasDamage && entry.matches(Attributes.ATTACK_DAMAGE, damageID)) || !(hasSpeed && entry.matches(Attributes.ATTACK_SPEED, speedID)))) builder.add(entry.attribute(), entry.modifier(), entry.slot());
+			if (!((hasDamage && entry.matches(Attributes.ATTACK_DAMAGE, damageID)) || (hasSpeed && entry.matches(Attributes.ATTACK_SPEED, speedID)))) builder.add(entry.attribute(), entry.modifier(), entry.slot());
         if (persistPrevious && oldModifiers != null)
             for (ItemAttributeModifiers.Entry entry : oldModifiers.modifiers())
-                if (!(!(hasDamage && entry.matches(Attributes.ATTACK_DAMAGE, damageID)) || !(hasSpeed && entry.matches(Attributes.ATTACK_SPEED, speedID)))) builder.add(entry.attribute(), entry.modifier(), entry.slot());
+                if (!((hasDamage && entry.matches(Attributes.ATTACK_DAMAGE, damageID)) || (hasSpeed && entry.matches(Attributes.ATTACK_SPEED, speedID)))) builder.add(entry.attribute(), entry.modifier(), entry.slot());
 
         if (hasDamage) builder.add(Attributes.ATTACK_DAMAGE, attackDamage, EquipmentSlotGroup.MAINHAND);
         if (hasSpeed) builder.add(Attributes.ATTACK_SPEED, attackSpeed, EquipmentSlotGroup.MAINHAND);
