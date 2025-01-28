@@ -15,7 +15,7 @@ The registry is reloadable using `/reload`.
 
 The JSON files for the defaulted:default_component_patches registry should be put in <namespace>/defaulted/default_component_patches/<path>.json.
 
-For documentation, please see the [Atlas Docs Page](https://atlas-modding.github.io/Atlas-Docs/defaulted.html).
+[![Atlas Docs Page](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/documentation/ghpages_64h.png)](https://atlas-modding.github.io/Atlas-Docs/defaulted.html)
 
 ***
 
