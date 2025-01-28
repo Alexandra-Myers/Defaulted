@@ -15,6 +15,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.level.storage.loot.LootDataType;
 
@@ -38,6 +39,7 @@ public final class Defaulted {
      * NOTE: All consumers must be triggered on **server start**.
      */
     public static final List<Consumer<Collection<ItemPatches>>> EXECUTE_ON_RELOAD = new ArrayList<>();
+	public static final Set<ItemStack> ALL_STACKS = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>()));
 
     public static void init() {
         // Write common init code here.
@@ -77,5 +79,8 @@ public final class Defaulted {
             if (newMap.asPatch().isEmpty()) continue;
             ((ItemAccessor) item).setComponents(newMap);
         }
+        synchronized (ALL_STACKS) {
+			ALL_STACKS.forEach(ItemStack::defaulted$updatePrototype);
+		}
     }
 }

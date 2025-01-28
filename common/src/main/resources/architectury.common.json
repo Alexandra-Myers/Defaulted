@@ -1,5 +1,6 @@
 {
     "injected_interfaces": {
-        "net/minecraft/class_1792": ["net/atlas/defaulted/extension/ItemExtensions"]
+        "net/minecraft/class_1792": ["net/atlas/defaulted/extension/ItemExtensions"],
+        "net/minecraft/class_1799": ["net/atlas/defaulted/extension/ItemStackExtensions"]
     }
 }
