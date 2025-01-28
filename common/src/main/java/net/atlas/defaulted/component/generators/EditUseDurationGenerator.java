@@ -23,8 +23,7 @@ public record EditUseDurationGenerator(Float useSeconds) implements PatchGenerat
     
     @Override
     public MapCodec<? extends PatchGenerator> codec() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'codec'");
+        return CODEC;
     };
     
 }

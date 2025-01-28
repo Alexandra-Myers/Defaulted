@@ -54,7 +54,6 @@ public record ModifyTierStatsGenerator(List<TierComponents> components,  Optiona
 
     @Override
     public MapCodec<? extends PatchGenerator> codec() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'codec'");
+        return CODEC;
     };
 }
