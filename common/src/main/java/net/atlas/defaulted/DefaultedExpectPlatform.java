@@ -22,7 +22,7 @@ public interface DefaultedExpectPlatform {
         throw new AssertionError();
     }
     @ExpectPlatform
-    static DataComponentMap handleOwOCompat(ItemStack itemStack, DataComponentMap prototype) {
+    static DataComponentMap createDerivedMap(ItemStack itemStack, DataComponentMap prototype) {
         throw new AssertionError();
     }
 }

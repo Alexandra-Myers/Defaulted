@@ -24,7 +24,7 @@ public class DefaultedExpectPlatformImpl {
     public static boolean isModLoaded(String modId) {
         return FabricLoader.getInstance().isModLoaded(modId);
     }
-    public static DataComponentMap handleOwOCompat(ItemStack itemStack, DataComponentMap prototype) {
+    public static DataComponentMap createDerivedMap(ItemStack itemStack, DataComponentMap prototype) {
         return OwoCompat.deriveComponentMap(itemStack, prototype);
     }
 }
