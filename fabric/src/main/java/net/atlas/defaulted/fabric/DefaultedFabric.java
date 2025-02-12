@@ -6,6 +6,7 @@ import net.fabricmc.api.ModInitializer;
 
 import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.DefaultedDataReloadListener;
+import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
@@ -40,6 +41,7 @@ public final class DefaultedFabric implements ModInitializer {
                 DefaultedDataReloadListener.reload(holderLookup, manager);
             }
         });
+        CommonLifecycleEvents.TAGS_LOADED.register((registries, client) -> DefaultedDataReloadListener.patch());
 
         PayloadTypeRegistry.playS2C().register(ClientboundDefaultComponentsSyncPacket.TYPE, ClientboundDefaultComponentsSyncPacket.CODEC);
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {

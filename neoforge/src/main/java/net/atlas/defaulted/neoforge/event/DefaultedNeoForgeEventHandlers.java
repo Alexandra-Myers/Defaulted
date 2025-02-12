@@ -7,6 +7,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
+import net.neoforged.neoforge.event.TagsUpdatedEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
@@ -30,5 +31,9 @@ public class DefaultedNeoForgeEventHandlers {
             }
             
         });
+    }
+    @SubscribeEvent
+    public static void onTagsLoaded(final TagsUpdatedEvent tagsUpdatedEvent) {
+        DefaultedDataReloadListener.patch();
     }
 }

@@ -38,6 +38,9 @@ public class DefaultedDataReloadListener {
             }
         }
         cached = entries.stream().sorted(Comparator.naturalOrder()).map(ItemPatchesEntry::itemPatches).toList();
+    }
+
+    public static void patch() {
         Defaulted.patchItemComponents(cached);
         Defaulted.EXECUTE_ON_RELOAD.forEach(collectionConsumer -> collectionConsumer.accept(cached));
     }
