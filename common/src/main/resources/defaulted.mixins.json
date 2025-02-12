@@ -10,10 +10,8 @@
     "ItemMixin",
     "ItemStackMixin",
     "ItemStackMixin$StreamCodecMixin",
-    "LootDataTypeMixin",
     "PatchedDataComponentMapAccessor",
-    "RegistryMixin",
-    "ReloadableServerResourcesMixin"
+    "RegistryMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -17,10 +17,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ToolMaterial;
-import net.minecraft.world.level.storage.loot.LootDataType;
 
 import java.util.*;
 import java.util.function.Consumer;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -31,9 +33,8 @@ public final class Defaulted {
     public static final ToolMaterialWrapper DEFAULT_WRAPPER = new ToolMaterialWrapper(ToolMaterial.DIAMOND, 3);
     public static final Map<Holder<Item>, DataComponentMap> originalComponents = new HashMap<>();
     public static final String MOD_ID = "defaulted";
+    public static final Logger LOGGER = LogManager.getLogger("defaulted");
 	public static final ResourceKey<Registry<MapCodec<? extends PatchGenerator>>> PATCH_GENERATOR_TYPE = ResourceKey.createRegistryKey(id("patch_generator"));
-    public static final ResourceKey<Registry<ItemPatches>> ITEM_PATCHES = ResourceKey.createRegistryKey(id("default_component_patches"));
-    public static final LootDataType<ItemPatches> PATCHES_LOOT_DATA_TYPE = DefaultedExpectPlatform.createLootDataType(ITEM_PATCHES, ItemPatches.DIRECT_CODEC, (validationContext, resourceKey, object) -> {});
     /**
      * {@link ArrayList} of {@link Consumer}s to run on the sorted collection of {@link ItemPatches} after a reload or resource loading.
      * NOTE: All consumers must be triggered on **server start**.
