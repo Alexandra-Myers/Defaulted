@@ -30,6 +30,7 @@ dependencies {
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_api_version"
     modImplementation include("xyz.nucleoid:packet-tweaker:$rootProject.packet_tweaker")
+    modCompileOnly "io.wispforest:owo-lib:$rootProject.owo_version"
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive false }
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')

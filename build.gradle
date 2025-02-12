@@ -32,6 +32,7 @@ subprojects {
         maven {
             url "https://maven.nucleoid.xyz"
         }
+        maven { url 'https://maven.wispforest.io' }
     }
 
     loom {

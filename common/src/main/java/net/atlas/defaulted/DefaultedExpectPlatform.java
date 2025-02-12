@@ -5,6 +5,8 @@ import com.mojang.serialization.MapCodec;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.atlas.defaulted.component.PatchGenerator;
 import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.world.item.ItemStack;
 
 public interface DefaultedExpectPlatform {
     @ExpectPlatform
@@ -17,6 +19,10 @@ public interface DefaultedExpectPlatform {
     }
     @ExpectPlatform
     static boolean isModLoaded(String modId) {
+        throw new AssertionError();
+    }
+    @ExpectPlatform
+    static DataComponentMap handleOwOCompat(ItemStack itemStack, DataComponentMap prototype) {
         throw new AssertionError();
     }
 }

@@ -41,7 +41,9 @@ public abstract class ItemStackMixin implements ItemStackExtensions {
         if (!isEmpty()) {
             DataComponentMap prototype = PatchedDataComponentMapAccessor.class.cast(components).getPrototype(); // Safe dw gang
             if (prototype.equals(getPrototype())) return;
-            PatchedDataComponentMap newMap = new PatchedDataComponentMap(getPrototype());
+            DataComponentMap newPrototype = getPrototype();
+            if (Defaulted.hasOwo) newPrototype = DefaultedExpectPlatform.handleOwOCompat(ItemStack.class.cast(this), newPrototype);
+            PatchedDataComponentMap newMap = new PatchedDataComponentMap(newPrototype);
             newMap.applyPatch(getComponentsPatch());
             components = newMap;
         }

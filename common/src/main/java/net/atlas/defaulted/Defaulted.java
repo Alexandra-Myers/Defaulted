@@ -29,6 +29,7 @@ import com.google.common.collect.HashBiMap;
 import com.mojang.serialization.MapCodec;
 
 public final class Defaulted {
+    public static boolean hasOwo = false;
     public static final BiMap<String, ToolMaterial> baseTiers = HashBiMap.create();
     public static final ToolMaterialWrapper DEFAULT_WRAPPER = new ToolMaterialWrapper(ToolMaterial.DIAMOND, 3);
     public static final Map<Holder<Item>, DataComponentMap> originalComponents = new HashMap<>();
