@@ -1,11 +1,12 @@
 package net.atlas.defaulted.neoforge.event;
 
+import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.DefaultedDataReloadListener;
 import net.atlas.defaulted.networking.ClientboundDefaultComponentsSyncPacket;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.TagsUpdatedEvent;
 import net.neoforged.neoforge.event.TagsUpdatedEvent.UpdateCause;
@@ -23,8 +24,8 @@ public class DefaultedNeoForgeEventHandlers {
         });
     }
     @SubscribeEvent
-    public static void onDatapackReload(final AddReloadListenerEvent addReloadListenerEvent) {
-        addReloadListenerEvent.addListener(new PreparableReloadListener() {
+    public static void onDatapackReload(final AddServerReloadListenersEvent addReloadListenerEvent) {
+        addReloadListenerEvent.addListener(Defaulted.id("default_component_patches"), new PreparableReloadListener() {
             @Override
             public CompletableFuture<Void> reload(PreparationBarrier arg, ResourceManager arg2, Executor executor,
                     Executor executor2) {
