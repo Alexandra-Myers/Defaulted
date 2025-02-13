@@ -43,7 +43,9 @@ public final class DefaultedFabric implements ModInitializer {
                 DefaultedDataReloadListener.reload(holderLookup, manager);
             }
         });
-        CommonLifecycleEvents.TAGS_LOADED.register((registries, client) -> DefaultedDataReloadListener.patch());
+        CommonLifecycleEvents.TAGS_LOADED.register((registries, client) -> {
+            if (!client) DefaultedDataReloadListener.patch();
+        });
 
         PayloadTypeRegistry.playS2C().register(ClientboundDefaultComponentsSyncPacket.TYPE, ClientboundDefaultComponentsSyncPacket.CODEC);
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {

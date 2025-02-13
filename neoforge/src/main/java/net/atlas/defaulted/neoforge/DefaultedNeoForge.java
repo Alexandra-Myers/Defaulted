@@ -34,5 +34,6 @@ public final class DefaultedNeoForge {
     }
     public static void receiveDefaults(final ClientboundDefaultComponentsSyncPacket payload, final IPayloadContext payloadContext) {
         DefaultedDataReloadListener.cached = payload.list();
+        Defaulted.patchItemComponents(DefaultedDataReloadListener.cached);
     }
 }

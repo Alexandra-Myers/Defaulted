@@ -15,7 +15,10 @@ public class DefaultedFabricClient implements ClientModInitializer {
      */
     @Override
     public void onInitializeClient() {
-        ClientPlayNetworking.registerGlobalReceiver(ClientboundDefaultComponentsSyncPacket.TYPE, (clientboundDefaultComponentsSyncPacket, context) -> DefaultedDataReloadListener.cached = clientboundDefaultComponentsSyncPacket.list());
+        ClientPlayNetworking.registerGlobalReceiver(ClientboundDefaultComponentsSyncPacket.TYPE, (clientboundDefaultComponentsSyncPacket, context) -> {
+            DefaultedDataReloadListener.cached = clientboundDefaultComponentsSyncPacket.list();
+            Defaulted.patchItemComponents(DefaultedDataReloadListener.cached);
+        });
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
             Defaulted.EXECUTE_ON_RELOAD.clear();
             DefaultedDataReloadListener.cached = new ArrayList<>(); 
