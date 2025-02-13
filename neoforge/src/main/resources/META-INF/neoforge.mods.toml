@@ -11,7 +11,7 @@ authors = "Alexandra"
 description = '''
 Minecraft mod to enable in-game modification of default item components.
 '''
-#logoFile = ""
+logoFile = "assets/icon.png"
 
 [[dependencies.defaulted]]
 modId = "neoforge"
