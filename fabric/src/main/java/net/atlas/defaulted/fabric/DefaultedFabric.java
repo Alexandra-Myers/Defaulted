@@ -5,18 +5,15 @@ import net.atlas.defaulted.networking.ClientboundDefaultComponentsSyncPacket;
 import net.fabricmc.api.ModInitializer;
 
 import net.atlas.defaulted.Defaulted;
-import net.atlas.defaulted.DefaultedDataReloadListener;
+import net.atlas.defaulted.DefaultComponentPatchesManager;
 import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.resources.ResourceManager;
 
 import java.util.*;
 
@@ -32,19 +29,9 @@ public final class DefaultedFabric implements ModInitializer {
         Defaulted.init();
         Defaulted.hasOwo = FabricLoader.getInstance().isModLoaded("owo");
         DefaultedRegistries.init();
-        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(Defaulted.id("default_component_patches"), holderLookup -> new SimpleSynchronousResourceReloadListener() {
-            @Override
-            public ResourceLocation getFabricId() {
-                return Defaulted.id("default_component_patches");
-            }
-
-            @Override
-            public void onResourceManagerReload(ResourceManager manager) {
-                DefaultedDataReloadListener.reload(holderLookup, manager);
-            }
-        });
+        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(Defaulted.id("default_component_patches"), holderLookup -> new FabricDefaultComponentPatchesManager(holderLookup));
         CommonLifecycleEvents.TAGS_LOADED.register((registries, client) -> {
-            if (!client) DefaultedDataReloadListener.patch();
+            if (!client) DefaultComponentPatchesManager.patch();
         });
 
         PayloadTypeRegistry.playS2C().register(ClientboundDefaultComponentsSyncPacket.TYPE, ClientboundDefaultComponentsSyncPacket.CODEC);
@@ -60,7 +47,7 @@ public final class DefaultedFabric implements ModInitializer {
         });
         ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register((player, joined) -> {
             if (ServerPlayNetworking.canSend(player, ClientboundDefaultComponentsSyncPacket.TYPE)) {
-                ServerPlayNetworking.send(player, new ClientboundDefaultComponentsSyncPacket(new ArrayList<>(DefaultedDataReloadListener.cached)));
+                ServerPlayNetworking.send(player, new ClientboundDefaultComponentsSyncPacket(new ArrayList<>(DefaultComponentPatchesManager.cached)));
             }
         });
     }

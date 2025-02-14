@@ -8,7 +8,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 
 import net.atlas.defaulted.Defaulted;
-import net.atlas.defaulted.DefaultedDataReloadListener;
+import net.atlas.defaulted.DefaultComponentPatchesManager;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -33,7 +33,7 @@ public final class DefaultedNeoForge {
         );
     }
     public static void receiveDefaults(final ClientboundDefaultComponentsSyncPacket payload, final IPayloadContext payloadContext) {
-        DefaultedDataReloadListener.cached = payload.list();
-        Defaulted.patchItemComponents(DefaultedDataReloadListener.cached);
+        DefaultComponentPatchesManager.cached = payload.list();
+        Defaulted.patchItemComponents(DefaultComponentPatchesManager.cached);
     }
 }

@@ -36,6 +36,7 @@ public final class Defaulted {
     public static final String MOD_ID = "defaulted";
     public static final Logger LOGGER = LogManager.getLogger("defaulted");
 	public static final ResourceKey<Registry<MapCodec<? extends PatchGenerator>>> PATCH_GENERATOR_TYPE = ResourceKey.createRegistryKey(id("patch_generator"));
+	public static final ResourceKey<Registry<ItemPatches>> ITEM_PATCHES_TYPE = ResourceKey.createRegistryKey(id("default_component_patches"));
     /**
      * {@link ArrayList} of {@link Consumer}s to run on the sorted collection of {@link ItemPatches} after a reload or resource loading.
      * NOTE: All consumers must be triggered on **server start**.
