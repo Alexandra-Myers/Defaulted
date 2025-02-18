@@ -33,7 +33,6 @@ public final class DefaultedNeoForge {
         );
     }
     public static void receiveDefaults(final ClientboundDefaultComponentsSyncPacket payload, final IPayloadContext payloadContext) {
-        DefaultComponentPatchesManager.cached = payload.list();
-        Defaulted.patchItemComponents(DefaultComponentPatchesManager.cached);
+        DefaultComponentPatchesManager.loadClientCache(payload.list());
     }
 }

@@ -31,7 +31,7 @@ public final class DefaultedFabric implements ModInitializer {
         DefaultedRegistries.init();
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(Defaulted.id("default_component_patches"), holderLookup -> new FabricDefaultComponentPatchesManager(holderLookup));
         CommonLifecycleEvents.TAGS_LOADED.register((registries, client) -> {
-            if (!client) DefaultComponentPatchesManager.patch();
+            if (!client) DefaultComponentPatchesManager.getInstance().load();
         });
 
         PayloadTypeRegistry.playS2C().register(ClientboundDefaultComponentsSyncPacket.TYPE, ClientboundDefaultComponentsSyncPacket.CODEC);
@@ -47,7 +47,7 @@ public final class DefaultedFabric implements ModInitializer {
         });
         ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register((player, joined) -> {
             if (ServerPlayNetworking.canSend(player, ClientboundDefaultComponentsSyncPacket.TYPE)) {
-                ServerPlayNetworking.send(player, new ClientboundDefaultComponentsSyncPacket(new ArrayList<>(DefaultComponentPatchesManager.cached)));
+                ServerPlayNetworking.send(player, new ClientboundDefaultComponentsSyncPacket(new ArrayList<>(DefaultComponentPatchesManager.getCached())));
             }
         });
     }

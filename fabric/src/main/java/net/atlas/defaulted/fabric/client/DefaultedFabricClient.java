@@ -1,8 +1,5 @@
 package net.atlas.defaulted.fabric.client;
 
-import java.util.ArrayList;
-
-import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.DefaultComponentPatchesManager;
 import net.atlas.defaulted.networking.ClientboundDefaultComponentsSyncPacket;
 import net.fabricmc.api.ClientModInitializer;
@@ -16,12 +13,10 @@ public class DefaultedFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         ClientPlayNetworking.registerGlobalReceiver(ClientboundDefaultComponentsSyncPacket.TYPE, (clientboundDefaultComponentsSyncPacket, context) -> {
-            DefaultComponentPatchesManager.cached = clientboundDefaultComponentsSyncPacket.list();
-            Defaulted.patchItemComponents(DefaultComponentPatchesManager.cached);
+            DefaultComponentPatchesManager.loadClientCache(clientboundDefaultComponentsSyncPacket.list());
         });
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
-            Defaulted.EXECUTE_ON_RELOAD.clear();
-            DefaultComponentPatchesManager.cached = new ArrayList<>(); 
+            DefaultComponentPatchesManager.clear(); 
         });
     }
 }

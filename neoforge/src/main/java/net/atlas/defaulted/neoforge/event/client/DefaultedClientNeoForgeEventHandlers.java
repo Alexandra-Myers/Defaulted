@@ -1,7 +1,5 @@
 package net.atlas.defaulted.neoforge.event.client;
 
-import java.util.ArrayList;
-
 import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.DefaultComponentPatchesManager;
 import net.neoforged.api.distmarker.Dist;
@@ -14,6 +12,6 @@ public class DefaultedClientNeoForgeEventHandlers {
     @SubscribeEvent
     public static void onClientDisconnect(final ClientPlayerNetworkEvent.LoggingOut loggingOut) {
         Defaulted.EXECUTE_ON_RELOAD.clear();
-        DefaultComponentPatchesManager.cached = new ArrayList<>(); 
+        DefaultComponentPatchesManager.clear(); 
     }
 }

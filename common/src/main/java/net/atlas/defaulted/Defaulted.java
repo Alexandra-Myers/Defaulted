@@ -39,9 +39,12 @@ public final class Defaulted {
 	public static final ResourceKey<Registry<ItemPatches>> ITEM_PATCHES_TYPE = ResourceKey.createRegistryKey(id("default_component_patches"));
     /**
      * {@link ArrayList} of {@link Consumer}s to run on the sorted collection of {@link ItemPatches} after a reload or resource loading.
-     * NOTE: All consumers must be triggered on **server start**.
      */
     public static final List<Consumer<Collection<ItemPatches>>> EXECUTE_ON_RELOAD = new ArrayList<>();
+    /**
+     * {@link ArrayList} of {@link Consumer}s for the initial map of all item patches, empty by default, and will be overridden if data is loaded for these.
+     */
+    public static final List<Consumer<Map<ResourceLocation, ItemPatches>>> ADD_DEFAULT_PATCHES = new ArrayList<>();
 	public static final Set<ItemStack> ALL_STACKS = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>()));
 
     public static void init() {
