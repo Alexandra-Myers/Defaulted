@@ -8,7 +8,6 @@ import net.atlas.defaulted.fabric.component.DefaultedRegistries;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ItemStack;
 import xyz.nucleoid.packettweaker.PacketContext;
 

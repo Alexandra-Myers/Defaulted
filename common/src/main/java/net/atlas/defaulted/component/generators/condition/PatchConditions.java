@@ -7,6 +7,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.atlas.defaulted.extension.LateBoundIdMapper;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
@@ -21,7 +22,7 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.Item;
 
 public class PatchConditions {
-    public static final ExtraCodecs.LateBoundIdMapper<ResourceLocation, MapCodec<? extends PatchCondition>> CONDITION_MAPPER = new ExtraCodecs.LateBoundIdMapper<>();
+    public static final LateBoundIdMapper<ResourceLocation, MapCodec<? extends PatchCondition>> CONDITION_MAPPER = new LateBoundIdMapper<>();
     public static final MapCodec<PatchCondition> MAP_CODEC = CONDITION_MAPPER.codec(ResourceLocation.CODEC)
 		.dispatchMap("condition", PatchCondition::codec, mapCodec -> mapCodec);
     public static void bootstrap() {
@@ -34,8 +35,8 @@ public class PatchConditions {
     }
     
     public interface PatchCondition {
-        public boolean matches(Item item, PatchedDataComponentMap patchedDataComponentMap);
-        public MapCodec<? extends PatchCondition> codec();
+        boolean matches(Item item, PatchedDataComponentMap patchedDataComponentMap);
+        MapCodec<? extends PatchCondition> codec();
     }
     public record InvertCondition(PatchCondition patchCondition) implements PatchCondition {
         public static final MapCodec<InvertCondition> CODEC = PatchConditions.MAP_CODEC.codec().fieldOf("inverted").xmap(InvertCondition::new, InvertCondition::patchCondition);

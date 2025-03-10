@@ -21,6 +21,7 @@ import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 
@@ -46,8 +47,8 @@ public record ArmourStatsGenerator(ArmourVariable<Integer> durability, ArmourVar
         List<Holder<Attribute>> addedEntries = new ArrayList<>();
 		ResourceLocation resourceLocation = ResourceLocation.withDefaultNamespace("armor.any");
 		EquipmentSlotGroup slotGroup = EquipmentSlotGroup.ARMOR;
-		if (item.components().has(DataComponents.EQUIPPABLE))
-			slotGroup = EquipmentSlotGroup.bySlot(item.components().get(DataComponents.EQUIPPABLE).slot());
+		if (item instanceof ArmorItem armorItem)
+			slotGroup = EquipmentSlotGroup.bySlot(armorItem.getEquipmentSlot());
 		resourceLocation = switch (slotGroup) {
 			case HEAD -> ResourceLocation.withDefaultNamespace("armor.helmet");
 			case CHEST -> ResourceLocation.withDefaultNamespace("armor.chestplate");

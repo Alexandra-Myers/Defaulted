@@ -16,7 +16,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ToolMaterial;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.Tiers;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -30,8 +31,8 @@ import com.mojang.serialization.MapCodec;
 
 public final class Defaulted {
     public static boolean hasOwo = false;
-    public static final BiMap<String, ToolMaterial> baseTiers = HashBiMap.create();
-    public static final ToolMaterialWrapper DEFAULT_WRAPPER = new ToolMaterialWrapper(ToolMaterial.DIAMOND, 3);
+    public static final BiMap<String, Tier> baseTiers = HashBiMap.create();
+    public static final ToolMaterialWrapper DEFAULT_WRAPPER = new ToolMaterialWrapper(Tiers.DIAMOND, 3);
     public static final Map<Holder<Item>, DataComponentMap> originalComponents = new HashMap<>();
     public static final String MOD_ID = "defaulted";
     public static final Logger LOGGER = LogManager.getLogger("defaulted");
@@ -49,12 +50,12 @@ public final class Defaulted {
 
     public static void init() {
         // Write common init code here.
-        baseTiers.put("wood", ToolMaterial.WOOD);
-        baseTiers.put("stone", ToolMaterial.STONE);
-        baseTiers.put("gold", ToolMaterial.GOLD);
-        baseTiers.put("iron", ToolMaterial.IRON);
-        baseTiers.put("diamond", ToolMaterial.DIAMOND);
-        baseTiers.put("netherite", ToolMaterial.NETHERITE);
+        baseTiers.put("wood", Tiers.WOOD);
+        baseTiers.put("stone", Tiers.STONE);
+        baseTiers.put("gold", Tiers.GOLD);
+        baseTiers.put("iron", Tiers.IRON);
+        baseTiers.put("diamond", Tiers.DIAMOND);
+        baseTiers.put("netherite", Tiers.NETHERITE);
         PatchConditions.bootstrap();
         WeaponLevelBasedValue.bootstrap();
     }
