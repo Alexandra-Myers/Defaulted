@@ -3,7 +3,11 @@ package net.atlas.defaulted.component.generators;
 import java.util.List;
 import java.util.Optional;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
+import net.atlas.defaulted.DefaultedExpectPlatform;
+import net.atlas.defaulted.component.backport.Enchantable;
+import net.atlas.defaulted.component.backport.Repairable;
 import org.apache.logging.log4j.LogManager;
 
 import com.mojang.serialization.MapCodec;
@@ -37,8 +41,14 @@ public record ModifyTierStatsGenerator(List<TierComponents> components,  Optiona
                 if (damageFactor.isPresent()) maxDamage = Math.round(maxDamage * damageFactor.get());
                 Defaulted.setDurability(maxDamage, patchedDataComponentMap);
             }
+            if (components.contains(TierComponents.ENCHANTABLE)) {
+                item.defaulted$set(DefaultedExpectPlatform.getEnchantable(), new Enchantable(tier.getEnchantmentValue()));
+            }
+            if (components.contains(TierComponents.REPAIRABLE)) {
+                item.defaulted$set(DefaultedExpectPlatform.getRepairable(), new Repairable(Either.right(tier.repairItems())));
+            }
             if (components.contains(TierComponents.TOOL)) {
-                if (!toolMineable.isPresent()) {
+                if (toolMineable.isEmpty()) {
                     LogManager.getLogger("Defaulted").warn("Attempted to update tool component for tiered item " + item.builtInRegistryHolder() + " but mineable tag is not present!");
                     return;
                 }

@@ -1,5 +1,6 @@
 package net.atlas.defaulted.fabric;
 
+import net.atlas.defaulted.fabric.backport.BackportedComponents;
 import net.atlas.defaulted.fabric.component.DefaultedRegistries;
 import net.atlas.defaulted.networking.ClientboundDefaultComponentsSyncPacket;
 import net.fabricmc.api.ModInitializer;
@@ -29,6 +30,7 @@ public final class DefaultedFabric implements ModInitializer {
         Defaulted.init();
         Defaulted.hasOwo = FabricLoader.getInstance().isModLoaded("owo");
         DefaultedRegistries.init();
+        BackportedComponents.registerDataComponents();
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(Defaulted.id("default_component_patches"), holderLookup -> new FabricDefaultComponentPatchesManager(holderLookup));
         CommonLifecycleEvents.TAGS_LOADED.register((registries, client) -> {
             if (!client) DefaultComponentPatchesManager.getInstance().load();

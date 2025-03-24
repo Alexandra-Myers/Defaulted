@@ -9,6 +9,7 @@ import net.atlas.defaulted.mixin.ItemAccessor;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -37,6 +38,7 @@ public final class Defaulted {
     public static final String MOD_ID = "defaulted";
     public static final Logger LOGGER = LogManager.getLogger("defaulted");
 	public static final ResourceKey<Registry<MapCodec<? extends PatchGenerator>>> PATCH_GENERATOR_TYPE = ResourceKey.createRegistryKey(id("patch_generator"));
+    public static final ResourceKey<Registry<DataComponentType<?>>> PHANTOM_COMPONENT_TYPE = ResourceKey.createRegistryKey(id("phantom_data_components"));
 	public static final ResourceKey<Registry<ItemPatches>> ITEM_PATCHES_TYPE = ResourceKey.createRegistryKey(id("default_component_patches"));
     /**
      * {@link ArrayList} of {@link Consumer}s to run on the sorted collection of {@link ItemPatches} after a reload or resource loading.

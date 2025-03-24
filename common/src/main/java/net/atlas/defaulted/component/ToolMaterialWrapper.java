@@ -8,16 +8,17 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.atlas.defaulted.Defaulted;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
 
 import java.util.Optional;
-import java.util.function.Supplier;
 
-public record ToolMaterialWrapper(TagKey<Block> incorrectBlocksForDrops, int uses, float speed, float attackDamageBonus, int enchantmentValue, Supplier<Ingredient> repairIngredient, int weaponLevel) implements Tier {
+public record ToolMaterialWrapper(TagKey<Block> incorrectBlocksForDrops, int uses, float speed, float attackDamageBonus, int enchantmentValue, TagKey<Item> repairItems, int weaponLevel) implements Tier {
 	public static Codec<Tier> TOOL_MATERIAL_CODEC = Codec.STRING.validate(s -> Defaulted.baseTiers.containsKey(s) ? DataResult.success(s) : DataResult.error(() -> "Given base tier does not exist!")).xmap(s -> Defaulted.baseTiers.get(s.toLowerCase()), Defaulted.baseTiers.inverse()::get);
 	public static MapCodec<ToolMaterialWrapper> BASE_CODEC = RecordCodecBuilder.mapCodec(instance ->
 		instance.group(ExtraCodecs.NON_NEGATIVE_INT.fieldOf("weapon_level").forGetter(ToolMaterialWrapper::weaponLevel),
@@ -25,7 +26,7 @@ public record ToolMaterialWrapper(TagKey<Block> incorrectBlocksForDrops, int use
 				ExtraCodecs.POSITIVE_INT.optionalFieldOf("uses").forGetter(toolMaterialWrapper -> Optional.of(toolMaterialWrapper.uses())),
 				Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("attack_damage_bonus").forGetter(toolMaterialWrapper -> Optional.of(toolMaterialWrapper.attackDamageBonus())),
 				Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("mining_speed").forGetter(toolMaterialWrapper -> Optional.of(toolMaterialWrapper.speed())),
-				Ingredient.CODEC.optionalFieldOf("repair_ingredient").forGetter(toolMaterialWrapper -> Optional.of(toolMaterialWrapper.getRepairIngredient())),
+				TagKey.codec(Registries.ITEM).optionalFieldOf("repair_items").forGetter(toolMaterialWrapper -> Optional.ofNullable(toolMaterialWrapper.repairItems)),
 				TagKey.codec(Registries.BLOCK).optionalFieldOf("incorrect_blocks").forGetter(toolMaterialWrapper -> Optional.of(toolMaterialWrapper.incorrectBlocksForDrops())),
 				TOOL_MATERIAL_CODEC.fieldOf("base_tier").forGetter(ToolMaterialWrapper::asTier))
 			.apply(instance, ToolMaterialWrapper::create));
@@ -36,7 +37,7 @@ public record ToolMaterialWrapper(TagKey<Block> incorrectBlocksForDrops, int use
 				ExtraCodecs.POSITIVE_INT.fieldOf("uses").forGetter(ToolMaterialWrapper::uses),
 				Codec.floatRange(0, Float.MAX_VALUE).fieldOf("attack_damage_bonus").forGetter(ToolMaterialWrapper::attackDamageBonus),
 				Codec.floatRange(0, Float.MAX_VALUE).fieldOf("mining_speed").forGetter(ToolMaterialWrapper::speed),
-				Ingredient.CODEC.fieldOf("repair_ingredient").forGetter(ToolMaterialWrapper::getRepairIngredient),
+				TagKey.codec(Registries.ITEM).fieldOf("repair_items").forGetter(ToolMaterialWrapper::repairItems),
 				TagKey.codec(Registries.BLOCK).fieldOf("incorrect_blocks").forGetter(ToolMaterialWrapper::incorrectBlocksForDrops))
 			.apply(instance, ToolMaterialWrapper::create));
 
@@ -48,16 +49,13 @@ public record ToolMaterialWrapper(TagKey<Block> incorrectBlocksForDrops, int use
 		return this;
 	}
 	public ToolMaterialWrapper(Tier tier, int weaponLevel) {
-		this(tier.getIncorrectBlocksForDrops(), tier.getUses(), tier.getSpeed(), tier.getAttackDamageBonus(), tier.getEnchantmentValue(), tier::getRepairIngredient, weaponLevel);
+		this(tier.getIncorrectBlocksForDrops(), tier.getUses(), tier.getSpeed(), tier.getAttackDamageBonus(), tier.getEnchantmentValue(), null, weaponLevel);
 	}
-	public static ToolMaterialWrapper create(Integer weaponLevel, Optional<Integer> enchantLevel, Optional<Integer> uses, Optional<Float> damage, Optional<Float> speed, Optional<Ingredient> repairIngredient, Optional<TagKey<Block>> incorrect, Tier baseTier) {
-		return create(weaponLevel, enchantLevel.orElse(baseTier.getEnchantmentValue()), uses.orElse(baseTier.getUses()), damage.orElse(baseTier.getAttackDamageBonus()), speed.orElse(baseTier.getSpeed()), () -> repairIngredient.orElseGet(baseTier::getRepairIngredient), incorrect.orElse(baseTier.getIncorrectBlocksForDrops()));
+	public static ToolMaterialWrapper create(Integer weaponLevel, Optional<Integer> enchantLevel, Optional<Integer> uses, Optional<Float> damage, Optional<Float> speed, Optional<TagKey<Item>> repairItems, Optional<TagKey<Block>> incorrect, Tier baseTier) {
+		return create(weaponLevel, enchantLevel.orElse(baseTier.getEnchantmentValue()), uses.orElse(baseTier.getUses()), damage.orElse(baseTier.getAttackDamageBonus()), speed.orElse(baseTier.getSpeed()), repairItems.orElse(null), incorrect.orElse(baseTier.getIncorrectBlocksForDrops()));
 	}
-	public static ToolMaterialWrapper create(int weaponLevel, int enchantLevel, int uses, float damage, float speed, Ingredient repairIngredient, TagKey<Block> incorrect) {
-		return create(weaponLevel, enchantLevel, uses, damage, speed, () -> repairIngredient,  incorrect);
-	}
-	public static ToolMaterialWrapper create(int weaponLevel, int enchantLevel, int uses, float damage, float speed, Supplier<Ingredient> repairIngredient, TagKey<Block> incorrect) {
-		return new ToolMaterialWrapper(incorrect, uses, speed, damage, enchantLevel, repairIngredient, weaponLevel);
+	public static ToolMaterialWrapper create(int weaponLevel, int enchantLevel, int uses, float damage, float speed, TagKey<Item> repairItems, TagKey<Block> incorrect) {
+		return new ToolMaterialWrapper(incorrect, uses, speed, damage, enchantLevel, repairItems, weaponLevel);
 	}
 
 	@Override
@@ -87,6 +85,12 @@ public record ToolMaterialWrapper(TagKey<Block> incorrectBlocksForDrops, int use
 
 	@Override
 	public Ingredient getRepairIngredient() {
-		return repairIngredient().get();
+		return Ingredient.of(repairItems());
+	}
+
+	@Override
+	public TagKey<Item> repairItems() {
+		if (repairItems == null) return ItemTags.PLANKS;
+		return repairItems;
 	}
 }

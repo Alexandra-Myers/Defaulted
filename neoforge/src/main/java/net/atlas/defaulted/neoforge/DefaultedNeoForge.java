@@ -1,5 +1,6 @@
 package net.atlas.defaulted.neoforge;
 
+import net.atlas.defaulted.neoforge.backport.BackportedComponents;
 import net.atlas.defaulted.neoforge.component.DefaultedRegistries;
 import net.atlas.defaulted.neoforge.event.DefaultedNeoForgeEventHandlers;
 import net.atlas.defaulted.networking.ClientboundDefaultComponentsSyncPacket;
@@ -20,6 +21,7 @@ public final class DefaultedNeoForge {
         // Run our common setup.
         Defaulted.init();
         DefaultedRegistries.init(modBus);
+        BackportedComponents.init(modBus);
         modBus.register(this);
         NeoForge.EVENT_BUS.register(DefaultedNeoForgeEventHandlers.class);
     }

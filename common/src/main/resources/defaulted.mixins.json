@@ -6,6 +6,7 @@
   "client": [
   ],
   "mixins": [
+    "AnvilMenuMixin",
     "ItemAccessor",
     "ItemMixin",
     "ItemStackMixin",
