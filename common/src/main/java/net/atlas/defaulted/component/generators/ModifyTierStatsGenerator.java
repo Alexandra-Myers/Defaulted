@@ -43,11 +43,11 @@ public record ModifyTierStatsGenerator(List<TierComponents> components,  Optiona
             if (components.contains(TierComponents.ENCHANTABLE)) patchedDataComponentMap.set(DataComponents.ENCHANTABLE, new Enchantable(tier.enchantmentValue()));
             if (components.contains(TierComponents.REPAIRABLE)) patchedDataComponentMap.set(DataComponents.REPAIRABLE, new Repairable(BuiltInRegistries.ITEM.getOrThrow(tier.repairItems())));
             if (components.contains(TierComponents.TOOL)) {
-                if (!toolMineable.isPresent()) {
+                if (toolMineable.isEmpty()) {
                     LogManager.getLogger("Defaulted").warn("Attempted to update tool component for tiered item " + item.builtInRegistryHolder() + " but mineable tag is not present!");
                     return;
                 }
-                patchedDataComponentMap.set(DataComponents.TOOL, new Tool(List.of(Tool.Rule.deniesDrops(BuiltInRegistries.BLOCK.getOrThrow(tier.incorrectBlocksForDrops())), Tool.Rule.minesAndDrops(BuiltInRegistries.BLOCK.getOrThrow(toolMineable.get()), tier.speed())), 1.0F, 1));
+                patchedDataComponentMap.set(DataComponents.TOOL, new Tool(List.of(Tool.Rule.deniesDrops(BuiltInRegistries.BLOCK.getOrThrow(tier.incorrectBlocksForDrops())), Tool.Rule.minesAndDrops(BuiltInRegistries.BLOCK.getOrThrow(toolMineable.get()), tier.speed())), 1.0F, 1, true));
             }
         }
     }
@@ -55,5 +55,5 @@ public record ModifyTierStatsGenerator(List<TierComponents> components,  Optiona
     @Override
     public MapCodec<? extends PatchGenerator> codec() {
         return CODEC;
-    };
+    }
 }
