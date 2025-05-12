@@ -10,10 +10,6 @@ import net.minecraft.world.item.ItemStack;
 
 public interface DefaultedExpectPlatform {
     @ExpectPlatform
-    static boolean isSyncingPlayerUnmodded() {
-        throw new AssertionError();
-    }
-    @ExpectPlatform
     static Registry<MapCodec<? extends PatchGenerator>> getPatchGenRegistry() {
         throw new AssertionError();
     }
