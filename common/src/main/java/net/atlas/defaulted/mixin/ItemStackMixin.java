@@ -5,9 +5,14 @@ import net.atlas.defaulted.DefaultedExpectPlatform;
 import net.atlas.defaulted.extension.ItemStackExtensions;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.PatchedDataComponentMap;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.ItemLike;
 
 import java.lang.reflect.Field;
@@ -65,20 +70,41 @@ public abstract class ItemStackMixin implements ItemStackExtensions {
 	}
     @Mixin(targets = {"net.minecraft.world.item.ItemStack$1"})
     public static class StreamCodecMixin {
-        @WrapMethod(method = "encode")
-        public void wrapEncode(RegistryFriendlyByteBuf registryFriendlyByteBuf, ItemStack itemStack, Operation<Void> original) {
-            if (!itemStack.isEmpty()) {
-                DataComponentMap prototype = PatchedDataComponentMapAccessor.class.cast(itemStack.getComponents()).getPrototype();
-                if (DefaultedExpectPlatform.isSyncingPlayerUnmodded() && prototype instanceof PatchedDataComponentMap prototypeDataComponentMap) {
-                    ItemStack newStack = itemStack.copy();
-                    if (newStack.getComponents() instanceof PatchedDataComponentMap patchedDataComponentMap) {
-                        patchedDataComponentMap.restorePatch(prototypeDataComponentMap.asPatch());
-                        patchedDataComponentMap.applyPatch(itemStack.getComponentsPatch());
-                    }
-                    itemStack = newStack;
+        @Unique
+        private static final String DEFAULTED$ORIGINAL_COMPONENTS = "defaulted$original_components";
+        @WrapMethod(method = "decode")
+        public ItemStack wrapDecode(RegistryFriendlyByteBuf buffer, Operation<ItemStack> original) {
+            ItemStack stack = original.call(buffer);
+            CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+            if (customData != null && customData.contains(DEFAULTED$ORIGINAL_COMPONENTS)) {
+                try {
+                    Tag tag = customData.copyTag().get(DEFAULTED$ORIGINAL_COMPONENTS);
+                    DataComponentPatch patch = DataComponentPatch.CODEC.parse(RegistryOps.create(NbtOps.INSTANCE, buffer.registryAccess()), tag).getOrThrow();
+                    if (stack.getComponents() instanceof PatchedDataComponentMap patchedDataComponentMap) patchedDataComponentMap.restorePatch(patch);
+                    stack.set(DataComponents.CUSTOM_DATA, customData);
+                } catch (Throwable ignored) {
+
                 }
             }
-            original.call(registryFriendlyByteBuf, itemStack);
+            return stack;
+        }
+        @WrapMethod(method = "encode")
+        public void wrapEncode(RegistryFriendlyByteBuf buffer, ItemStack stack, Operation<Void> original) {
+            ItemStack newStack = stack.copy();
+            if (!stack.isEmpty()) {
+                DataComponentMap prototype = PatchedDataComponentMapAccessor.class.cast(stack.getComponents()).getPrototype();
+                if (prototype instanceof PatchedDataComponentMap prototypeDataComponentMap) {
+                    if (newStack.getComponents() instanceof PatchedDataComponentMap patchedDataComponentMap) {
+                        patchedDataComponentMap.restorePatch(prototypeDataComponentMap.asPatch());
+                        patchedDataComponentMap.applyPatch(stack.getComponentsPatch());
+                    }
+
+                }
+            }
+            Tag tag = DataComponentPatch.CODEC.encodeStart(RegistryOps.create(NbtOps.INSTANCE, buffer.registryAccess()), stack.getComponentsPatch()).getOrThrow();
+            CustomData customItemData = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
+            newStack.set(DataComponents.CUSTOM_DATA, customItemData.update(customDataTag -> customDataTag.put(DEFAULTED$ORIGINAL_COMPONENTS, tag)));
+            original.call(buffer, newStack);
         }
     }
 }

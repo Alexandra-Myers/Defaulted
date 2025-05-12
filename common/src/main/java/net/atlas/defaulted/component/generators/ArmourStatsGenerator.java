@@ -27,8 +27,8 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 public record ArmourStatsGenerator(ArmourVariable<Integer> durability, ArmourVariable<Integer> protection, ArmourVariable<Double> armourToughness, ArmourVariable<Double> armourKbRes, boolean persistPrevious) implements PatchGenerator {
     public static final Codec<Double> POSITIVE_DOUBLE = doubleMiniumumExclusiveWithMessage(0, double_ -> "Value must be positive: " + double_);
     public static final MapCodec<ArmourStatsGenerator> CODEC = RecordCodecBuilder.mapCodec(instance ->
-        instance.group(ArmourVariable.codec(ExtraCodecs.POSITIVE_INT).fieldOf("max_damage").forGetter(ArmourStatsGenerator::durability),
-            ArmourVariable.codec(ExtraCodecs.POSITIVE_INT).fieldOf("armor").forGetter(ArmourStatsGenerator::protection),
+        instance.group(ArmourVariable.codec(ExtraCodecs.POSITIVE_INT).optionalFieldOf("max_damage", ArmourVariable.empty()).forGetter(ArmourStatsGenerator::durability),
+            ArmourVariable.codec(ExtraCodecs.POSITIVE_INT).optionalFieldOf("armor", ArmourVariable.empty()).forGetter(ArmourStatsGenerator::protection),
             ArmourVariable.codec(POSITIVE_DOUBLE).optionalFieldOf("armor_toughness", ArmourVariable.empty()).forGetter(ArmourStatsGenerator::armourToughness),
             ArmourVariable.codec(POSITIVE_DOUBLE).optionalFieldOf("knockback_resistance", ArmourVariable.empty()).forGetter(ArmourStatsGenerator::armourKbRes),
             Codec.BOOL.fieldOf("persist_previous").forGetter(ArmourStatsGenerator::persistPrevious))

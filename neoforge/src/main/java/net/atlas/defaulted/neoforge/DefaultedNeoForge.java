@@ -25,7 +25,7 @@ public final class DefaultedNeoForge {
     }
     @SubscribeEvent
     public void register(final RegisterPayloadHandlersEvent event) {
-        final PayloadRegistrar registrar = event.registrar("1");
+        final PayloadRegistrar registrar = event.registrar("1").optional();
         registrar.playToClient(
                 ClientboundDefaultComponentsSyncPacket.TYPE,
                 ClientboundDefaultComponentsSyncPacket.CODEC,
