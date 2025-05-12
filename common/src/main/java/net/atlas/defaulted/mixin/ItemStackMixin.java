@@ -10,6 +10,7 @@ import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
@@ -17,6 +18,7 @@ import net.minecraft.world.level.ItemLike;
 
 import java.lang.reflect.Field;
 
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -27,6 +29,8 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin implements ItemStackExtensions {
+    @Unique
+    private static final String DEFAULTED$ORIGINAL_COMPONENTS = "defaulted$original_components";
     @Shadow public abstract boolean isEmpty();
 
     @Mutable
@@ -37,6 +41,51 @@ public abstract class ItemStackMixin implements ItemStackExtensions {
     @Shadow public abstract DataComponentPatch getComponentsPatch();
 
     @Shadow public abstract DataComponentMap getPrototype();
+
+    @WrapMethod(method = "createOptionalStreamCodec")
+    private static StreamCodec<RegistryFriendlyByteBuf, ItemStack> wrapCodec(StreamCodec<RegistryFriendlyByteBuf, DataComponentPatch> streamCodec, Operation<StreamCodec<RegistryFriendlyByteBuf, ItemStack>> original) {
+        StreamCodec<RegistryFriendlyByteBuf, ItemStack> result = original.call(streamCodec);
+        return defaulted$wrapStreamCodec(result);
+    }
+
+    @Unique
+    private static StreamCodec<RegistryFriendlyByteBuf, ItemStack> defaulted$wrapStreamCodec(StreamCodec<RegistryFriendlyByteBuf, ItemStack> original) {
+        return new StreamCodec<>() {
+            @Override
+            public @NotNull ItemStack decode(RegistryFriendlyByteBuf buffer) {
+                ItemStack stack = original.decode(buffer);
+                CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+                if (customData != null && customData.contains(DEFAULTED$ORIGINAL_COMPONENTS)) {
+                    try {
+                        Tag tag = customData.copyTag().get(DEFAULTED$ORIGINAL_COMPONENTS);
+                        DataComponentPatch patch = DataComponentPatch.CODEC.parse(RegistryOps.create(NbtOps.INSTANCE, buffer.registryAccess()), tag).getOrThrow();
+                        if (stack.getComponents() instanceof PatchedDataComponentMap patchedDataComponentMap) patchedDataComponentMap.restorePatch(patch);
+                    } catch (Throwable ignored) {
+
+                    }
+                }
+                return stack;
+            }
+
+            @Override
+            public void encode(RegistryFriendlyByteBuf buffer, ItemStack stack) {
+                ItemStack newStack = stack.copy();
+                if (!stack.isEmpty()) {
+                    DataComponentMap prototype = PatchedDataComponentMapAccessor.class.cast(stack.getComponents()).getPrototype();
+                    if (prototype instanceof PatchedDataComponentMap prototypeDataComponentMap) {
+                        if (newStack.getComponents() instanceof PatchedDataComponentMap patchedDataComponentMap) {
+                            patchedDataComponentMap.restorePatch(prototypeDataComponentMap.asPatch());
+                            patchedDataComponentMap.applyPatch(stack.getComponentsPatch());
+                        }
+                    }
+                }
+                Tag tag = DataComponentPatch.CODEC.encodeStart(RegistryOps.create(NbtOps.INSTANCE, buffer.registryAccess()), stack.getComponentsPatch()).getOrThrow();
+                CustomData customItemData = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
+                newStack.set(DataComponents.CUSTOM_DATA, customItemData.update(customDataTag -> customDataTag.put(DEFAULTED$ORIGINAL_COMPONENTS, tag)));
+                original.encode(buffer, newStack);
+            }
+        };
+    }
 
     @Inject(method = "<init>(Lnet/minecraft/world/level/ItemLike;ILnet/minecraft/core/component/PatchedDataComponentMap;)V", at = @At("RETURN"))
     public void appendStack(ItemLike itemLike, int count, PatchedDataComponentMap patchedDataComponentMap, CallbackInfo ci) {
@@ -68,41 +117,4 @@ public abstract class ItemStackMixin implements ItemStackExtensions {
 			throw new RuntimeException(e);
 		}
 	}
-    @Mixin(targets = {"net.minecraft.world.item.ItemStack$1"})
-    public static class StreamCodecMixin {
-        @Unique
-        private static final String DEFAULTED$ORIGINAL_COMPONENTS = "defaulted$original_components";
-        @WrapMethod(method = "decode")
-        public ItemStack wrapDecode(RegistryFriendlyByteBuf buffer, Operation<ItemStack> original) {
-            ItemStack stack = original.call(buffer);
-            CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
-            if (customData != null && customData.contains(DEFAULTED$ORIGINAL_COMPONENTS)) {
-                try {
-                    Tag tag = customData.copyTag().get(DEFAULTED$ORIGINAL_COMPONENTS);
-                    DataComponentPatch patch = DataComponentPatch.CODEC.parse(RegistryOps.create(NbtOps.INSTANCE, buffer.registryAccess()), tag).getOrThrow();
-                    if (stack.getComponents() instanceof PatchedDataComponentMap patchedDataComponentMap) patchedDataComponentMap.restorePatch(patch);
-                } catch (Throwable ignored) {
-
-                }
-            }
-            return stack;
-        }
-        @WrapMethod(method = "encode")
-        public void wrapEncode(RegistryFriendlyByteBuf buffer, ItemStack stack, Operation<Void> original) {
-            ItemStack newStack = stack.copy();
-            if (!stack.isEmpty()) {
-                DataComponentMap prototype = PatchedDataComponentMapAccessor.class.cast(stack.getComponents()).getPrototype();
-                if (prototype instanceof PatchedDataComponentMap prototypeDataComponentMap) {
-                    if (newStack.getComponents() instanceof PatchedDataComponentMap patchedDataComponentMap) {
-                        patchedDataComponentMap.restorePatch(prototypeDataComponentMap.asPatch());
-                        patchedDataComponentMap.applyPatch(stack.getComponentsPatch());
-                    }
-                }
-            }
-            Tag tag = DataComponentPatch.CODEC.encodeStart(RegistryOps.create(NbtOps.INSTANCE, buffer.registryAccess()), stack.getComponentsPatch()).getOrThrow();
-            CustomData customItemData = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
-            newStack.set(DataComponents.CUSTOM_DATA, customItemData.update(customDataTag -> customDataTag.put(DEFAULTED$ORIGINAL_COMPONENTS, tag)));
-            original.call(buffer, newStack);
-        }
-    }
 }
