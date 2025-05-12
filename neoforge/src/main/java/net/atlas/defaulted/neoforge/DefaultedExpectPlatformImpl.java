@@ -15,9 +15,6 @@ import net.neoforged.fml.ModList;
 
 @SuppressWarnings("unused")
 public class DefaultedExpectPlatformImpl {
-    public static boolean isSyncingPlayerUnmodded() {
-        return false;
-    }
     public static Registry<MapCodec<? extends PatchGenerator>> getPatchGenRegistry() {
         return DefaultedRegistries.PATCH_GENERATOR_TYPE_REG;
     }

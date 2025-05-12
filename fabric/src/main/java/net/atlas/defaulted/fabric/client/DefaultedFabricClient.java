@@ -12,11 +12,7 @@ public class DefaultedFabricClient implements ClientModInitializer {
      */
     @Override
     public void onInitializeClient() {
-        ClientPlayNetworking.registerGlobalReceiver(ClientboundDefaultComponentsSyncPacket.TYPE, (clientboundDefaultComponentsSyncPacket, context) -> {
-            DefaultComponentPatchesManager.loadClientCache(clientboundDefaultComponentsSyncPacket.list());
-        });
-        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
-            DefaultComponentPatchesManager.clear(); 
-        });
+        ClientPlayNetworking.registerGlobalReceiver(ClientboundDefaultComponentsSyncPacket.TYPE, (clientboundDefaultComponentsSyncPacket, context) -> DefaultComponentPatchesManager.loadClientCache(clientboundDefaultComponentsSyncPacket.list()));
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> DefaultComponentPatchesManager.clear());
     }
 }

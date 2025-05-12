@@ -13,8 +13,9 @@ import java.util.ArrayList;
 public class DefaultedNeoForgeEventHandlers {
     @SubscribeEvent
     public static void onDatapackSync(final OnDatapackSyncEvent onDatapackSyncEvent) {
+        ClientboundDefaultComponentsSyncPacket packet = new ClientboundDefaultComponentsSyncPacket(new ArrayList<>(DefaultComponentPatchesManager.getCached()));
         onDatapackSyncEvent.getRelevantPlayers().forEach(player -> {
-            PacketDistributor.sendToPlayer(player, new ClientboundDefaultComponentsSyncPacket(new ArrayList<>(DefaultComponentPatchesManager.getCached())));
+            if (player.connection.hasChannel(packet)) PacketDistributor.sendToPlayer(player, packet);
         });
     }
     @SubscribeEvent
