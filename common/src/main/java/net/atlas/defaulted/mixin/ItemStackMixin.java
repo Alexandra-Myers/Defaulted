@@ -81,6 +81,7 @@ public abstract class ItemStackMixin implements ItemStackExtensions {
                     Tag tag = customData.copyTag().get(DEFAULTED$ORIGINAL_COMPONENTS);
                     DataComponentPatch patch = DataComponentPatch.CODEC.parse(RegistryOps.create(NbtOps.INSTANCE, buffer.registryAccess()), tag).getOrThrow();
                     if (stack.getComponents() instanceof PatchedDataComponentMap patchedDataComponentMap) patchedDataComponentMap.restorePatch(patch);
+                    stack.set(DataComponents.CUSTOM_DATA, customData);
                 } catch (Throwable ignored) {
 
                 }
