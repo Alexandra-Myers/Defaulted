@@ -17,7 +17,7 @@ public class RegistrySyncManagerMixin {
     @WrapOperation(method = "createAndPopulateRegistryMap", at = @At(value = "INVOKE", target = "Lnet/fabricmc/fabric/api/event/registry/RegistryAttributeHolder;hasAttribute(Lnet/fabricmc/fabric/api/event/registry/RegistryAttribute;)Z"), require = 0, remap = false)
     private static boolean skipDefaultedRegistries(RegistryAttributeHolder instance, RegistryAttribute registryAttribute, Operation<Boolean> original, @Local(ordinal = 0) Registry<?> reg) {
         if (registryAttribute == RegistryAttribute.MODDED && reg.key().location().getNamespace().equals("defaulted")) {
-            return !DefaultedExpectPlatformImpl.isSyncingPlayerUnmodded();
+            return false;
         }
 
         return original.call(instance, registryAttribute);
