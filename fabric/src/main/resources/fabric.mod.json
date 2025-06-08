@@ -12,7 +12,7 @@
     "issues": "https://github.com/Alexandra-Myers/Defaulted/issues"
   },
   "icon": "assets/icon.png",
-  "license": "CC0-1.0",
+  "license": "MIT",
   "environment": "*",
   "entrypoints": {
     "main": [
