@@ -29,8 +29,6 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin implements ItemStackExtensions {
-    @Unique
-    private static final String DEFAULTED$ORIGINAL_COMPONENTS = "defaulted$original_components";
     @Shadow public abstract boolean isEmpty();
 
     @Mutable
@@ -53,18 +51,7 @@ public abstract class ItemStackMixin implements ItemStackExtensions {
         return new StreamCodec<>() {
             @Override
             public @NotNull ItemStack decode(RegistryFriendlyByteBuf buffer) {
-                ItemStack stack = original.decode(buffer);
-                CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
-                if (customData != null && customData.contains(DEFAULTED$ORIGINAL_COMPONENTS)) {
-                    try {
-                        Tag tag = customData.copyTag().get(DEFAULTED$ORIGINAL_COMPONENTS);
-                        DataComponentPatch patch = DataComponentPatch.CODEC.parse(RegistryOps.create(NbtOps.INSTANCE, buffer.registryAccess()), tag).getOrThrow();
-                        if (stack.getComponents() instanceof PatchedDataComponentMap patchedDataComponentMap) patchedDataComponentMap.restorePatch(patch);
-                    } catch (Throwable ignored) {
-
-                    }
-                }
-                return stack;
+                return original.decode(buffer);
             }
 
             @Override
@@ -79,9 +66,6 @@ public abstract class ItemStackMixin implements ItemStackExtensions {
                         }
                     }
                 }
-                Tag tag = DataComponentPatch.CODEC.encodeStart(RegistryOps.create(NbtOps.INSTANCE, buffer.registryAccess()), stack.getComponentsPatch()).getOrThrow();
-                CustomData customItemData = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
-                newStack.set(DataComponents.CUSTOM_DATA, customItemData.update(customDataTag -> customDataTag.put(DEFAULTED$ORIGINAL_COMPONENTS, tag)));
                 original.encode(buffer, newStack);
             }
         };
