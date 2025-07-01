@@ -74,19 +74,7 @@ public abstract class ItemStackMixin implements ItemStackExtensions {
         private static final String DEFAULTED$ORIGINAL_COMPONENTS = "defaulted$original_components";
         @WrapMethod(method = "decode")
         public ItemStack wrapDecode(RegistryFriendlyByteBuf buffer, Operation<ItemStack> original) {
-            ItemStack stack = original.call(buffer);
-            CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
-            if (customData != null && customData.contains(DEFAULTED$ORIGINAL_COMPONENTS)) {
-                try {
-                    Tag tag = customData.copyTag().get(DEFAULTED$ORIGINAL_COMPONENTS);
-                    DataComponentPatch patch = DataComponentPatch.CODEC.parse(RegistryOps.create(NbtOps.INSTANCE, buffer.registryAccess()), tag).getOrThrow();
-                    if (stack.getComponents() instanceof PatchedDataComponentMap patchedDataComponentMap) patchedDataComponentMap.restorePatch(patch);
-                    stack.set(DataComponents.CUSTOM_DATA, customData);
-                } catch (Throwable ignored) {
-
-                }
-            }
-            return stack;
+            return original.call(buffer);
         }
         @WrapMethod(method = "encode")
         public void wrapEncode(RegistryFriendlyByteBuf buffer, ItemStack stack, Operation<Void> original) {
@@ -100,9 +88,6 @@ public abstract class ItemStackMixin implements ItemStackExtensions {
                     }
                 }
             }
-            Tag tag = DataComponentPatch.CODEC.encodeStart(RegistryOps.create(NbtOps.INSTANCE, buffer.registryAccess()), stack.getComponentsPatch()).getOrThrow();
-            CustomData customItemData = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
-            newStack.set(DataComponents.CUSTOM_DATA, customItemData.update(customDataTag -> customDataTag.put(DEFAULTED$ORIGINAL_COMPONENTS, tag)));
             original.call(buffer, newStack);
         }
     }
