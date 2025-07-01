@@ -51,7 +51,13 @@ public abstract class ItemStackMixin implements ItemStackExtensions {
         return new StreamCodec<>() {
             @Override
             public @NotNull ItemStack decode(RegistryFriendlyByteBuf buffer) {
-                return original.decode(buffer);
+                ItemStack stack = original.decode(buffer);
+                DataComponentPatch patch = stack.getComponentsPatch();
+                if (stack.getComponents() instanceof PatchedDataComponentMap patchedDataComponentMap) {
+                    patchedDataComponentMap.clearPatch();
+                    patchedDataComponentMap.applyPatch(patch);
+                }
+                return stack;
             }
 
             @Override
