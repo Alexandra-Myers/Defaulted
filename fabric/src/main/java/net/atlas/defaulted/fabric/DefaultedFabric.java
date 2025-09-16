@@ -29,7 +29,7 @@ public final class DefaultedFabric implements ModInitializer {
         Defaulted.hasOwo = FabricLoader.getInstance().isModLoaded("owo");
         DefaultedRegistries.init();
         BackportedComponents.registerDataComponents();
-        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(Defaulted.id("default_component_patches"), holderLookup -> new FabricDefaultComponentPatchesManager(holderLookup));
+        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(Defaulted.id("default_component_patches"), FabricDefaultComponentPatchesManager::new);
         CommonLifecycleEvents.TAGS_LOADED.register((registries, client) -> {
             if (!client) DefaultComponentPatchesManager.getInstance().load();
         });

@@ -5,14 +5,9 @@ import net.atlas.defaulted.DefaultedExpectPlatform;
 import net.atlas.defaulted.extension.ItemStackExtensions;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.PatchedDataComponentMap;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.RegistryOps;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.ItemLike;
 
 import java.lang.reflect.Field;
