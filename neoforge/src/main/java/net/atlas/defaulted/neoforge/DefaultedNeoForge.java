@@ -3,6 +3,7 @@ package net.atlas.defaulted.neoforge;
 import net.atlas.defaulted.neoforge.component.DefaultedRegistries;
 import net.atlas.defaulted.neoforge.event.DefaultedNeoForgeEventHandlers;
 import net.atlas.defaulted.networking.ClientboundDefaultComponentsSyncPacket;
+import net.minecraft.client.Minecraft;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
@@ -33,6 +34,7 @@ public final class DefaultedNeoForge {
         );
     }
     public static void receiveDefaults(final ClientboundDefaultComponentsSyncPacket payload, final IPayloadContext payloadContext) {
-        DefaultComponentPatchesManager.loadClientCache(payload.list());
+        if (!Minecraft.getInstance().hasSingleplayerServer()) DefaultComponentPatchesManager.loadClientCache(payload.list());
+        else DefaultComponentPatchesManager.setClientCache();
     }
 }

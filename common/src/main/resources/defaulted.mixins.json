@@ -10,8 +10,7 @@
     "ItemAccessor",
     "ItemMixin",
     "ItemStackMixin",
-    "PatchedDataComponentMapAccessor",
-    "RegistryMixin"
+    "PatchedDataComponentMapAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

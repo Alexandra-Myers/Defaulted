@@ -57,14 +57,17 @@ public class DefaultComponentPatchesManager extends SimpleJsonResourceReloadList
     }
 
     public static void clear() {
-        if (INSTANCE != null) {
-            INSTANCE.cached = null;
-        }
+        if (INSTANCE != null) INSTANCE.cached = null;
+
+        if (CLIENT_CACHED != null) CLIENT_CACHED = null;
     }
 
     public static void loadClientCache(List<ItemPatches> cached) {
         DefaultComponentPatchesManager.CLIENT_CACHED = cached;
         Defaulted.patchItemComponents(cached);
+    }
+    public static void setClientCache() {
+        DefaultComponentPatchesManager.CLIENT_CACHED = getCached();
     }
     
     public record ItemPatchesEntry(ResourceLocation id, ItemPatches itemPatches) implements Comparable<ItemPatchesEntry> {
