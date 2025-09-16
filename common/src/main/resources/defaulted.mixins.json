@@ -10,8 +10,7 @@
     "ItemMixin",
     "ItemStackMixin",
     "ItemStackMixin$StreamCodecMixin",
-    "PatchedDataComponentMapAccessor",
-    "RegistryMixin"
+    "PatchedDataComponentMapAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
