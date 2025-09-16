@@ -52,6 +52,7 @@ public final class Defaulted {
         baseTiers.put("wood", ToolMaterial.WOOD);
         baseTiers.put("stone", ToolMaterial.STONE);
         baseTiers.put("gold", ToolMaterial.GOLD);
+        baseTiers.put("copper", ToolMaterial.COPPER);
         baseTiers.put("iron", ToolMaterial.IRON);
         baseTiers.put("diamond", ToolMaterial.DIAMOND);
         baseTiers.put("netherite", ToolMaterial.NETHERITE);
