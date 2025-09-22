@@ -17,6 +17,6 @@ public class DefaultedFabricClient implements ClientModInitializer {
             if (!Minecraft.getInstance().hasSingleplayerServer()) DefaultComponentPatchesManager.loadClientCache(clientboundDefaultComponentsSyncPacket.list());
             else DefaultComponentPatchesManager.setClientCache();
         });
-        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> DefaultComponentPatchesManager.clear());
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> DefaultComponentPatchesManager.clearClient());
     }
 }

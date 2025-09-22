@@ -12,6 +12,6 @@ public class DefaultedClientNeoForgeEventHandlers {
     @SubscribeEvent
     public static void onClientDisconnect(final ClientPlayerNetworkEvent.LoggingOut loggingOut) {
         Defaulted.EXECUTE_ON_RELOAD.clear();
-        DefaultComponentPatchesManager.clear(); 
+        DefaultComponentPatchesManager.clearClient();
     }
 }
