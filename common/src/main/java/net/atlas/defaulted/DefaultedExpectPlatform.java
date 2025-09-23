@@ -25,6 +25,10 @@ public interface DefaultedExpectPlatform {
         throw new AssertionError();
     }
     @ExpectPlatform
+    static boolean isOnClientNetworkingThread() {
+        throw new AssertionError();
+    }
+    @ExpectPlatform
     static DataComponentMap createDerivedMap(ItemStack itemStack, DataComponentMap prototype) {
         throw new AssertionError();
     }

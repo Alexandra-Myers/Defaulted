@@ -65,14 +65,16 @@ public abstract class ItemStackMixin implements ItemStackExtensions {
 	}
     @Mixin(targets = {"net.minecraft.world.item.ItemStack$1"})
     public static class StreamCodecMixin {
-        @Unique
-        private static final String DEFAULTED$ORIGINAL_COMPONENTS = "defaulted$original_components";
         @WrapMethod(method = "decode")
         public ItemStack wrapDecode(RegistryFriendlyByteBuf buffer, Operation<ItemStack> original) {
             return original.call(buffer);
         }
         @WrapMethod(method = "encode")
         public void wrapEncode(RegistryFriendlyByteBuf buffer, ItemStack stack, Operation<Void> original) {
+            if (DefaultedExpectPlatform.isOnClientNetworkingThread()) {
+                original.call(buffer, stack);
+                return;
+            }
             ItemStack newStack = stack.copy();
             if (!stack.isEmpty()) {
                 DataComponentMap prototype = PatchedDataComponentMapAccessor.class.cast(stack.getComponents()).getPrototype();

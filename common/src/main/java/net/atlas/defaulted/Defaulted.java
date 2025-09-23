@@ -92,4 +92,7 @@ public final class Defaulted {
 			ALL_STACKS.forEach(ItemStack::defaulted$updatePrototype);
 		}
     }
+    public static boolean isOnClientNetworkingThread() {
+        return Thread.currentThread().getName().startsWith("Netty") && Thread.currentThread().getName().contains("Client");
+    }
 }

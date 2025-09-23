@@ -2,6 +2,7 @@ package net.atlas.defaulted.neoforge;
 
 import com.mojang.serialization.MapCodec;
 
+import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.component.PatchGenerator;
 import net.atlas.defaulted.component.backport.Enchantable;
 import net.atlas.defaulted.component.backport.Repairable;
@@ -12,6 +13,7 @@ import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.ModList;
+import net.neoforged.fml.loading.FMLEnvironment;
 
 @SuppressWarnings("unused")
 public class DefaultedExpectPlatformImpl {
@@ -23,6 +25,10 @@ public class DefaultedExpectPlatformImpl {
     }
     public static boolean isModLoaded(String modId) {
         return ModList.get().isLoaded(modId);
+    }
+    public static boolean isOnClientNetworkingThread() {
+        if (!FMLEnvironment.dist.isClient()) return false;
+        return Defaulted.isOnClientNetworkingThread();
     }
     public static DataComponentMap createDerivedMap(ItemStack itemStack, DataComponentMap prototype) {
         return prototype;
