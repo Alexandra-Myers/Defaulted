@@ -1,5 +1,8 @@
 package net.atlas.defaulted.extension;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.hash.HashCode;
 import com.mojang.serialization.DynamicOps;
 import net.minecraft.core.component.*;
@@ -19,10 +22,17 @@ public class WrapHashedStreamCodec implements StreamCodec<RegistryFriendlyByteBu
     private final StreamCodec<RegistryFriendlyByteBuf, HashedStack.ActualItem> original;
     private DynamicOps<HashCode> registryHashOps;
 
-    private final HashedPatchMap.HashGenerator generator = (typedDataComponent) -> typedDataComponent.encodeValue(registryHashOps).getOrThrow((string) -> {
-        String var10002 = String.valueOf(typedDataComponent);
-        return new IllegalArgumentException("Failed to hash " + var10002 + ": " + string);
-    }).asInt();
+    private final LoadingCache<TypedDataComponent<?>, Integer> cache = CacheBuilder.newBuilder()
+            .maximumSize(256L)
+            .build(
+                    new CacheLoader<>() {
+                        public Integer load(TypedDataComponent<?> typedDataComponent) {
+                            return typedDataComponent.encodeValue(WrapHashedStreamCodec.this.registryHashOps)
+                                    .getOrThrow(string -> new IllegalArgumentException("Failed to hash " + typedDataComponent + ": " + string))
+                                    .asInt();
+                        }
+                    }
+            );
 
     public WrapHashedStreamCodec(StreamCodec<RegistryFriendlyByteBuf, HashedStack.ActualItem> original) {
         this.original = original;
@@ -39,7 +49,7 @@ public class WrapHashedStreamCodec implements StreamCodec<RegistryFriendlyByteBu
             Map<DataComponentType<?>, Integer> added = new IdentityHashMap<>(splitResult.added().size());
             added.putAll(components.addedComponents());
             splitResult.added().forEach((typedDataComponent) -> {
-                if (added.containsKey(typedDataComponent.type()) && added.get(typedDataComponent.type()).equals(generator.apply(typedDataComponent))) added.remove(typedDataComponent.type());
+                if (added.containsKey(typedDataComponent.type()) && added.get(typedDataComponent.type()).equals(cache.getUnchecked(typedDataComponent))) added.remove(typedDataComponent.type());
             });
             Set<DataComponentType<?>> removed = new HashSet<>(components.removedComponents());
             removed.removeAll(splitResult.removed());

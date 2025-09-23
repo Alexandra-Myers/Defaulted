@@ -46,17 +46,15 @@ public abstract class ItemStackMixin implements ItemStackExtensions {
         return new StreamCodec<>() {
             @Override
             public @NotNull ItemStack decode(RegistryFriendlyByteBuf buffer) {
-                ItemStack stack = original.decode(buffer);
-                DataComponentPatch patch = stack.getComponentsPatch();
-                if (stack.getComponents() instanceof PatchedDataComponentMap patchedDataComponentMap) {
-                    patchedDataComponentMap.clearPatch();
-                    patchedDataComponentMap.applyPatch(patch);
-                }
-                return stack;
+                return original.decode(buffer);
             }
 
             @Override
             public void encode(RegistryFriendlyByteBuf buffer, ItemStack stack) {
+                if (DefaultedExpectPlatform.isOnClientNetworkingThread()) {
+                    original.encode(buffer, stack);
+                    return;
+                }
                 ItemStack newStack = stack.copy();
                 if (!stack.isEmpty()) {
                     DataComponentMap prototype = PatchedDataComponentMapAccessor.class.cast(stack.getComponents()).getPrototype();
