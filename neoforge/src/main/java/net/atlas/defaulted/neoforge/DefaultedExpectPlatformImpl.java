@@ -17,6 +17,10 @@ public class DefaultedExpectPlatformImpl {
     public static boolean isModLoaded(String modId) {
         return ModList.get().isLoaded(modId);
     }
+    public static boolean isOnClientNetworkingThread() {
+        if (!FMLEnvironment.dist.isClient()) return false;
+        return Defaulted.isOnClientNetworkingThread();
+    }
     public static DataComponentMap createDerivedMap(ItemStack itemStack, DataComponentMap prototype) {
         return prototype;
     }
