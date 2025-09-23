@@ -71,6 +71,10 @@ public abstract class ItemStackMixin implements ItemStackExtensions {
         }
         @WrapMethod(method = "encode")
         public void wrapEncode(RegistryFriendlyByteBuf buffer, ItemStack stack, Operation<Void> original) {
+            if (DefaultedExpectPlatform.isOnClientNetworkingThread()) {
+                original.call(buffer, stack);
+                return;
+            }
             ItemStack newStack = stack.copy();
             if (!stack.isEmpty()) {
                 DataComponentMap prototype = PatchedDataComponentMapAccessor.class.cast(stack.getComponents()).getPrototype();
