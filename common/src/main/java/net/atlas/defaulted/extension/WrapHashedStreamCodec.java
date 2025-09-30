@@ -40,7 +40,7 @@ public class WrapHashedStreamCodec implements StreamCodec<RegistryFriendlyByteBu
 
     @Override
     public HashedStack.@NotNull ActualItem decode(RegistryFriendlyByteBuf buffer) {
-        if (this.registryHashOps == null) this.registryHashOps = buffer.registryAccess().createSerializationContext(HashOps.CRC32C_INSTANCE);
+        this.registryHashOps = buffer.registryAccess().createSerializationContext(HashOps.CRC32C_INSTANCE);
         HashedStack.ActualItem stack = original.decode(buffer);
         HashedPatchMap components = stack.components();
         DataComponentMap prototype = stack.item().value().components();
