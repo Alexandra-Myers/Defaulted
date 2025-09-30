@@ -16,14 +16,14 @@ logoFile = "assets/icon.png"
 [[dependencies.defaulted]]
 modId = "neoforge"
 type = "required"
-versionRange = "[21.5.65-beta,)"
+versionRange = "[21.9.1-beta,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.defaulted]]
 modId = "minecraft"
 type = "required"
-versionRange = "[1.21.5,)"
+versionRange = "[1.21.9,)"
 ordering = "NONE"
 side = "BOTH"
 
