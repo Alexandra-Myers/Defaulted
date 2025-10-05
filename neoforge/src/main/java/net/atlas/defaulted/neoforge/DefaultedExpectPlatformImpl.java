@@ -9,9 +9,7 @@ import net.atlas.defaulted.component.backport.Repairable;
 import net.atlas.defaulted.neoforge.backport.BackportedComponents;
 import net.atlas.defaulted.neoforge.component.DefaultedRegistries;
 import net.minecraft.core.Registry;
-import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentType;
-import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLEnvironment;
 
@@ -29,9 +27,6 @@ public class DefaultedExpectPlatformImpl {
     public static boolean isOnClientNetworkingThread() {
         if (!FMLEnvironment.dist.isClient()) return false;
         return Defaulted.isOnClientNetworkingThread();
-    }
-    public static DataComponentMap createDerivedMap(ItemStack itemStack, DataComponentMap prototype) {
-        return prototype;
     }
     public static DataComponentType<Enchantable> getEnchantable() {
         return BackportedComponents.ENCHANTABLE.get();

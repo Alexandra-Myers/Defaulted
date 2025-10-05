@@ -5,7 +5,6 @@ import net.atlas.defaulted.component.PatchGenerator;
 import net.atlas.defaulted.component.ToolMaterialWrapper;
 import net.atlas.defaulted.component.generators.WeaponLevelBasedValue;
 import net.atlas.defaulted.component.generators.condition.PatchConditions;
-import net.atlas.defaulted.mixin.ItemAccessor;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentMap;
@@ -31,7 +30,6 @@ import com.google.common.collect.HashBiMap;
 import com.mojang.serialization.MapCodec;
 
 public final class Defaulted {
-    public static boolean hasOwo = false;
     public static final BiMap<String, Tier> baseTiers = HashBiMap.create();
     public static final ToolMaterialWrapper DEFAULT_WRAPPER = new ToolMaterialWrapper(Tiers.DIAMOND, 3);
     public static final Map<Holder<Item>, DataComponentMap> originalComponents = new HashMap<>();
@@ -63,7 +61,7 @@ public final class Defaulted {
     }
 
     public static ResourceLocation id(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+        return new ResourceLocation(MOD_ID, path);
     }
 
     public static void setDurability(int maxDamage, PatchedDataComponentMap patchedDataComponentMap) {
@@ -79,14 +77,14 @@ public final class Defaulted {
             DataComponentMap originalPrototype = item.components();
             if (Defaulted.originalComponents.containsKey(itemHolder)) {
                 originalPrototype = Defaulted.originalComponents.get(itemHolder);
-                ((ItemAccessor) item).setComponents(originalPrototype);
+                item.components = originalPrototype;
             }
             else Defaulted.originalComponents.put(itemHolder, originalPrototype);
             PatchedDataComponentMap newMap = new PatchedDataComponentMap(originalPrototype);
             reg.forEach(itemPatches -> itemPatches.apply(item, newMap));
             reg.forEach(itemPatches -> itemPatches.applyGenerators(item, newMap));
             if (newMap.asPatch().isEmpty()) continue;
-            ((ItemAccessor) item).setComponents(newMap);
+            item.components = newMap;
         }
         synchronized (ALL_STACKS) {
 			ALL_STACKS.forEach(ItemStack::defaulted$updatePrototype);

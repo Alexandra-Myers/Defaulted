@@ -3,6 +3,7 @@ package net.atlas.defaulted.component;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -18,7 +19,9 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 
 public record ItemPatches(HolderSet<Item> items, List<TagKey<Item>> tags, List<PatchGenerator> generators, DataComponentPatch dataComponentPatch, int priority) implements Comparable<ItemPatches> {
     public static final Codec<ItemPatches> DIRECT_CODEC = Codec.lazyInitialized(() -> RecordCodecBuilder.create(instance ->
@@ -55,5 +58,8 @@ public record ItemPatches(HolderSet<Item> items, List<TagKey<Item>> tags, List<P
             if (!(items.contains(itemHolder) || !matchedTags.isEmpty())) return false;
         }
         return true;
+    }
+    public static boolean matches(ItemAttributeModifiers.Entry entry, Holder<Attribute> attribute, UUID uuid) {
+        return entry.attribute().is(attribute) && entry.modifier().id().equals(uuid);
     }
 }

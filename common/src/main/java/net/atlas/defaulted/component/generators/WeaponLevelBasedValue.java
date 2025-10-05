@@ -15,8 +15,8 @@ public interface WeaponLevelBasedValue {
     Codec<WeaponLevelBasedValue> BASE_CODEC = ID_MAPPER.codec(ResourceLocation.CODEC)
 		.dispatch(WeaponLevelBasedValue::codec, mapCodec -> mapCodec);
     static void bootstrap() {
-        ID_MAPPER.put(ResourceLocation.withDefaultNamespace("unconditional"), Unconditional.CODEC);
-        ID_MAPPER.put(ResourceLocation.withDefaultNamespace("match_weapon_level"), MatchingLevel.CODEC);
+        ID_MAPPER.put(new ResourceLocation("unconditional"), Unconditional.CODEC);
+        ID_MAPPER.put(new ResourceLocation("match_weapon_level"), MatchingLevel.CODEC);
     }
     Codec<List<WeaponLevelBasedValue>> CODEC = Codec.withAlternative(BASE_CODEC.listOf(), Codec.FLOAT.xmap(Unconditional::new, Unconditional::value), Collections::singletonList);
     Float getResult(int weaponLevel, boolean applyTier);

@@ -2,6 +2,7 @@ package net.atlas.defaulted.component.generators;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Function;
 
 import com.mojang.serialization.Codec;
@@ -10,12 +11,12 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.atlas.defaulted.Defaulted;
+import net.atlas.defaulted.component.ItemPatches;
 import net.atlas.defaulted.component.PatchGenerator;
 import net.atlas.defaulted.component.generators.handler.ArmourVariable;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.PatchedDataComponentMap;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -45,42 +46,44 @@ public record ArmourStatsGenerator(ArmourVariable<Integer> durability, ArmourVar
         ItemAttributeModifiers oldModifiers = patchedDataComponentMap.get(DataComponents.ATTRIBUTE_MODIFIERS);
         ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
         List<Holder<Attribute>> addedEntries = new ArrayList<>();
-		ResourceLocation resourceLocation = ResourceLocation.withDefaultNamespace("armor.any");
+		String uuid = "2AD3F246-C118-495F-4726-6020A9A58B6B";
 		EquipmentSlotGroup slotGroup = EquipmentSlotGroup.ARMOR;
 		if (item instanceof Equipable equipable)
 			slotGroup = EquipmentSlotGroup.bySlot(equipable.getEquipmentSlot());
-		resourceLocation = switch (slotGroup) {
-			case HEAD -> ResourceLocation.withDefaultNamespace("armor.helmet");
-			case CHEST -> ResourceLocation.withDefaultNamespace("armor.chestplate");
-			case LEGS -> ResourceLocation.withDefaultNamespace("armor.leggings");
-			case FEET -> ResourceLocation.withDefaultNamespace("armor.boots");
-			case BODY -> ResourceLocation.withDefaultNamespace("armor.body");
-			default -> resourceLocation;
+		uuid = switch (slotGroup) {
+			case HEAD -> "2AD3F246-FEE1-4E67-B886-69FD380BB150";
+			case CHEST -> "9F3D476D-C118-4544-8365-64846904B48E";
+			case LEGS -> "D8499B04-0E66-4726-AB29-64469D734E0D";
+			case FEET -> "845DB27C-C624-495F-8C9F-6020A9A58B6B";
+			case BODY -> "C1C72771-8B8E-BA4A-ACE0-81A93C8928B2";
+			default -> uuid;
 		};
 
 		if (armor != null) {
             addedEntries.add(Attributes.ARMOR);
 			builder.add(Attributes.ARMOR,
-                new AttributeModifier(resourceLocation, armor, AttributeModifier.Operation.ADD_VALUE),
+                new AttributeModifier(uuid, armor, AttributeModifier.Operation.ADD_VALUE),
                 slotGroup);
 		}
 		if (toughness != null) {
             addedEntries.add(Attributes.ARMOR_TOUGHNESS);
 			if (toughness > 0) builder.add(Attributes.ARMOR_TOUGHNESS,
-				new AttributeModifier(resourceLocation, toughness, AttributeModifier.Operation.ADD_VALUE),
+				new AttributeModifier(uuid, toughness, AttributeModifier.Operation.ADD_VALUE),
 				slotGroup);
 		}
 		if (kbRes != null) {
 			addedEntries.add(Attributes.KNOCKBACK_RESISTANCE);
 			if (kbRes > 0) builder.add(Attributes.KNOCKBACK_RESISTANCE,
-				new AttributeModifier(resourceLocation, kbRes, AttributeModifier.Operation.ADD_VALUE),
+				new AttributeModifier(uuid, kbRes, AttributeModifier.Operation.ADD_VALUE),
 				slotGroup);
 		}
         
         if (persistPrevious && oldModifiers != null)
             for (ItemAttributeModifiers.Entry entry : oldModifiers.modifiers()) {
                 innerloop: {
-                    for (Holder<Attribute> attribute : addedEntries) if (entry.matches(attribute, resourceLocation)) break innerloop;
+                    for (Holder<Attribute> attribute : addedEntries) {
+                        if (ItemPatches.matches(entry, attribute, UUID.fromString(uuid))) break innerloop;
+                    }
                     builder.add(entry.attribute(), entry.modifier(), entry.slot());
                 }
             }

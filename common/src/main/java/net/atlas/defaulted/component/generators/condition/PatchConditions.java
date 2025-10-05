@@ -26,12 +26,12 @@ public class PatchConditions {
     public static final MapCodec<PatchCondition> MAP_CODEC = CONDITION_MAPPER.codec(ResourceLocation.CODEC)
 		.dispatchMap("condition", PatchCondition::codec, mapCodec -> mapCodec);
     public static void bootstrap() {
-        CONDITION_MAPPER.put(ResourceLocation.withDefaultNamespace("invert"), InvertCondition.CODEC);
-        CONDITION_MAPPER.put(ResourceLocation.withDefaultNamespace("condition_list"), ListCondition.CODEC);
-        CONDITION_MAPPER.put(ResourceLocation.withDefaultNamespace("is_item"), ItemIsCondition.CODEC);
-        CONDITION_MAPPER.put(ResourceLocation.withDefaultNamespace("in_tag"), ItemHasTagCondition.CODEC);
-        CONDITION_MAPPER.put(ResourceLocation.withDefaultNamespace("has_components"), ComponentsPresentCondition.CODEC);
-        CONDITION_MAPPER.put(ResourceLocation.withDefaultNamespace("matches_components"), ExactComponentsCondition.CODEC);
+        CONDITION_MAPPER.put(new ResourceLocation("invert"), InvertCondition.CODEC);
+        CONDITION_MAPPER.put(new ResourceLocation("condition_list"), ListCondition.CODEC);
+        CONDITION_MAPPER.put(new ResourceLocation("is_item"), ItemIsCondition.CODEC);
+        CONDITION_MAPPER.put(new ResourceLocation("in_tag"), ItemHasTagCondition.CODEC);
+        CONDITION_MAPPER.put(new ResourceLocation("has_components"), ComponentsPresentCondition.CODEC);
+        CONDITION_MAPPER.put(new ResourceLocation("matches_components"), ExactComponentsCondition.CODEC);
     }
     
     public interface PatchCondition {

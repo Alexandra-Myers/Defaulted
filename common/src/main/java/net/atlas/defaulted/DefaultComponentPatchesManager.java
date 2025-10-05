@@ -5,7 +5,6 @@ import java.util.*;
 import com.google.gson.*;
 import com.mojang.serialization.Codec;
 import net.atlas.defaulted.component.ItemPatches;
-import net.atlas.defaulted.mixin.ItemAccessor;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -88,7 +87,7 @@ public abstract class DefaultComponentPatchesManager extends SimpleJsonResourceR
 
     public static void clearClient() {
         clear();
-        Defaulted.originalComponents.forEach((itemHolder, components) -> ((ItemAccessor) itemHolder.value()).setComponents(components));
+        Defaulted.originalComponents.forEach((itemHolder, components) -> itemHolder.value().components = components);
     }
 
 

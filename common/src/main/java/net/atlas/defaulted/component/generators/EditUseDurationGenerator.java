@@ -15,7 +15,7 @@ public record EditUseDurationGenerator(Float useSeconds) implements PatchGenerat
     public void patchDataComponentMap(Item item, PatchedDataComponentMap patchedDataComponentMap) {
         FoodProperties foodProperties = patchedDataComponentMap.get(DataComponents.FOOD);
         if (foodProperties != null) {
-            FoodProperties newFoodProperties = new FoodProperties(foodProperties.nutrition(), foodProperties.saturation(), foodProperties.canAlwaysEat(), useSeconds, foodProperties.usingConvertsTo(), foodProperties.effects());
+            FoodProperties newFoodProperties = new FoodProperties(foodProperties.nutrition(), foodProperties.saturation(), foodProperties.canAlwaysEat(), useSeconds, foodProperties.effects());
             patchedDataComponentMap.set(DataComponents.FOOD, newFoodProperties);
         }
     }
@@ -23,6 +23,6 @@ public record EditUseDurationGenerator(Float useSeconds) implements PatchGenerat
     @Override
     public MapCodec<? extends PatchGenerator> codec() {
         return CODEC;
-    };
+    }
     
 }
