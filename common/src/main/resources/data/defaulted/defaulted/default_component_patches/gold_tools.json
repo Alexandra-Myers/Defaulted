@@ -6,7 +6,7 @@
         {
             "generator": "defaulted:tool_material",
             "weapon_level": 0,
-            "speed_level": 5,
+            "speed_level": 6,
             "base_tier": "gold"
         }
     ],
