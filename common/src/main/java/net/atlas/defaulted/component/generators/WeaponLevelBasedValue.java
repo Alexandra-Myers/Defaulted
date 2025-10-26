@@ -70,7 +70,7 @@ public interface WeaponLevelBasedValue {
         public static final MapCodec<Unconditional> CODEC = Codec.FLOAT.xmap(Unconditional::new, Unconditional::value).fieldOf("value");
         @Override
         public Float getResult(int weaponLevel, float addedValue, boolean applyTier) {
-            return value;
+            return value + (applyTier ? addedValue : 0);
         }
         @Override
         public MapCodec<? extends WeaponLevelBasedValue> codec() {
