@@ -48,7 +48,7 @@ public record WeaponStatsGenerator(Optional<WeaponLevelBasedValue> damage, Optio
         boolean hasSpeed = false;
         if (speed.isPresent()) {
             hasSpeed = true;
-            attackSpeed = new AttributeModifier(speedID, speed.get().getResult(toolMaterialWrapper.weaponLevel(), true), AttributeModifier.Operation.ADD_VALUE);
+            attackSpeed = new AttributeModifier(speedID, speed.get().getResult(toolMaterialWrapper.speedLevel(), true), AttributeModifier.Operation.ADD_VALUE);
         }
         if (!(hasDamage || hasSpeed)) return;
         
