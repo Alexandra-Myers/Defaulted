@@ -5,6 +5,10 @@
         "minecraft:wooden_hoe",
         "minecraft:wooden_pickaxe",
         "minecraft:wooden_shovel",
+        {
+            "id": "minecraft:wooden_spear",
+            "required": false
+        },
         "minecraft:wooden_sword"
     ]
 }

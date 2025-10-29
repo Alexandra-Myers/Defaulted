@@ -5,6 +5,10 @@
         "minecraft:golden_hoe",
         "minecraft:golden_pickaxe",
         "minecraft:golden_shovel",
+        {
+            "id": "minecraft:golden_spear",
+            "required": false
+        },
         "minecraft:golden_sword"
     ]
 }
