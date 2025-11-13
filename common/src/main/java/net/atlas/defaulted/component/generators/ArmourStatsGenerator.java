@@ -42,9 +42,9 @@ public record ArmourStatsGenerator(ArmourVariable<Integer> durability, ArmourVar
         Double toughness = armourToughness.getValue(item);
         Double kbRes = armourKbRes.getValue(item);
         if (armor == null && toughness == null && kbRes == null) return;
-        ItemAttributeModifiers oldModifiers = patchedDataComponentMap.get(DataComponents.ATTRIBUTE_MODIFIERS);
+        ItemAttributeModifiers oldModifiers = patchedDataComponentMap.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
         ItemAttributeModifiers defaultModifiers = item.getDefaultAttributeModifiers();
-        if (oldModifiers == null && defaultModifiers != ItemAttributeModifiers.EMPTY) oldModifiers = defaultModifiers;
+        if (oldModifiers == ItemAttributeModifiers.EMPTY && defaultModifiers != ItemAttributeModifiers.EMPTY) oldModifiers = defaultModifiers;
         ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
         List<Holder<Attribute>> addedEntries = new ArrayList<>();
 		ResourceLocation resourceLocation = ResourceLocation.withDefaultNamespace("armor.any");
@@ -79,7 +79,7 @@ public record ArmourStatsGenerator(ArmourVariable<Integer> durability, ArmourVar
 				slotGroup);
 		}
         
-        if (persistPrevious && oldModifiers != null)
+        if (persistPrevious && oldModifiers != ItemAttributeModifiers.EMPTY)
             for (ItemAttributeModifiers.Entry entry : oldModifiers.modifiers()) {
                 innerloop: {
                     for (Holder<Attribute> attribute : addedEntries) if (entry.matches(attribute, resourceLocation)) break innerloop;
