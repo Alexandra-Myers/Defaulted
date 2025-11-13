@@ -43,6 +43,8 @@ public record ArmourStatsGenerator(ArmourVariable<Integer> durability, ArmourVar
         Double kbRes = armourKbRes.getValue(item);
         if (armor == null && toughness == null && kbRes == null) return;
         ItemAttributeModifiers oldModifiers = patchedDataComponentMap.get(DataComponents.ATTRIBUTE_MODIFIERS);
+        ItemAttributeModifiers defaultModifiers = item.getDefaultAttributeModifiers();
+        if (oldModifiers == null && defaultModifiers != ItemAttributeModifiers.EMPTY) oldModifiers = defaultModifiers;
         ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
         List<Holder<Attribute>> addedEntries = new ArrayList<>();
 		ResourceLocation resourceLocation = ResourceLocation.withDefaultNamespace("armor.any");
