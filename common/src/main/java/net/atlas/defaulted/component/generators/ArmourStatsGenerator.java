@@ -1,9 +1,11 @@
 package net.atlas.defaulted.component.generators;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
@@ -25,13 +27,14 @@ import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 
-public record ArmourStatsGenerator(ArmourVariable<Integer> durability, ArmourVariable<Integer> protection, ArmourVariable<Double> armourToughness, ArmourVariable<Double> armourKbRes, boolean persistPrevious) implements PatchGenerator {
+public record ArmourStatsGenerator(ArmourVariable<Integer> durability, ArmourVariable<Integer> protection, ArmourVariable<Double> armourToughness, ArmourVariable<Double> armourKbRes, List<ArmorAttributeEntry> additionalModifiers, boolean persistPrevious) implements PatchGenerator {
     public static final Codec<Double> POSITIVE_DOUBLE = doubleMiniumumExclusiveWithMessage(0, double_ -> "Value must be positive: " + double_);
     public static final MapCodec<ArmourStatsGenerator> CODEC = RecordCodecBuilder.mapCodec(instance ->
         instance.group(ArmourVariable.codec(ExtraCodecs.POSITIVE_INT).optionalFieldOf("max_damage", ArmourVariable.empty()).forGetter(ArmourStatsGenerator::durability),
             ArmourVariable.codec(ExtraCodecs.POSITIVE_INT).optionalFieldOf("armor", ArmourVariable.empty()).forGetter(ArmourStatsGenerator::protection),
             ArmourVariable.codec(POSITIVE_DOUBLE).optionalFieldOf("armor_toughness", ArmourVariable.empty()).forGetter(ArmourStatsGenerator::armourToughness),
             ArmourVariable.codec(POSITIVE_DOUBLE).optionalFieldOf("knockback_resistance", ArmourVariable.empty()).forGetter(ArmourStatsGenerator::armourKbRes),
+            ArmorAttributeEntry.CODEC.listOf().optionalFieldOf("additional_modifiers", Collections.emptyList()).forGetter(ArmourStatsGenerator::additionalModifiers),
             Codec.BOOL.fieldOf("persist_previous").forGetter(ArmourStatsGenerator::persistPrevious))
         .apply(instance, ArmourStatsGenerator::new));
     @Override
@@ -41,17 +44,19 @@ public record ArmourStatsGenerator(ArmourVariable<Integer> durability, ArmourVar
         Integer armor = protection.getValue(item);
         Double toughness = armourToughness.getValue(item);
         Double kbRes = armourKbRes.getValue(item);
-        if (armor == null && toughness == null && kbRes == null) return;
+        if (armor == null && toughness == null && kbRes == null && additionalModifiers.isEmpty()) return;
         ItemAttributeModifiers oldModifiers = patchedDataComponentMap.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
         ItemAttributeModifiers defaultModifiers = item.getDefaultAttributeModifiers();
         if (oldModifiers == ItemAttributeModifiers.EMPTY && defaultModifiers != ItemAttributeModifiers.EMPTY) oldModifiers = defaultModifiers;
         ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
-        List<Holder<Attribute>> addedEntries = new ArrayList<>();
+        List<Pair<Holder<Attribute>, ResourceLocation>> addedEntries = new ArrayList<>();
 		ResourceLocation resourceLocation = ResourceLocation.withDefaultNamespace("armor.any");
-		EquipmentSlotGroup slotGroup = EquipmentSlotGroup.ARMOR;
+		EquipmentSlotGroup slotGroup;
 		if (item instanceof Equipable equipable)
 			slotGroup = EquipmentSlotGroup.bySlot(equipable.getEquipmentSlot());
-		resourceLocation = switch (slotGroup) {
+        else
+            slotGroup = EquipmentSlotGroup.ARMOR;
+        resourceLocation = switch (slotGroup) {
 			case HEAD -> ResourceLocation.withDefaultNamespace("armor.helmet");
 			case CHEST -> ResourceLocation.withDefaultNamespace("armor.chestplate");
 			case LEGS -> ResourceLocation.withDefaultNamespace("armor.leggings");
@@ -61,28 +66,30 @@ public record ArmourStatsGenerator(ArmourVariable<Integer> durability, ArmourVar
 		};
 
 		if (armor != null) {
-            addedEntries.add(Attributes.ARMOR);
+            addedEntries.add(Pair.of(Attributes.ARMOR, resourceLocation));
 			builder.add(Attributes.ARMOR,
                 new AttributeModifier(resourceLocation, armor, AttributeModifier.Operation.ADD_VALUE),
                 slotGroup);
 		}
 		if (toughness != null) {
-            addedEntries.add(Attributes.ARMOR_TOUGHNESS);
+            addedEntries.add(Pair.of(Attributes.ARMOR_TOUGHNESS, resourceLocation));
 			if (toughness > 0) builder.add(Attributes.ARMOR_TOUGHNESS,
 				new AttributeModifier(resourceLocation, toughness, AttributeModifier.Operation.ADD_VALUE),
 				slotGroup);
 		}
 		if (kbRes != null) {
-			addedEntries.add(Attributes.KNOCKBACK_RESISTANCE);
+			addedEntries.add(Pair.of(Attributes.KNOCKBACK_RESISTANCE, resourceLocation));
 			if (kbRes > 0) builder.add(Attributes.KNOCKBACK_RESISTANCE,
 				new AttributeModifier(resourceLocation, kbRes, AttributeModifier.Operation.ADD_VALUE),
 				slotGroup);
 		}
+
+        additionalModifiers.forEach(armorAttributeEntry -> armorAttributeEntry.addEntry(item, builder, addedEntries, slotGroup));
         
         if (persistPrevious && oldModifiers != ItemAttributeModifiers.EMPTY)
             for (ItemAttributeModifiers.Entry entry : oldModifiers.modifiers()) {
                 innerloop: {
-                    for (Holder<Attribute> attribute : addedEntries) if (entry.matches(attribute, resourceLocation)) break innerloop;
+                    for (Pair<Holder<Attribute>, ResourceLocation> attributeIdPair : addedEntries) if (entry.matches(attributeIdPair.getFirst(), attributeIdPair.getSecond())) break innerloop;
                     builder.add(entry.attribute(), entry.modifier(), entry.slot());
                 }
             }
@@ -98,5 +105,33 @@ public record ArmourStatsGenerator(ArmourVariable<Integer> durability, ArmourVar
             .validate(
                 double_ -> double_.compareTo(min) > 0 ? DataResult.success(double_) : DataResult.error(() -> (String)function.apply(double_))
             );
+    }
+    public record ArmorAttributeEntry(Holder<Attribute> attribute, ResourceLocation baseId, ArmourVariable<Double> amount, AttributeModifier.Operation operation) {
+        public static final Codec<ArmorAttributeEntry> CODEC = RecordCodecBuilder.create(
+                instance -> instance.group(
+                                Attribute.CODEC.fieldOf("type").forGetter(ArmorAttributeEntry::attribute),
+                                ResourceLocation.CODEC.fieldOf("base_id").forGetter(ArmorAttributeEntry::baseId),
+                                ArmourVariable.codec(Codec.DOUBLE).fieldOf("amount").forGetter(ArmorAttributeEntry::amount),
+                                AttributeModifier.Operation.CODEC.fieldOf("operation").forGetter(ArmorAttributeEntry::operation)
+                        )
+                        .apply(instance, ArmorAttributeEntry::new)
+        );
+
+        public void addEntry(Item item, ItemAttributeModifiers.Builder builder, List<Pair<Holder<Attribute>, ResourceLocation>> addedEntries, EquipmentSlotGroup slotGroup) {
+            Double value = amount.getValue(item);
+            if (value == null) return;
+            ResourceLocation id = switch (slotGroup) {
+                case HEAD -> baseId.withSuffix(".helmet");
+                case CHEST -> baseId.withSuffix(".chestplate");
+                case LEGS -> baseId.withSuffix(".leggings");
+                case FEET -> baseId.withSuffix(".boots");
+                case BODY -> baseId.withSuffix(".body");
+                default -> baseId.withSuffix(".any");
+            };
+            addedEntries.add(Pair.of(attribute, id));
+            builder.add(attribute,
+                    new AttributeModifier(id, value, operation),
+                    slotGroup);
+        }
     }
 }
