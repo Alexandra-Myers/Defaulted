@@ -92,6 +92,7 @@ public abstract class ItemStackMixin implements ItemStackExtensions {
 	private DataComponentMap defaulted$wrapAsDerivedComponentMap(DataComponentMap prototype) {
 		try {
 			Field field = ItemStack.class.getDeclaredField("owo$derivedMap");
+            field.setAccessible(true);
 			DataComponentMap derived = DefaultedExpectPlatform.createDerivedMap(ItemStack.class.cast(this), prototype);
 			field.set(this, derived);
 			return derived;

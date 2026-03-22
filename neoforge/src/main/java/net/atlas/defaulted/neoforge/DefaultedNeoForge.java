@@ -6,6 +6,7 @@ import net.atlas.defaulted.networking.ClientboundDefaultComponentsSyncPacket;
 import net.minecraft.client.Minecraft;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 
 import net.atlas.defaulted.Defaulted;
@@ -22,6 +23,7 @@ public final class DefaultedNeoForge {
         Defaulted.init();
         DefaultedRegistries.init(modBus);
         modBus.register(this);
+        Defaulted.hasOwo = ModList.get().isLoaded("owo");
         NeoForge.EVENT_BUS.register(DefaultedNeoForgeEventHandlers.class);
     }
     @SubscribeEvent
