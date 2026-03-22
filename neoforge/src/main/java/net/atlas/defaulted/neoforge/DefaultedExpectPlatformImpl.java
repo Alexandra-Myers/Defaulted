@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 
 import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.component.PatchGenerator;
+import net.atlas.defaulted.neoforge.compat.OwoCompat;
 import net.atlas.defaulted.neoforge.component.DefaultedRegistries;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentMap;
@@ -24,6 +25,6 @@ public class DefaultedExpectPlatformImpl {
         return Defaulted.isOnClientNetworkingThread();
     }
     public static DataComponentMap createDerivedMap(ItemStack itemStack, DataComponentMap prototype) {
-        return prototype;
+        return OwoCompat.deriveComponentMap(itemStack, prototype);
     }
 }
