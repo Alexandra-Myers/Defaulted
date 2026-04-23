@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import net.atlas.defaulted.component.ItemPatches;
-import net.atlas.defaulted.mixin.ItemAccessor;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -65,7 +65,8 @@ public class DefaultComponentPatchesManager extends SimpleJsonResourceReloadList
 
     public static void clearClient() {
         clear();
-        Defaulted.originalComponents.forEach((itemHolder, components) -> ((ItemAccessor) itemHolder.value()).setComponents(components));
+        DataComponentPatch.Builder builder = DataComponentPatch.builder();
+        Defaulted.originalComponents.forEach((itemHolder, components) -> builder.set(itemHolder.value().components()).build());
     }
 
     public static void loadClientCache(List<ItemPatches> cached) {
