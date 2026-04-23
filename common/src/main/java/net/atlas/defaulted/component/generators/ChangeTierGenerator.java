@@ -4,7 +4,6 @@ import com.mojang.serialization.MapCodec;
 
 import net.atlas.defaulted.component.PatchGenerator;
 import net.atlas.defaulted.component.ToolMaterialWrapper;
-import net.atlas.defaulted.extension.ItemExtensions;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.world.item.Item;
 
@@ -13,7 +12,7 @@ public record ChangeTierGenerator(ToolMaterialWrapper toolMaterialWrapper) imple
     
     @Override
     public void patchDataComponentMap(Item item, PatchedDataComponentMap patchedDataComponentMap) {
-        ((ItemExtensions) item).defaulted$setToolMaterial(toolMaterialWrapper);
+        item.defaulted$setToolMaterial(toolMaterialWrapper);
     }
 
     @Override
