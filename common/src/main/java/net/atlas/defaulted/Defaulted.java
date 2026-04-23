@@ -5,12 +5,10 @@ import net.atlas.defaulted.component.PatchGenerator;
 import net.atlas.defaulted.component.ToolMaterialWrapper;
 import net.atlas.defaulted.component.generators.WeaponLevelBasedValue;
 import net.atlas.defaulted.component.generators.condition.PatchConditions;
-import net.atlas.defaulted.extension.ItemExtensions;
-import net.atlas.defaulted.extension.ItemStackExtensions;
+import net.atlas.defaulted.mixin.ItemAccessor;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -79,24 +77,19 @@ public final class Defaulted {
         for (Item item : BuiltInRegistries.ITEM) {
             Holder<Item> itemHolder = item.builtInRegistryHolder();
             DataComponentMap originalPrototype = item.components();
-            DataComponentPatch.Builder builder = DataComponentPatch.builder();
-
             if (Defaulted.originalComponents.containsKey(itemHolder)) {
                 originalPrototype = Defaulted.originalComponents.get(itemHolder);
-                builder.set(originalPrototype);
+                ((ItemAccessor) item).setComponents(originalPrototype);
             }
             else Defaulted.originalComponents.put(itemHolder, originalPrototype);
             PatchedDataComponentMap newMap = new PatchedDataComponentMap(originalPrototype);
             reg.forEach(itemPatches -> itemPatches.apply(item, newMap));
             reg.forEach(itemPatches -> itemPatches.applyGenerators(item, newMap));
             if (newMap.asPatch().isEmpty()) continue;
-            builder.set(newMap);
-            builder.build();
+            ((ItemAccessor) item).setComponents(newMap);
         }
         synchronized (ALL_STACKS) {
-			ALL_STACKS.forEach(stack ->
-                    ((ItemStackExtensions)(Object) stack).defaulted$updatePrototype()
-            );
+			ALL_STACKS.forEach(ItemStack::defaulted$updatePrototype);
 		}
     }
     public static boolean isOnClientNetworkingThread() {
