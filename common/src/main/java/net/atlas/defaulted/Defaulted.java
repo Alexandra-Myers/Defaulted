@@ -5,6 +5,7 @@ import net.atlas.defaulted.component.PatchGenerator;
 import net.atlas.defaulted.component.ToolMaterialWrapper;
 import net.atlas.defaulted.component.generators.WeaponLevelBasedValue;
 import net.atlas.defaulted.component.generators.condition.PatchConditions;
+import net.atlas.defaulted.extension.ItemStackExtensions;
 import net.atlas.defaulted.mixin.ItemAccessor;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -89,7 +90,9 @@ public final class Defaulted {
             ((ItemAccessor) item).setComponents(newMap);
         }
         synchronized (ALL_STACKS) {
-			ALL_STACKS.forEach(ItemStack::defaulted$updatePrototype);
+            ALL_STACKS.forEach(stack ->
+                    ((ItemStackExtensions)(Object) stack).defaulted$updatePrototype()
+            );
 		}
     }
     public static boolean isOnClientNetworkingThread() {
