@@ -43,9 +43,16 @@ processResources {
     }
 }
 
+jar {
+    archiveClassifier = "raw"
+}
+
 shadowJar {
-    exclude "architectury.common.json"
+    dependsOn(jar)
+    mainSpec.sourcePaths.clear()       // Remove default source set inclusion
+    from(zipTree(jar.archiveFile))     // Unpack jar output (preserves Loom modifications)
 
     configurations = [project.configurations.shadowBundle]
-    archiveClassifier = 'dev-shadow'
+    archiveClassifier = null           // shadowJar becomes the main artifact
+    from rootProject.file("LICENSE.md")
 }
