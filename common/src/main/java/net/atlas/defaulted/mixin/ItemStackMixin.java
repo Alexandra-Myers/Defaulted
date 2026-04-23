@@ -70,7 +70,7 @@ public abstract class ItemStackMixin implements ItemStackExtensions {
         };
     }
 
-    @Inject(method = "<init>(Lnet/minecraft/world/level/ItemLike;ILnet/minecraft/core/component/PatchedDataComponentMap;)V", at = @At("RETURN"))
+    @Inject(method = "<init>(Lnet/minecraft/world/level/ItemLike;ILnet/minecraft/core/component/PatchedDataComponentMap;)V", at = @At("RETURN")) // TODO fix reference name
     public void appendStack(ItemLike itemLike, int count, PatchedDataComponentMap patchedDataComponentMap, CallbackInfo ci) {
         Defaulted.ALL_STACKS.add(ItemStack.class.cast(this));
     }
