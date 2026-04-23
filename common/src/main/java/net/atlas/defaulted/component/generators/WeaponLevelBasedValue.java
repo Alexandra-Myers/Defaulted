@@ -7,18 +7,18 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ExtraCodecs.LateBoundIdMapper;
 
 public interface WeaponLevelBasedValue {
-    LateBoundIdMapper<ResourceLocation, MapCodec<? extends WeaponLevelBasedValue>> ID_MAPPER = new LateBoundIdMapper<>();
-    Codec<WeaponLevelBasedValue> BASE_CODEC = ID_MAPPER.codec(ResourceLocation.CODEC)
+    LateBoundIdMapper<Identifier, MapCodec<? extends WeaponLevelBasedValue>> ID_MAPPER = new LateBoundIdMapper<>();
+    Codec<WeaponLevelBasedValue> BASE_CODEC = ID_MAPPER.codec(Identifier.CODEC)
             .dispatch(WeaponLevelBasedValue::codec, mapCodec -> mapCodec);
     static void bootstrap() {
         LevelCondition.bootstrap();
-        ID_MAPPER.put(ResourceLocation.withDefaultNamespace("constant"), Constant.CODEC);
-        ID_MAPPER.put(ResourceLocation.withDefaultNamespace("lookup"), Lookup.CODEC);
-        ID_MAPPER.put(ResourceLocation.withDefaultNamespace("linear"), Linear.CODEC);
+        ID_MAPPER.put(Identifier.withDefaultNamespace("constant"), Constant.CODEC);
+        ID_MAPPER.put(Identifier.withDefaultNamespace("lookup"), Lookup.CODEC);
+        ID_MAPPER.put(Identifier.withDefaultNamespace("linear"), Linear.CODEC);
     }
     Codec<WeaponLevelBasedValue> CODEC = Codec.withAlternative(BASE_CODEC, Codec.FLOAT.xmap(Constant::new, Constant::value));
     Float getResult(int weaponLevel, float addedValue, boolean applyTier);
@@ -27,13 +27,13 @@ public interface WeaponLevelBasedValue {
     }
     MapCodec<? extends WeaponLevelBasedValue> codec();
     interface LevelCondition {
-        LateBoundIdMapper<ResourceLocation, MapCodec<? extends LevelCondition>> ID_MAPPER = new LateBoundIdMapper<>();
-        Codec<LevelCondition> BASE_CODEC = ID_MAPPER.codec(ResourceLocation.CODEC)
+        LateBoundIdMapper<Identifier, MapCodec<? extends LevelCondition>> ID_MAPPER = new LateBoundIdMapper<>();
+        Codec<LevelCondition> BASE_CODEC = ID_MAPPER.codec(Identifier.CODEC)
                 .dispatch(LevelCondition::codec, mapCodec -> mapCodec);
         Codec<LevelCondition> CODEC = Codec.withAlternative(BASE_CODEC, Codec.INT.xmap(i -> new ClampedCondition(i, i), ClampedCondition::min));
         static void bootstrap() {
-            ID_MAPPER.put(ResourceLocation.withDefaultNamespace("clamped"), ClampedCondition.CODEC);
-            ID_MAPPER.put(ResourceLocation.withDefaultNamespace("list"), ListCondition.CODEC);
+            ID_MAPPER.put(Identifier.withDefaultNamespace("clamped"), ClampedCondition.CODEC);
+            ID_MAPPER.put(Identifier.withDefaultNamespace("list"), ListCondition.CODEC);
         }
         boolean matches(int value);
         MapCodec<? extends LevelCondition> codec();
