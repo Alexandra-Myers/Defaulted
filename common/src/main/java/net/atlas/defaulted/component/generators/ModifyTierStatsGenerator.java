@@ -3,6 +3,7 @@ package net.atlas.defaulted.component.generators;
 import java.util.List;
 import java.util.Optional;
 
+import net.atlas.defaulted.extension.ItemExtensions;
 import org.apache.logging.log4j.LogManager;
 
 import com.mojang.serialization.MapCodec;
@@ -33,7 +34,7 @@ public record ModifyTierStatsGenerator(List<TierComponents> components,  Optiona
     @SuppressWarnings("deprecation")
     @Override
     public void patchDataComponentMap(Item item, PatchedDataComponentMap patchedDataComponentMap) {
-        ToolMaterialWrapper tier = item.defaulted$getToolMaterial();
+        ToolMaterialWrapper tier = ((ItemExtensions) item).defaulted$getToolMaterial();
         if (tier != null) {
             if (components.contains(TierComponents.DURABILITY)) {
                 int maxDamage = tier.durability();
