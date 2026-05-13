@@ -9,15 +9,15 @@ import org.spongepowered.asm.mixin.Unique;
 @Mixin(Item.class)
 public class ItemMixin implements ItemExtensions {
   @Unique
-  public ToolMaterialWrapper toolMaterialWrapper = null;
+  public ToolMaterialWrapper defaulted$toolMaterialWrapper = null;
   
   @Override
   public ToolMaterialWrapper defaulted$getToolMaterial() {
-	  return toolMaterialWrapper;
+	  return defaulted$toolMaterialWrapper;
   }
 
   @Override
   public void defaulted$setToolMaterial(ToolMaterialWrapper newTier) {
-	  toolMaterialWrapper = newTier;
+	  defaulted$toolMaterialWrapper = newTier;
   }
 }

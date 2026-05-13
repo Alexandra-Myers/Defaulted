@@ -5,7 +5,6 @@ import net.atlas.defaulted.component.PatchGenerator;
 import net.atlas.defaulted.component.ToolMaterialWrapper;
 import net.atlas.defaulted.component.generators.WeaponLevelBasedValue;
 import net.atlas.defaulted.component.generators.condition.PatchConditions;
-import net.atlas.defaulted.mixin.ItemAccessor;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentMap;
@@ -14,7 +13,6 @@ import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ToolMaterial;
@@ -79,14 +77,14 @@ public final class Defaulted {
             DataComponentMap originalPrototype = item.components();
             if (Defaulted.originalComponents.containsKey(itemHolder)) {
                 originalPrototype = Defaulted.originalComponents.get(itemHolder);
-                ((ItemAccessor) item).setComponents(originalPrototype);
+                item.builtInRegistryHolder().bindComponents(originalPrototype);
             }
             else Defaulted.originalComponents.put(itemHolder, originalPrototype);
             PatchedDataComponentMap newMap = new PatchedDataComponentMap(originalPrototype);
             reg.forEach(itemPatches -> itemPatches.apply(item, newMap));
             reg.forEach(itemPatches -> itemPatches.applyGenerators(item, newMap));
             if (newMap.asPatch().isEmpty()) continue;
-            ((ItemAccessor) item).setComponents(newMap);
+            item.builtInRegistryHolder().bindComponents(newMap);
         }
         synchronized (ALL_STACKS) {
 			ALL_STACKS.forEach(ItemStack::defaulted$updatePrototype);
