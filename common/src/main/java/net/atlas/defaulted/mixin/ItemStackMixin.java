@@ -3,13 +3,14 @@ package net.atlas.defaulted.mixin;
 import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.DefaultedExpectPlatform;
 import net.atlas.defaulted.extension.ItemStackExtensions;
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ItemLike;
 
 import java.lang.reflect.Field;
 
@@ -70,12 +71,9 @@ public abstract class ItemStackMixin implements ItemStackExtensions {
         };
     }
 
-    @Inject(
-            method = "<init>(Lnet/minecraft/world/level/ItemLike;I)V",
-            at = @At("RETURN")
-    )
-    private void appendStack(ItemLike itemLike, int count, CallbackInfo ci) {
-        Defaulted.ALL_STACKS.add((ItemStack)(Object)this);
+    @Inject(method = "<init>(Lnet/minecraft/core/Holder;ILnet/minecraft/core/component/PatchedDataComponentMap;)V", at = @At("RETURN"))
+    private void appendStack(Holder<Item> itemHolder, int count, PatchedDataComponentMap components, CallbackInfo ci) {
+        Defaulted.ALL_STACKS.add(ItemStack.class.cast(this));
     }
 
     @Override
