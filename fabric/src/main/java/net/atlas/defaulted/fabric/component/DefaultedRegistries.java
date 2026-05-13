@@ -11,7 +11,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 
 public class DefaultedRegistries {
-	public static final Registry<MapCodec<? extends PatchGenerator>> PATCH_GENERATOR_TYPE_REG = FabricRegistryBuilder.createSimple(
+	public static final Registry<MapCodec<? extends PatchGenerator>> PATCH_GENERATOR_TYPE_REG = FabricRegistryBuilder.create(
 		Defaulted.PATCH_GENERATOR_TYPE
 	).attribute(RegistryAttribute.OPTIONAL).buildAndRegister();
 

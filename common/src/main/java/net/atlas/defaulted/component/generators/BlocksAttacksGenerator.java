@@ -5,9 +5,12 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.atlas.defaulted.component.PatchGenerator;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.HolderSetCodec;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
@@ -23,7 +26,7 @@ public record BlocksAttacksGenerator(Optional<Float> blockDelaySeconds,
 									 Optional<Float> disableCooldownScale,
 									 List<BlocksAttacks.DamageReduction> damageReductions,
 									 Optional<BlocksAttacks.ItemDamageFunction> itemDamage,
-									 Optional<TagKey<DamageType>> bypassedBy,
+									 Optional<HolderSet<DamageType>> bypassedBy,
 									 Optional<Holder<SoundEvent>> blockSound,
 									 Optional<Holder<SoundEvent>> disableSound,
 									 boolean appendReductions) implements PatchGenerator {
@@ -36,7 +39,7 @@ public record BlocksAttacksGenerator(Optional<Float> blockDelaySeconds,
 					.optionalFieldOf("damage_reductions", List.of(new BlocksAttacks.DamageReduction(90.0F, Optional.empty(), 0.0F, 1.0F)))
 					.forGetter(BlocksAttacksGenerator::damageReductions),
 				BlocksAttacks.ItemDamageFunction.CODEC.optionalFieldOf("item_damage").forGetter(BlocksAttacksGenerator::itemDamage),
-				TagKey.hashedCodec(Registries.DAMAGE_TYPE).optionalFieldOf("bypassed_by").forGetter(BlocksAttacksGenerator::bypassedBy),
+				RegistryCodecs.homogeneousList(Registries.DAMAGE_TYPE).optionalFieldOf("bypassed_by").forGetter(BlocksAttacksGenerator::bypassedBy), // Unsure if this is a suitable replacement ?
 				SoundEvent.CODEC.optionalFieldOf("block_sound").forGetter(BlocksAttacksGenerator::blockSound),
 				SoundEvent.CODEC.optionalFieldOf("disabled_sound").forGetter(BlocksAttacksGenerator::disableSound),
 				Codec.BOOL.optionalFieldOf("append_reductions", true).forGetter(BlocksAttacksGenerator::appendReductions)

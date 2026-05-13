@@ -12,8 +12,9 @@ import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ToolMaterial;
@@ -44,7 +45,7 @@ public final class Defaulted {
     /**
      * {@link ArrayList} of {@link Consumer}s for the initial map of all item patches, empty by default, and will be overridden if data is loaded for these.
      */
-    public static final List<Consumer<Map<ResourceLocation, ItemPatches>>> ADD_DEFAULT_PATCHES = new ArrayList<>();
+    public static final List<Consumer<Map<Identifier, ItemPatches>>> ADD_DEFAULT_PATCHES = new ArrayList<>();
 	public static final Set<ItemStack> ALL_STACKS = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>()));
 
     public static void init() {
@@ -59,9 +60,10 @@ public final class Defaulted {
         PatchConditions.bootstrap();
         WeaponLevelBasedValue.bootstrap();
     }
-
-    public static ResourceLocation id(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+    
+    // Identifier is renamed to Identifier as of 26.1
+    public static Identifier id(String path) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
 
     public static void setDurability(int maxDamage, PatchedDataComponentMap patchedDataComponentMap) {

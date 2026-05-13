@@ -15,22 +15,22 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.core.component.TypedDataComponent;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.Item;
 
 public class PatchConditions {
-    public static final ExtraCodecs.LateBoundIdMapper<ResourceLocation, MapCodec<? extends PatchCondition>> CONDITION_MAPPER = new ExtraCodecs.LateBoundIdMapper<>();
-    public static final MapCodec<PatchCondition> MAP_CODEC = CONDITION_MAPPER.codec(ResourceLocation.CODEC)
+    public static final ExtraCodecs.LateBoundIdMapper<Identifier, MapCodec<? extends PatchCondition>> CONDITION_MAPPER = new ExtraCodecs.LateBoundIdMapper<>();
+    public static final MapCodec<PatchCondition> MAP_CODEC = CONDITION_MAPPER.codec(Identifier.CODEC)
 		.dispatchMap("condition", PatchCondition::codec, mapCodec -> mapCodec);
     public static void bootstrap() {
-        CONDITION_MAPPER.put(ResourceLocation.withDefaultNamespace("invert"), InvertCondition.CODEC);
-        CONDITION_MAPPER.put(ResourceLocation.withDefaultNamespace("condition_list"), ListCondition.CODEC);
-        CONDITION_MAPPER.put(ResourceLocation.withDefaultNamespace("is_item"), ItemIsCondition.CODEC);
-        CONDITION_MAPPER.put(ResourceLocation.withDefaultNamespace("in_tag"), ItemHasTagCondition.CODEC);
-        CONDITION_MAPPER.put(ResourceLocation.withDefaultNamespace("has_components"), ComponentsPresentCondition.CODEC);
-        CONDITION_MAPPER.put(ResourceLocation.withDefaultNamespace("matches_components"), ExactComponentsCondition.CODEC);
+        CONDITION_MAPPER.put(Identifier.withDefaultNamespace("invert"), InvertCondition.CODEC);
+        CONDITION_MAPPER.put(Identifier.withDefaultNamespace("condition_list"), ListCondition.CODEC);
+        CONDITION_MAPPER.put(Identifier.withDefaultNamespace("is_item"), ItemIsCondition.CODEC);
+        CONDITION_MAPPER.put(Identifier.withDefaultNamespace("in_tag"), ItemHasTagCondition.CODEC);
+        CONDITION_MAPPER.put(Identifier.withDefaultNamespace("has_components"), ComponentsPresentCondition.CODEC);
+        CONDITION_MAPPER.put(Identifier.withDefaultNamespace("matches_components"), ExactComponentsCondition.CODEC);
     }
     
     public interface PatchCondition {
