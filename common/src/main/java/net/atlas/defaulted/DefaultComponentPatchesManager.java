@@ -55,6 +55,7 @@ public abstract class DefaultComponentPatchesManager extends SimpleJsonResourceR
         }
 
         intermediary = patchesMap;
+        Defaulted.ADD_DEFAULT_PATCHES.forEach(collectionConsumer -> collectionConsumer.accept(intermediary));
     }
 
     public Codec<Optional<ItemPatches>> getCodec() {
