@@ -1,6 +1,5 @@
 package net.atlas.defaulted.neoforge.event.client;
 
-import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.DefaultComponentPatchesManager;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -11,7 +10,6 @@ import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 public class DefaultedClientNeoForgeEventHandlers {
     @SubscribeEvent
     public static void onClientDisconnect(final ClientPlayerNetworkEvent.LoggingOut loggingOut) {
-        Defaulted.EXECUTE_ON_RELOAD.clear();
         DefaultComponentPatchesManager.clearClient();
     }
 }
