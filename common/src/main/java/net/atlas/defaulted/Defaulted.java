@@ -43,7 +43,7 @@ public final class Defaulted {
     /**
      * {@link ArrayList} of {@link Consumer}s for the initial map of all item patches, empty by default, and will be overridden if data is loaded for these.
      */
-    public static final List<Consumer<Map<Identifier, ItemPatches>>> ADD_DEFAULT_PATCHES = new ArrayList<>();
+    static final List<Consumer<Map<Identifier, ItemPatches>>> ADD_DEFAULT_PATCHES = new ArrayList<>();
 	public static final Set<ItemStack> ALL_STACKS = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>()));
 
     public static void init() {
@@ -92,5 +92,12 @@ public final class Defaulted {
     }
     public static boolean isOnClientNetworkingThread() {
         return Thread.currentThread().getName().startsWith("Netty") && Thread.currentThread().getName().contains("Client");
+    }
+    /**
+     * Attaches a {@link Consumer} to run on the intermediary map of item patches (before they get resorted and applied).
+     * @param patchApplier The {@link Consumer} to apply onto the intermediary patches.
+     */
+    public static void builtinPatchCreator(Consumer<Map<Identifier, ItemPatches>> patchApplier) {
+        ADD_DEFAULT_PATCHES.add(patchApplier);
     }
 }
