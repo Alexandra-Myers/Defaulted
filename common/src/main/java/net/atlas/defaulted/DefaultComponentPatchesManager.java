@@ -38,6 +38,7 @@ public class DefaultComponentPatchesManager extends SimpleJsonResourceReloadList
     @Override
     protected void apply(Map<ResourceLocation, ItemPatches> patches, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
         intermediary = patches;
+        Defaulted.ADD_DEFAULT_PATCHES.forEach(collectionConsumer -> collectionConsumer.accept(intermediary));
     }
 
     public static DefaultComponentPatchesManager getInstance() {
