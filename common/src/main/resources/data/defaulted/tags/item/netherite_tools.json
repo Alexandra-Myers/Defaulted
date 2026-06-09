@@ -5,10 +5,7 @@
         "minecraft:netherite_hoe",
         "minecraft:netherite_pickaxe",
         "minecraft:netherite_shovel",
-        {
-            "id": "minecraft:netherite_spear",
-            "required": false
-        },
+        "minecraft:netherite_spear",
         "minecraft:netherite_sword"
     ]
 }

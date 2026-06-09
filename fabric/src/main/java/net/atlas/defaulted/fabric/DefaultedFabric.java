@@ -10,9 +10,8 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.v1.DataResourceLoader;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.server.packs.PackType;
 
 import java.util.*;
 
@@ -27,7 +26,7 @@ public final class DefaultedFabric implements ModInitializer {
         Defaulted.init();
         Defaulted.hasOwo = FabricLoader.getInstance().isModLoaded("owo");
         DefaultedRegistries.init();
-        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(Defaulted.id("default_component_patches"), FabricDefaultComponentPatchesManager::new);
+        DataResourceLoader.get().registerReloadListener(Defaulted.id("default_component_patches"), FabricDefaultComponentPatchesManager::new);
         CommonLifecycleEvents.TAGS_LOADED.register((registries, client) -> {
             if (!client) DefaultComponentPatchesManager.getInstance().load();
         });

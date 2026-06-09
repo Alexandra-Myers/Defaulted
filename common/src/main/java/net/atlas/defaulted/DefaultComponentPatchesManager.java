@@ -65,7 +65,6 @@ public class DefaultComponentPatchesManager extends SimpleJsonResourceReloadList
 
     public static void clearClient() {
         clear();
-        Defaulted.originalComponents.forEach((itemHolder, components) -> itemHolder.value().builtInRegistryHolder().bindComponents(components));
     }
 
     public static void loadClientCache(List<ItemPatches> cached) {

@@ -5,10 +5,7 @@
         "minecraft:copper_hoe",
         "minecraft:copper_pickaxe",
         "minecraft:copper_shovel",
-        {
-            "id": "minecraft:copper_spear",
-            "required": false
-        },
+        "minecraft:copper_spear",
         "minecraft:copper_sword"
     ]
 }

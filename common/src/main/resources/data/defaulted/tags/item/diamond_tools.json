@@ -5,10 +5,7 @@
         "minecraft:diamond_hoe",
         "minecraft:diamond_pickaxe",
         "minecraft:diamond_shovel",
-        {
-            "id": "minecraft:diamond_spear",
-            "required": false
-        },
+        "minecraft:diamond_spear",
         "minecraft:diamond_sword"
     ]
 }
