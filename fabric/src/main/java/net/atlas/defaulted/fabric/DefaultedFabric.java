@@ -1,7 +1,9 @@
 package net.atlas.defaulted.fabric;
 
+import net.atlas.defaulted.EnchantmentPatchesManager;
 import net.atlas.defaulted.fabric.component.DefaultedRegistries;
 import net.atlas.defaulted.networking.ClientboundDefaultComponentsSyncPacket;
+import net.atlas.defaulted.networking.ClientboundEnchantmentsSyncPacket;
 import net.fabricmc.api.ModInitializer;
 
 import net.atlas.defaulted.Defaulted;
@@ -12,6 +14,7 @@ import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.resource.v1.DataResourceLoader;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.resources.Identifier;
 
 import java.util.*;
 
@@ -26,15 +29,24 @@ public final class DefaultedFabric implements ModInitializer {
         Defaulted.init();
         Defaulted.hasOwo = FabricLoader.getInstance().isModLoaded("owo");
         DefaultedRegistries.init();
-        DataResourceLoader.get().registerReloadListener(Defaulted.id("default_component_patches"), FabricDefaultComponentPatchesManager::new);
+        Identifier defaultComponentPatches = Defaulted.id("default_component_patches");
+        Identifier enchantmentPatches = Defaulted.id("enchantment_patches");
+        DataResourceLoader.get().registerReloadListener(defaultComponentPatches, DefaultComponentPatchesManager::new);
+        DataResourceLoader.get().registerReloadListener(enchantmentPatches, EnchantmentPatchesManager::new);
+        DataResourceLoader.get().addListenerOrdering(enchantmentPatches, defaultComponentPatches);
         CommonLifecycleEvents.TAGS_LOADED.register((registries, client) -> {
-            if (!client) DefaultComponentPatchesManager.getInstance().load();
+            if (!client) {
+                DefaultComponentPatchesManager.getInstance().load();
+                EnchantmentPatchesManager.getInstance().load(registries);
+            }
         });
         PayloadTypeRegistry.clientboundPlay().register(ClientboundDefaultComponentsSyncPacket.TYPE, ClientboundDefaultComponentsSyncPacket.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(ClientboundEnchantmentsSyncPacket.TYPE, ClientboundEnchantmentsSyncPacket.CODEC);
         ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register((player, joined) -> {
-            if (ServerPlayNetworking.canSend(player, ClientboundDefaultComponentsSyncPacket.TYPE)) {
+            if (ServerPlayNetworking.canSend(player, ClientboundDefaultComponentsSyncPacket.TYPE))
                 ServerPlayNetworking.send(player, new ClientboundDefaultComponentsSyncPacket(new ArrayList<>(DefaultComponentPatchesManager.getCached())));
-            }
+            if (ServerPlayNetworking.canSend(player, ClientboundEnchantmentsSyncPacket.TYPE))
+                ServerPlayNetworking.send(player, new ClientboundEnchantmentsSyncPacket(new ArrayList<>(EnchantmentPatchesManager.getCached(player.registryAccess()))));
         });
     }
 }

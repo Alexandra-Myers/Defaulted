@@ -2,7 +2,10 @@ package net.atlas.defaulted.neoforge.event;
 
 import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.DefaultComponentPatchesManager;
+import net.atlas.defaulted.EnchantmentPatchesManager;
 import net.atlas.defaulted.networking.ClientboundDefaultComponentsSyncPacket;
+import net.atlas.defaulted.networking.ClientboundEnchantmentsSyncPacket;
+import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
@@ -15,16 +18,24 @@ public class DefaultedNeoForgeEventHandlers {
     @SubscribeEvent
     public static void onDatapackSync(final OnDatapackSyncEvent onDatapackSyncEvent) {
         ClientboundDefaultComponentsSyncPacket packet = new ClientboundDefaultComponentsSyncPacket(new ArrayList<>(DefaultComponentPatchesManager.getCached()));
+        ClientboundEnchantmentsSyncPacket[] enchantmentsSyncPacket = {null};
         onDatapackSyncEvent.getRelevantPlayers().forEach(player -> {
+            if (enchantmentsSyncPacket[0] == null) enchantmentsSyncPacket[0] = new ClientboundEnchantmentsSyncPacket(new ArrayList<>(EnchantmentPatchesManager.getCached(player.registryAccess())));
             if (player.connection.hasChannel(packet)) PacketDistributor.sendToPlayer(player, packet);
+            if (player.connection.hasChannel(enchantmentsSyncPacket[0])) PacketDistributor.sendToPlayer(player, enchantmentsSyncPacket[0]);
         });
     }
     @SubscribeEvent
     public static void onDatapackReload(final AddServerReloadListenersEvent addReloadListenerEvent) {
-        addReloadListenerEvent.addListener(Defaulted.id("default_component_patches"), new DefaultComponentPatchesManager(addReloadListenerEvent.getRegistryAccess()));
+        Identifier defaultComponentPatches = Defaulted.id("default_component_patches");
+        Identifier enchantmentPatches = Defaulted.id("enchantment_patches");
+        addReloadListenerEvent.addListener(defaultComponentPatches, new DefaultComponentPatchesManager(addReloadListenerEvent.getRegistryAccess()));
+        addReloadListenerEvent.addListener(enchantmentPatches, new EnchantmentPatchesManager(addReloadListenerEvent.getRegistryAccess()));
+        addReloadListenerEvent.addDependency(enchantmentPatches, defaultComponentPatches);
     }
     @SubscribeEvent
     public static void serverStart(final ServerStartedEvent event) {
         DefaultComponentPatchesManager.getInstance().load();
+        EnchantmentPatchesManager.getInstance().load(event.getServer().registryAccess());
     }
 }

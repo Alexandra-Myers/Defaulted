@@ -18,7 +18,7 @@ public class DefaultComponentPatchesManager extends SimpleJsonResourceReloadList
     private List<ItemPatches> cached = null;
     private Map<Identifier, ItemPatches> intermediary = new HashMap<>();
     public DefaultComponentPatchesManager(HolderLookup.Provider arg) {
-        super(arg, ItemPatches.DIRECT_CODEC, Defaulted.ITEM_PATCHES_TYPE);
+        super(arg, ItemPatches.CODEC, Defaulted.ITEM_PATCHES_TYPE);
         INSTANCE = this;
     }
 

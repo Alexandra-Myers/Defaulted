@@ -1,6 +1,6 @@
 {
-  "tags": [
-    "defaulted:copper_tools"
+  "elements": [
+    "#defaulted:copper_tools"
   ],
   "patch_generators": [
     {
