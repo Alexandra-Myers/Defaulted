@@ -24,6 +24,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ToolMaterial;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -52,7 +53,7 @@ public final class Defaulted {
     /**
      * {@link ArrayList} of {@link Consumer}s for the initial map of all item patches, empty by default, and will be overridden if data is loaded for these.
      */
-    static final List<Consumer<Map<Identifier, ItemPatches>>> ADD_DEFAULT_PATCHES = new ArrayList<>();
+    static final List<BiConsumer<RegistryAccess, Map<Identifier, ItemPatches>>> ADD_DEFAULT_PATCHES = new ArrayList<>();
     /**
      * {@link ArrayList} of {@link Consumer}s to run on the sorted collection of {@link EnchantmentPatches} after a reload or resource loading.
      */
@@ -60,7 +61,7 @@ public final class Defaulted {
     /**
      * {@link ArrayList} of {@link Consumer}s for the initial map of all enchantment patches, empty by default, and will be overridden if data is loaded for these.
      */
-    static final List<Consumer<Map<Identifier, EnchantmentPatches>>> ADD_DEFAULT_ENCHANT_PATCHES = new ArrayList<>();
+    static final List<BiConsumer<RegistryAccess, Map<Identifier, EnchantmentPatches>>> ADD_DEFAULT_ENCHANT_PATCHES = new ArrayList<>();
 	public static final Set<ItemStack> ALL_STACKS = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>()));
 
     public static void init() {
@@ -110,19 +111,19 @@ public final class Defaulted {
      * Attaches a {@link Consumer} to run on the intermediary map of item patches (before they get resorted and applied).
      * @param patchApplier The {@link Consumer} to apply onto the intermediary patches.
      */
-    public static void builtinPatchCreator(Consumer<Map<Identifier, ItemPatches>> patchApplier) {
+    public static void builtinPatchCreator(BiConsumer<RegistryAccess, Map<Identifier, ItemPatches>> patchApplier) {
         ADD_DEFAULT_PATCHES.add(patchApplier);
     }
     /**
      * Attaches a {@link Consumer} to run on the intermediary map of enchantment patches (before they get resorted and applied).
      * @param patchApplier The {@link Consumer} to apply onto the intermediary patches.
      */
-    public static void builtinEnchantmentPatchCreator(Consumer<Map<Identifier, EnchantmentPatches>> patchApplier) {
+    public static void builtinEnchantmentPatchCreator(BiConsumer<RegistryAccess, Map<Identifier, EnchantmentPatches>> patchApplier) {
         ADD_DEFAULT_ENCHANT_PATCHES.add(patchApplier);
     }
 
-    public static void patchEnchantments(HolderLookup.Provider provider, List<EnchantmentPatches> reg) {
-        var enchantmentLookup = provider.lookupOrThrow(Registries.ENCHANTMENT);
+    public static void patchEnchantments(RegistryAccess registryAccess, List<EnchantmentPatches> reg) {
+        var enchantmentLookup = registryAccess.lookupOrThrow(Registries.ENCHANTMENT);
         Map<Pair<Enchantment, Enchantment>, Holder.Reference<Enchantment>> modified = new HashMap<>();
         enchantmentLookup.listElements().forEach(enchantment -> {
             ResourceKey<Enchantment> key = enchantment.key();

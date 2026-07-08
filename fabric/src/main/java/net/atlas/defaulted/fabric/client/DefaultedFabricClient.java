@@ -18,7 +18,7 @@ public class DefaultedFabricClient implements ClientModInitializer {
     public void onInitializeClient() {
         ClientPlayNetworking.registerGlobalReceiver(ClientboundDefaultComponentsSyncPacket.TYPE, (clientboundDefaultComponentsSyncPacket, context) -> {
             if (!Minecraft.getInstance().hasSingleplayerServer()) DefaultComponentPatchesManager.loadClientCache(clientboundDefaultComponentsSyncPacket.list());
-            else DefaultComponentPatchesManager.setClientCache();
+            else DefaultComponentPatchesManager.setClientCache(context.packetContext().get(PacketContext.REGISTRY_ACCESS));
         });
         ClientPlayNetworking.registerGlobalReceiver(ClientboundEnchantmentsSyncPacket.TYPE, (clientboundEnchantmentsSyncPacket, context) -> {
             if (!Minecraft.getInstance().hasSingleplayerServer()) EnchantmentPatchesManager.loadClientCache(context.packetContext().get(PacketContext.REGISTRY_ACCESS), clientboundEnchantmentsSyncPacket.list());

@@ -2,6 +2,7 @@ package net.atlas.defaulted;
 
 import net.atlas.defaulted.enchantment.EnchantmentPatches;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -22,8 +23,8 @@ public class EnchantmentPatchesManager extends SimpleJsonResourceReloadListener<
         INSTANCE = this;
     }
 
-    public void patch(HolderLookup.Provider provider) {
-        Defaulted.patchEnchantments(provider, cached);
+    public void patch(RegistryAccess registryAccess) {
+        Defaulted.patchEnchantments(registryAccess, cached);
         Defaulted.EXECUTE_ON_ENCHANT_RELOAD.forEach(collectionConsumer -> collectionConsumer.accept(cached));
     }
 
@@ -37,23 +38,23 @@ public class EnchantmentPatchesManager extends SimpleJsonResourceReloadListener<
     @Override
     protected void apply(Map<Identifier, EnchantmentPatches> patches, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
         intermediary = patches;
-        Defaulted.ADD_DEFAULT_ENCHANT_PATCHES.forEach(collectionConsumer -> collectionConsumer.accept(intermediary));
     }
 
     public static EnchantmentPatchesManager getInstance() {
         return INSTANCE;
     }
 
-    public static List<EnchantmentPatches> getCached(HolderLookup.Provider provider) {
+    public static List<EnchantmentPatches> getCached(RegistryAccess registryAccess) {
         if (INSTANCE == null) return null;
-        INSTANCE.load(provider);
+        INSTANCE.load(registryAccess);
         return INSTANCE.cached;
     }
 
-    public void load(HolderLookup.Provider provider) {
+    public void load(RegistryAccess registryAccess) {
         if (cached == null) {
+            Defaulted.ADD_DEFAULT_ENCHANT_PATCHES.forEach(collectionConsumer -> collectionConsumer.accept(registryAccess, intermediary));
             cached = intermediary.entrySet().stream().map(entry -> new EnchantmentPatchesEntry(entry.getKey(), entry.getValue())).sorted(Comparator.naturalOrder()).map(EnchantmentPatchesEntry::enchantmentPatches).toList();
-            patch(provider);
+            patch(registryAccess);
         }
     }
 
@@ -68,12 +69,12 @@ public class EnchantmentPatchesManager extends SimpleJsonResourceReloadListener<
         Defaulted.ORIGINAL_ENCHANTMENTS.clear();
     }
 
-    public static void loadClientCache(HolderLookup.Provider provider, List<EnchantmentPatches> cached) {
+    public static void loadClientCache(RegistryAccess registryAccess, List<EnchantmentPatches> cached) {
         EnchantmentPatchesManager.CLIENT_CACHED = cached;
-        Defaulted.patchEnchantments(provider, cached);
+        Defaulted.patchEnchantments(registryAccess, cached);
     }
-    public static void setClientCache(HolderLookup.Provider provider) {
-        EnchantmentPatchesManager.CLIENT_CACHED = getCached(provider);
+    public static void setClientCache(RegistryAccess registryAccess) {
+        EnchantmentPatchesManager.CLIENT_CACHED = getCached(registryAccess);
     }
     
     public record EnchantmentPatchesEntry(Identifier id, EnchantmentPatches enchantmentPatches) implements Comparable<EnchantmentPatchesEntry> {

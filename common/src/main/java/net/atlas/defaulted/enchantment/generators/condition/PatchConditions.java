@@ -15,6 +15,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 
 import java.util.List;
 import java.util.Objects;
@@ -99,7 +100,7 @@ public class PatchConditions {
     }
     public record ComponentsPresentCondition(List<DataComponentType<?>> presentComponents, boolean allMatch) implements PatchCondition {
         public static final MapCodec<ComponentsPresentCondition> CODEC = RecordCodecBuilder.mapCodec(instance ->
-            instance.group(DataComponentType.CODEC.listOf().fieldOf("components").forGetter(ComponentsPresentCondition::presentComponents),
+            instance.group(EnchantmentEffectComponents.COMPONENT_CODEC.listOf().fieldOf("components").forGetter(ComponentsPresentCondition::presentComponents),
                 Codec.BOOL.fieldOf("all_required").forGetter(ComponentsPresentCondition::allMatch)).apply(instance, ComponentsPresentCondition::new));
         @Override
         public boolean matches(Holder<Enchantment> enchantment, EnchantmentBuilder builder) {
@@ -116,7 +117,7 @@ public class PatchConditions {
     }
     public record ExactComponentsCondition(DataComponentMap exactComponents, boolean allMatch) implements PatchCondition {
         public static final MapCodec<ExactComponentsCondition> CODEC = RecordCodecBuilder.mapCodec(instance ->
-            instance.group(DataComponentMap.CODEC.fieldOf("components").forGetter(ExactComponentsCondition::exactComponents),
+            instance.group(EnchantmentEffectComponents.CODEC.fieldOf("components").forGetter(ExactComponentsCondition::exactComponents),
                 Codec.BOOL.fieldOf("all_required").forGetter(ExactComponentsCondition::allMatch)).apply(instance, ExactComponentsCondition::new));
         @Override
         public boolean matches(Holder<Enchantment> enchantment, EnchantmentBuilder builder) {
