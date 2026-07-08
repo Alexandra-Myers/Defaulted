@@ -17,7 +17,7 @@ All functionality is reloadable using `/reload`.
 
 The JSON files for the defaulted:default_component_patches datapack element should be put in `<namespace>/defaulted/default_component_patches/<path>.json`.
 
-The JSON files for the defaulted:enchantment_patches registry should be put in `<namespace>/defaulted/enchantment_patches/<path>.json`.
+The JSON files for the defaulted:enchantment_patches datapack element should be put in `<namespace>/defaulted/enchantment_patches/<path>.json`.
 
 [![Atlas Docs Page](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/documentation/ghpages_64h.png)](https://atlas-modding.github.io/Atlas-Docs/defaulted/intro)
 
