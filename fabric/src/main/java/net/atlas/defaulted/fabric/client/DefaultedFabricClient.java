@@ -1,7 +1,9 @@
 package net.atlas.defaulted.fabric.client;
 
 import net.atlas.defaulted.DefaultComponentPatchesManager;
+import net.atlas.defaulted.EnchantmentPatchesManager;
 import net.atlas.defaulted.networking.ClientboundDefaultComponentsSyncPacket;
+import net.atlas.defaulted.networking.ClientboundEnchantmentsSyncPacket;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -17,6 +19,13 @@ public class DefaultedFabricClient implements ClientModInitializer {
             if (!Minecraft.getInstance().hasSingleplayerServer()) DefaultComponentPatchesManager.loadClientCache(clientboundDefaultComponentsSyncPacket.list());
             else DefaultComponentPatchesManager.setClientCache();
         });
-        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> DefaultComponentPatchesManager.clearClient());
+        ClientPlayNetworking.registerGlobalReceiver(ClientboundEnchantmentsSyncPacket.TYPE, (clientboundEnchantmentsSyncPacket, context) -> {
+            if (!Minecraft.getInstance().hasSingleplayerServer()) EnchantmentPatchesManager.loadClientCache(context.player().registryAccess(), clientboundEnchantmentsSyncPacket.list());
+            else EnchantmentPatchesManager.setClientCache(context.player().registryAccess());
+        });
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
+            DefaultComponentPatchesManager.clearClient();
+            EnchantmentPatchesManager.clearClient();
+        });
     }
 }
