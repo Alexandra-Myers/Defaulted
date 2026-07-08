@@ -6,7 +6,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.mojang.serialization.Codec;
 import net.atlas.defaulted.enchantment.EnchantmentPatches;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
@@ -59,7 +58,6 @@ public abstract class EnchantmentPatchesManager extends SimpleJsonResourceReload
         }
 
         intermediary = patchesMap;
-        Defaulted.ADD_DEFAULT_ENCHANT_PATCHES.forEach(collectionConsumer -> collectionConsumer.accept(intermediary));
     }
 
     public Codec<Optional<EnchantmentPatches>> getCodec() {
@@ -80,6 +78,7 @@ public abstract class EnchantmentPatchesManager extends SimpleJsonResourceReload
 
     public void load(RegistryAccess registryAccess) {
         if (cached == null) {
+            Defaulted.ADD_DEFAULT_ENCHANT_PATCHES.forEach(collectionConsumer -> collectionConsumer.accept(registryAccess, intermediary));
             cached = intermediary.entrySet().stream().map(entry -> new EnchantmentPatchesEntry(entry.getKey(), entry.getValue())).sorted(Comparator.naturalOrder()).map(EnchantmentPatchesEntry::enchantmentPatches).toList();
             patch(registryAccess);
         }

@@ -23,12 +23,13 @@ import java.util.Optional;
 public class DefaultedNeoForgeEventHandlers {
     @SubscribeEvent
     public static void onDatapackSync(final OnDatapackSyncEvent onDatapackSyncEvent) {
-        ClientboundDefaultComponentsSyncPacket packet = new ClientboundDefaultComponentsSyncPacket(new ArrayList<>(DefaultComponentPatchesManager.getCached()));
+        ClientboundDefaultComponentsSyncPacket[] defaultComponentsSyncPacket = {null};
         ClientboundEnchantmentsSyncPacket[] enchantmentsSyncPacket = {null};
         onDatapackSyncEvent.getRelevantPlayers().forEach(player -> {
+            if (defaultComponentsSyncPacket[0] == null) defaultComponentsSyncPacket[0] = new ClientboundDefaultComponentsSyncPacket(new ArrayList<>(DefaultComponentPatchesManager.getCached(player.registryAccess())));
             if (enchantmentsSyncPacket[0] == null) enchantmentsSyncPacket[0] = new ClientboundEnchantmentsSyncPacket(new ArrayList<>(EnchantmentPatchesManager.getCached(player.registryAccess())));
-            if (player.connection.hasChannel(packet)) PacketDistributor.sendToPlayer(player, packet);
             if (player.connection.hasChannel(enchantmentsSyncPacket[0])) PacketDistributor.sendToPlayer(player, enchantmentsSyncPacket[0]);
+            if (player.connection.hasChannel(defaultComponentsSyncPacket[0])) PacketDistributor.sendToPlayer(player, defaultComponentsSyncPacket[0]);
         });
     }
     @SubscribeEvent
@@ -58,7 +59,7 @@ public class DefaultedNeoForgeEventHandlers {
     }
     @SubscribeEvent
     public static void serverStart(final ServerStartedEvent event) {
-        DefaultComponentPatchesManager.getInstance().load();
+        DefaultComponentPatchesManager.getInstance().load(event.getServer().registryAccess());
         EnchantmentPatchesManager.getInstance().load(event.getServer().registryAccess());
     }
 }

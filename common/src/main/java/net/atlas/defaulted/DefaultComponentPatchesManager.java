@@ -7,6 +7,7 @@ import com.mojang.serialization.Codec;
 import net.atlas.defaulted.component.ItemPatches;
 import net.atlas.defaulted.mixin.ItemAccessor;
 import net.minecraft.resources.RegistryOps;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -55,7 +56,6 @@ public abstract class DefaultComponentPatchesManager extends SimpleJsonResourceR
         }
 
         intermediary = patchesMap;
-        Defaulted.ADD_DEFAULT_PATCHES.forEach(collectionConsumer -> collectionConsumer.accept(intermediary));
     }
 
     public Codec<Optional<ItemPatches>> getCodec() {
@@ -68,14 +68,15 @@ public abstract class DefaultComponentPatchesManager extends SimpleJsonResourceR
         return INSTANCE;
     }
 
-    public static List<ItemPatches> getCached() {
+    public static List<ItemPatches> getCached(RegistryAccess registryAccess) {
         if (INSTANCE == null) return null;
-        INSTANCE.load();
+        INSTANCE.load(registryAccess);
         return INSTANCE.cached;
     }
 
-    public void load() {
+    public void load(RegistryAccess registryAccess) {
         if (cached == null) {
+            Defaulted.ADD_DEFAULT_PATCHES.forEach(collectionConsumer -> collectionConsumer.accept(registryAccess, intermediary));
             cached = intermediary.entrySet().stream().map(entry -> new ItemPatchesEntry(entry.getKey(), entry.getValue())).sorted(Comparator.naturalOrder()).map(ItemPatchesEntry::itemPatches).toList();
             patch();
         }
@@ -97,8 +98,8 @@ public abstract class DefaultComponentPatchesManager extends SimpleJsonResourceR
         DefaultComponentPatchesManager.CLIENT_CACHED = cached;
         Defaulted.patchItemComponents(cached);
     }
-    public static void setClientCache() {
-        DefaultComponentPatchesManager.CLIENT_CACHED = getCached();
+    public static void setClientCache(RegistryAccess registryAccess) {
+        DefaultComponentPatchesManager.CLIENT_CACHED = getCached(registryAccess);
     }
     
     public record ItemPatchesEntry(ResourceLocation id, ItemPatches itemPatches) implements Comparable<ItemPatchesEntry> {

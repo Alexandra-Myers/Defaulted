@@ -1,19 +1,23 @@
 ![Defaulted](https://www.bisecthosting.com/images/CF/DEFAULTED/DEFAULTED_Header.webp)
 ***
 
-A simple mod, provides functionality to customise default item components using a datapack registry.
+A simple mod, provides functionality to customize default item components using datapack elements.
+
+Also provides functionality to make tweaks to enchantments without overwriting them entirely.
 
 Required on the server side only.
 
-The registry is reloadable using `/reload`.
+All functionality is reloadable using `/reload`.
 
 ***
 
-![Default Component Patches Registry](https://www.bisecthosting.com/images/CF/DEFAULTED/DEFAULTED_Documentation.webp)
+![Documentation](https://www.bisecthosting.com/images/CF/DEFAULTED/DEFAULTED_Documentation.webp)
 
 ***
 
-The JSON files for the defaulted:default_component_patches registry should be put in <namespace>/defaulted/default_component_patches/<path>.json.
+The JSON files for the defaulted:default_component_patches datapack element should be put in `<namespace>/defaulted/default_component_patches/<path>.json`.
+
+The JSON files for the defaulted:enchantment_patches datapack element should be put in `<namespace>/defaulted/enchantment_patches/<path>.json`.
 
 [![Atlas Docs Page](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/documentation/ghpages_64h.png)](https://atlas-modding.github.io/Atlas-Docs/defaulted/intro)
 
