@@ -7,7 +7,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.atlas.defaulted.extension.LateBoundIdMapper;
+import net.atlas.defaulted.utils.LateBoundIdMapper;
 import net.minecraft.resources.ResourceLocation;
 
 public interface WeaponLevelBasedValue {

@@ -1,4 +1,4 @@
-package net.atlas.defaulted.extension;
+package net.atlas.defaulted.utils;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;

@@ -59,7 +59,7 @@ public abstract class DefaultComponentPatchesManager extends SimpleJsonResourceR
     }
 
     public Codec<Optional<ItemPatches>> getCodec() {
-        return ItemPatches.DIRECT_CODEC.xmap(Optional::of, Optional::get);
+        return ItemPatches.CODEC.xmap(Optional::of, Optional::get);
     }
 
     public abstract RegistryOps<JsonElement> makeOps();

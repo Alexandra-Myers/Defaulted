@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.atlas.defaulted.component.PatchGenerator;
+import net.atlas.defaulted.enchantment.EnchantmentPatchGenerator;
 import net.atlas.defaulted.component.backport.Enchantable;
 import net.atlas.defaulted.component.backport.Repairable;
 import net.minecraft.core.Registry;
@@ -18,6 +19,10 @@ public interface DefaultedExpectPlatform {
     }
     @ExpectPlatform
     static Registry<DataComponentType<?>> getPhantomDataComponentTypeRegistry() {
+        throw new AssertionError();
+    }
+    @ExpectPlatform
+    static Registry<MapCodec<? extends EnchantmentPatchGenerator>> getEnchantmentPatchGenRegistry() {
         throw new AssertionError();
     }
     @ExpectPlatform

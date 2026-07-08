@@ -2,37 +2,30 @@ package net.atlas.defaulted.fabric;
 
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
-import net.atlas.defaulted.DefaultComponentPatchesManager;
 import net.atlas.defaulted.Defaulted;
+import net.atlas.defaulted.EnchantmentPatchesManager;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.Collection;
-import java.util.List;
-
-public class FabricDefaultComponentPatchesManager extends DefaultComponentPatchesManager implements IdentifiableResourceReloadListener {
+public class FabricEnchantmentPatchesManager extends EnchantmentPatchesManager implements IdentifiableResourceReloadListener {
 
     private final Provider registries;
 
-    public FabricDefaultComponentPatchesManager(Provider arg) {
+    public FabricEnchantmentPatchesManager(Provider arg) {
         super();
         this.registries = arg;
     }
 
     @Override
     public ResourceLocation getFabricId() {
-        return Defaulted.id("default_component_patches");
-    }
-
-    @Override
-    public Collection<ResourceLocation> getFabricDependencies() {
-        return List.of(Defaulted.id("enchantment_patches"));
+        return Defaulted.id("enchantment_patches");
     }
 
     @Override
     public RegistryOps<JsonElement> makeOps() {
         return registries.createSerializationContext(JsonOps.INSTANCE);
     }
+    
 }

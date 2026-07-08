@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 
 import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.component.PatchGenerator;
+import net.atlas.defaulted.enchantment.EnchantmentPatchGenerator;
 import net.atlas.defaulted.component.backport.Enchantable;
 import net.atlas.defaulted.component.backport.Repairable;
 import net.atlas.defaulted.neoforge.backport.BackportedComponents;
@@ -22,6 +23,9 @@ public class DefaultedExpectPlatformImpl {
     }
     public static Registry<DataComponentType<?>> getPhantomDataComponentTypeRegistry() {
         return BackportedComponents.PHANTOM_COMPONENT_TYPE_REG;
+    }
+    public static Registry<MapCodec<? extends EnchantmentPatchGenerator>> getEnchantmentPatchGenRegistry() {
+        return DefaultedRegistries.ENCHANTMENT_PATCH_GENERATOR_TYPE_REG;
     }
     public static boolean isModLoaded(String modId) {
         return ModList.get().isLoaded(modId);
