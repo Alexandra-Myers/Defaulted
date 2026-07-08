@@ -4,14 +4,9 @@ import com.mojang.serialization.MapCodec;
 
 import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.component.PatchGenerator;
-import net.atlas.defaulted.component.generators.ArmourStatsGenerator;
-import net.atlas.defaulted.component.generators.AttributeModifiersGenerator;
-import net.atlas.defaulted.component.generators.ChangeTierGenerator;
-import net.atlas.defaulted.component.generators.ConditionalPatch;
-import net.atlas.defaulted.component.generators.EditUseDurationGenerator;
-import net.atlas.defaulted.component.generators.EnchantmentModifierGenerator;
-import net.atlas.defaulted.component.generators.ModifyTierStatsGenerator;
-import net.atlas.defaulted.component.generators.WeaponStatsGenerator;
+import net.atlas.defaulted.component.generators.*;
+import net.atlas.defaulted.enchantment.EnchantmentPatchGenerator;
+import net.atlas.defaulted.enchantment.generators.AddEffectGenerator;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.minecraft.core.Registry;
@@ -22,8 +17,16 @@ public class DefaultedRegistries {
 		Defaulted.PATCH_GENERATOR_TYPE
 	).attribute(RegistryAttribute.OPTIONAL).buildAndRegister();
 
+    public static final Registry<MapCodec<? extends EnchantmentPatchGenerator>> ENCHANTMENT_PATCH_GENERATOR_TYPE_REG = FabricRegistryBuilder.createSimple(
+            Defaulted.ENCHANTMENT_PATCH_GENERATOR_TYPE
+    ).attribute(RegistryAttribute.OPTIONAL).buildAndRegister();
+
     public static void registerPatchGenerator(String path, MapCodec<? extends PatchGenerator> mapCodec) {
         Registry.register(PATCH_GENERATOR_TYPE_REG, ResourceKey.create(Defaulted.PATCH_GENERATOR_TYPE, Defaulted.id(path)), mapCodec);
+    }
+
+    public static void registerEnchantmentPatchGenerator(String path, MapCodec<? extends EnchantmentPatchGenerator> mapCodec) {
+        Registry.register(ENCHANTMENT_PATCH_GENERATOR_TYPE_REG, ResourceKey.create(Defaulted.ENCHANTMENT_PATCH_GENERATOR_TYPE, Defaulted.id(path)), mapCodec);
     }
 
     public static void init() {
@@ -35,5 +38,7 @@ public class DefaultedRegistries {
         registerPatchGenerator("modify_use_seconds", EditUseDurationGenerator.CODEC);
         registerPatchGenerator("tool_material", ChangeTierGenerator.CODEC);
         registerPatchGenerator("vanilla_weapon_stats", WeaponStatsGenerator.CODEC);
+        registerEnchantmentPatchGenerator("conditional", net.atlas.defaulted.enchantment.generators.ConditionalPatch.CODEC);
+        registerEnchantmentPatchGenerator("modify_list_effect", AddEffectGenerator.CODEC);
     }
 }

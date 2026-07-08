@@ -1,8 +1,10 @@
 package net.atlas.defaulted.neoforge;
 
+import net.atlas.defaulted.EnchantmentPatchesManager;
 import net.atlas.defaulted.neoforge.component.DefaultedRegistries;
 import net.atlas.defaulted.neoforge.event.DefaultedNeoForgeEventHandlers;
 import net.atlas.defaulted.networking.ClientboundDefaultComponentsSyncPacket;
+import net.atlas.defaulted.networking.ClientboundEnchantmentsSyncPacket;
 import net.minecraft.client.Minecraft;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -32,7 +34,18 @@ public final class DefaultedNeoForge {
                 ClientboundDefaultComponentsSyncPacket.CODEC,
                 DefaultedNeoForge::receiveDefaults
         );
+        registrar.playToClient(
+                ClientboundEnchantmentsSyncPacket.TYPE,
+                ClientboundEnchantmentsSyncPacket.CODEC,
+                DefaultedNeoForge::receiveEnchantments
+        );
     }
+
+    public static void receiveEnchantments(ClientboundEnchantmentsSyncPacket payload, IPayloadContext iPayloadContext) {
+        if (!Minecraft.getInstance().hasSingleplayerServer()) EnchantmentPatchesManager.loadClientCache(iPayloadContext.player().registryAccess(), payload.list());
+        else EnchantmentPatchesManager.setClientCache(iPayloadContext.player().registryAccess());
+    }
+
     public static void receiveDefaults(final ClientboundDefaultComponentsSyncPacket payload, final IPayloadContext payloadContext) {
         if (!Minecraft.getInstance().hasSingleplayerServer()) DefaultComponentPatchesManager.loadClientCache(payload.list());
         else DefaultComponentPatchesManager.setClientCache();
