@@ -9,6 +9,7 @@ import net.atlas.defaulted.component.generators.condition.PatchConditions;
 import net.atlas.defaulted.enchantment.EnchantmentBuilder;
 import net.atlas.defaulted.enchantment.EnchantmentPatchGenerator;
 import net.atlas.defaulted.enchantment.EnchantmentPatches;
+import net.atlas.defaulted.enchantment.value_provider.ValueProvider;
 import net.atlas.defaulted.mixin.MappedRegistryAccessor;
 import net.minecraft.core.*;
 import net.minecraft.core.component.DataComponentMap;
@@ -72,6 +73,8 @@ public final class Defaulted {
         baseTiers.put("diamond", ToolMaterial.DIAMOND);
         baseTiers.put("netherite", ToolMaterial.NETHERITE);
         PatchConditions.bootstrap();
+        net.atlas.defaulted.enchantment.generators.condition.PatchConditions.bootstrap();
+        ValueProvider.bootstrap();
         WeaponLevelBasedValue.bootstrap();
     }
     
