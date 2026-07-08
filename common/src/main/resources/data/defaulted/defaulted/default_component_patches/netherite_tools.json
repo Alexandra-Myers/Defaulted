@@ -1,15 +1,15 @@
 {
-    "tags": [
-        "defaulted:netherite_tools"
-    ],
-    "patch_generators": [
-        {
-            "generator": "defaulted:tool_material",
-            "weapon_level": 4,
-            "speed_level": 5,
-            "base_tier": "netherite"
-        }
-    ],
-    "patch": {},
-    "priority": 800
+  "elements": [
+    "#defaulted:netherite_tools"
+  ],
+  "patch_generators": [
+    {
+      "generator": "defaulted:tool_material",
+      "weapon_level": 4,
+      "speed_level": 5,
+      "base_tier": "netherite"
+    }
+  ],
+  "patch": {},
+  "priority": 800
 }

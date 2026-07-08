@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 
 import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.component.PatchGenerator;
+import net.atlas.defaulted.enchantment.EnchantmentPatchGenerator;
 import net.atlas.defaulted.neoforge.compat.OwoCompat;
 import net.atlas.defaulted.neoforge.component.DefaultedRegistries;
 import net.minecraft.core.Registry;
@@ -16,6 +17,9 @@ import net.neoforged.fml.loading.FMLEnvironment;
 public class DefaultedExpectPlatformImpl {
     public static Registry<MapCodec<? extends PatchGenerator>> getPatchGenRegistry() {
         return DefaultedRegistries.PATCH_GENERATOR_TYPE_REG;
+    }
+    public static Registry<MapCodec<? extends EnchantmentPatchGenerator>> getEnchantmentPatchGenRegistry() {
+        return DefaultedRegistries.ENCHANTMENT_PATCH_GENERATOR_TYPE_REG;
     }
     public static boolean isModLoaded(String modId) {
         return ModList.get().isLoaded(modId);

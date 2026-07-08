@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 
 import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.component.PatchGenerator;
+import net.atlas.defaulted.enchantment.EnchantmentPatchGenerator;
 import net.atlas.defaulted.fabric.compat.OwoCompat;
 import net.atlas.defaulted.fabric.component.DefaultedRegistries;
 import net.fabricmc.api.EnvType;
@@ -16,6 +17,9 @@ import net.minecraft.world.item.ItemStack;
 public class DefaultedExpectPlatformImpl {
     public static Registry<MapCodec<? extends PatchGenerator>> getPatchGenRegistry() {
         return DefaultedRegistries.PATCH_GENERATOR_TYPE_REG;
+    }
+    public static Registry<MapCodec<? extends EnchantmentPatchGenerator>> getEnchantmentPatchGenRegistry() {
+        return DefaultedRegistries.ENCHANTMENT_PATCH_GENERATOR_TYPE_REG;
     }
     public static boolean isModLoaded(String modId) {
         return FabricLoader.getInstance().isModLoaded(modId);
