@@ -6,15 +6,25 @@ import net.minecraft.core.component.PatchedDataComponentMap;
 import org.jetbrains.annotations.Nullable;
 
 public interface ItemExtensions {
-    <T> @Nullable T defaulted$get(DataComponentType<T> phantomType);
+    default <T> @Nullable T defaulted$get(DataComponentType<T> phantomType)  {
+        throw new IllegalStateException("Extension has not been applied");
+    }
 
-    <T> @Nullable T defaulted$getOrDefault(DataComponentType<T> phantomType, T defaultValue);
+    default <T> @Nullable T defaulted$getOrDefault(DataComponentType<T> phantomType, T defaultValue)  {
+        throw new IllegalStateException("Extension has not been applied");
+    }
 
-    boolean defaulted$has(DataComponentType<?> phantomType);
+    default boolean defaulted$has(DataComponentType<?> phantomType)  {
+        throw new IllegalStateException("Extension has not been applied");
+    }
 
-    <T> void defaulted$set(DataComponentType<T> phantomType, T phantom);
+    default <T> void defaulted$set(DataComponentType<T> phantomType, T phantom)  {
+        throw new IllegalStateException("Extension has not been applied");
+    }
 
-    PatchedDataComponentMap defaulted$getPhantomComponentMap();
+    default PatchedDataComponentMap defaulted$getPhantomComponentMap()  {
+        throw new IllegalStateException("Extension has not been applied");
+    }
 
     default ToolMaterialWrapper defaulted$getToolMaterial() {
       throw new IllegalStateException("Extension has not been applied");
