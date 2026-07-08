@@ -39,8 +39,8 @@ public final class DefaultedFabric implements ModInitializer {
         DefaultedRegistries.init();
         ResourceLocation defaultComponentPatches = Defaulted.id("default_component_patches");
         ResourceLocation enchantmentPatches = Defaulted.id("enchantment_patches");
-        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(defaultComponentPatches, wrap(defaultComponentPatches, DefaultComponentPatchesManager::new, enchantmentPatches));
-        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(enchantmentPatches, wrap(enchantmentPatches, EnchantmentPatchesManager::new));
+        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(defaultComponentPatches, FabricDefaultComponentPatchesManager::new);
+        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(enchantmentPatches, FabricEnchantmentPatchesManager::new);
         CommonLifecycleEvents.TAGS_LOADED.register((registries, client) -> {
             if (!client) {
                 DefaultComponentPatchesManager.getInstance().load();
