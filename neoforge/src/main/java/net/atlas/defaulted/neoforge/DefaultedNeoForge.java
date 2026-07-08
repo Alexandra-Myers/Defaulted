@@ -41,13 +41,13 @@ public final class DefaultedNeoForge {
         );
     }
 
-    public static void receiveEnchantments(ClientboundEnchantmentsSyncPacket payload, IPayloadContext iPayloadContext) {
-        if (!Minecraft.getInstance().hasSingleplayerServer()) EnchantmentPatchesManager.loadClientCache(iPayloadContext.player().registryAccess(), payload.list());
-        else EnchantmentPatchesManager.setClientCache(iPayloadContext.player().registryAccess());
+    public static void receiveEnchantments(ClientboundEnchantmentsSyncPacket payload, IPayloadContext payloadContext) {
+        if (!Minecraft.getInstance().hasSingleplayerServer()) EnchantmentPatchesManager.loadClientCache(payloadContext.player().registryAccess(), payload.list());
+        else EnchantmentPatchesManager.setClientCache(payloadContext.player().registryAccess());
     }
 
     public static void receiveDefaults(final ClientboundDefaultComponentsSyncPacket payload, final IPayloadContext payloadContext) {
         if (!Minecraft.getInstance().hasSingleplayerServer()) DefaultComponentPatchesManager.loadClientCache(payload.list());
-        else DefaultComponentPatchesManager.setClientCache();
+        else DefaultComponentPatchesManager.setClientCache(payloadContext.player().registryAccess());
     }
 }
