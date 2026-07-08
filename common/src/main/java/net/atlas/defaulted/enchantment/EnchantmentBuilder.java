@@ -1,6 +1,5 @@
 package net.atlas.defaulted.enchantment;
 
-import net.atlas.defaulted.mixin.DataComponentMapBuilderAccessor;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.component.*;
 import net.minecraft.network.chat.Component;
@@ -8,14 +7,14 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantment;
-import org.jspecify.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class EnchantmentBuilder implements DataComponentGetter {
+public class EnchantmentBuilder implements DataComponentHolder {
     Component description;
     HolderSet<Item> supportedItems;
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -27,7 +26,7 @@ public class EnchantmentBuilder implements DataComponentGetter {
     int anvilCost;
     List<EquipmentSlotGroup> slots;
     HolderSet<Enchantment> exclusiveSet;
-    DataComponentMap.Builder effects;
+    PatchedDataComponentMap effects;
     boolean getsChanged = false;
     public EnchantmentBuilder(Component description, Enchantment.EnchantmentDefinition definition, HolderSet<Enchantment> exclusiveSet, DataComponentMap effects) {
         this.description = description;
@@ -40,7 +39,7 @@ public class EnchantmentBuilder implements DataComponentGetter {
         this.anvilCost = definition.anvilCost();
         this.slots = new ArrayList<>(definition.slots());
         this.exclusiveSet = exclusiveSet;
-        this.effects = DataComponentMap.builder().addAll(effects);
+        this.effects = new PatchedDataComponentMap(effects);
     }
 
     public static EnchantmentBuilder of(Enchantment enchantment) {
@@ -108,10 +107,10 @@ public class EnchantmentBuilder implements DataComponentGetter {
         this.slots.addAll(added);
     }
 
-    public void applyEffects(DataComponentMap effects) {
+    public void applyEffects(DataComponentPatch effects) {
         if (effects.isEmpty()) return;
         setChanged();
-        this.effects.addAll(effects);
+        this.effects.applyPatch(effects);
     }
 
     public <T> void set(DataComponentType<T> type, T value) {
@@ -152,16 +151,11 @@ public class EnchantmentBuilder implements DataComponentGetter {
                         this.anvilCost,
                         Collections.unmodifiableList(this.slots)),
                 this.exclusiveSet,
-                this.effects.build());
+                this.effects);
     }
 
     @Override
-    public @Nullable <T> T get(DataComponentType<? extends T> type) {
-        //noinspection unchecked
-        return (T) ((DataComponentMapBuilderAccessor)this.effects).getMap().get(type);
-    }
-
-    public boolean has(DataComponentType<?> dataComponentType) {
-        return get(dataComponentType) != null;
+    public @NonNull DataComponentMap getComponents() {
+        return this.effects;
     }
 }

@@ -6,10 +6,12 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.atlas.defaulted.component.HeterogeneousHolderSetListCodec;
 import net.atlas.defaulted.enchantment.value_provider.ValueProvider;
+import net.atlas.defaulted.utils.DataComponentPatchUtils;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.component.*;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
@@ -18,7 +20,6 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 
 import java.util.Collections;
 import java.util.List;
@@ -62,7 +63,7 @@ public record EnchantmentPatches(List<HolderSet<Enchantment>> elements, Enchantm
                                        Optional<HolderSet<Enchantment>> exclusiveSet,
                                        List<EquipmentSlotGroup> addedSlots,
                                        List<EquipmentSlotGroup> removedSlots,
-                                       DataComponentMap effectsPatch) {
+                                       DataComponentPatch effectsPatch) {
         public static final MapCodec<EnchantmentOverrides> CODEC = RecordCodecBuilder.mapCodec(
                 i -> i.group(
                                 ComponentSerialization.CODEC.optionalFieldOf("description").forGetter(EnchantmentOverrides::description),
@@ -70,7 +71,7 @@ public record EnchantmentPatches(List<HolderSet<Enchantment>> elements, Enchantm
                                 RegistryCodecs.homogeneousList(Registries.ENCHANTMENT).optionalFieldOf("exclusive_set").forGetter(EnchantmentOverrides::exclusiveSet),
                                 EquipmentSlotGroup.CODEC.listOf().optionalFieldOf("added_slots", Collections.emptyList()).forGetter(EnchantmentOverrides::addedSlots),
                                 EquipmentSlotGroup.CODEC.listOf().optionalFieldOf("removed_slots", Collections.emptyList()).forGetter(EnchantmentOverrides::removedSlots),
-                                EnchantmentEffectComponents.CODEC.optionalFieldOf("patch", DataComponentMap.EMPTY).forGetter(EnchantmentOverrides::effectsPatch)
+                                DataComponentPatchUtils.codec(BuiltInRegistries.ENCHANTMENT_EFFECT_COMPONENT_TYPE).optionalFieldOf("patch", DataComponentPatch.EMPTY).forGetter(EnchantmentOverrides::effectsPatch)
                         )
                         .apply(i, EnchantmentOverrides::new)
         );
