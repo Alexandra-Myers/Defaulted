@@ -122,6 +122,7 @@ public class DefaultedCommand {
         PatchType<?, ?, ?, ?> patchType = PatchType.forId(id);
         if (patchType == null) throw ERROR_NON_EXISTING_BUILDER.create(id);
         patchType.removeBuilder(id);
+        emit(context, Collections.singletonList(discarded(id)));
         return 0;
     }
 
@@ -176,6 +177,10 @@ public class DefaultedCommand {
 
     private static Component started(Identifier id) {
         return Component.translatableWithFallback("commands.defaulted.started_patch_builder", "Patch builder started with id %s.", id.toString());
+    }
+
+    private static Component discarded(Identifier id) {
+        return Component.translatableWithFallback("commands.defaulted.discarded_patch_builder", "Patch builder with id %s discarded.", id.toString());
     }
 
     private static Component outputToFile(Identifier id, String path) {
