@@ -16,8 +16,9 @@ import net.minecraft.world.item.Item;
 public record ConditionalPatch(PatchCondition condition, List<PatchGenerator> generators, DataComponentPatch dataComponentPatch) implements PatchGenerator {
     public static final MapCodec<ConditionalPatch> CODEC = RecordCodecBuilder.mapCodec(instance ->
         instance.group(PatchConditions.MAP_CODEC.forGetter(ConditionalPatch::condition),
-            PatchGenerator.CODEC.listOf().optionalFieldOf("patch_generators", Collections.emptyList()).forGetter(ConditionalPatch::generators),
-            DataComponentPatch.CODEC.optionalFieldOf("patch", DataComponentPatch.EMPTY).forGetter(ConditionalPatch::dataComponentPatch)).apply(instance, ConditionalPatch::new));
+                        PatchGenerator.CODEC.listOf().optionalFieldOf("patch_generators", Collections.emptyList()).forGetter(ConditionalPatch::generators),
+                        DataComponentPatch.CODEC.optionalFieldOf("patch", DataComponentPatch.EMPTY).forGetter(ConditionalPatch::dataComponentPatch))
+                .apply(instance, ConditionalPatch::new));
 
     @Override
     public void patchDataComponentMap(Item item, PatchedDataComponentMap patchedDataComponentMap) {

@@ -8,11 +8,13 @@
   "mixins": [
     "ActualItemMixin",
     "DataComponentPatchAccessor",
+    "ItemAccessor",
     "ItemMixin",
     "ItemStackMixin",
     "MappedRegistryAccessor",
     "PatchedDataComponentMapAccessor",
-    "ReferenceHolderMixin"
+    "ReferenceHolderMixin",
+    "StructureTemplateManagerAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

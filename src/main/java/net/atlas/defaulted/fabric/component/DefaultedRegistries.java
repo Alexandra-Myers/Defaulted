@@ -1,24 +1,24 @@
 package net.atlas.defaulted.fabric.component;
 
 //? fabric {
-/*import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.MapCodec;
 
 import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.component.PatchGenerator;
 import net.atlas.defaulted.component.generators.*;
 import net.atlas.defaulted.enchantment.EnchantmentPatchGenerator;
 import net.atlas.defaulted.enchantment.generators.AddEffectGenerator;
-import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
+import net.atlas.defaulted.fabric.util.FabricUtils;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 
 public class DefaultedRegistries {
-	public static final Registry<MapCodec<? extends PatchGenerator>> PATCH_GENERATOR_TYPE_REG = FabricRegistryBuilder.create(
+	public static final Registry<MapCodec<? extends PatchGenerator>> PATCH_GENERATOR_TYPE_REG = FabricUtils.createRegistry(
 		Defaulted.PATCH_GENERATOR_TYPE
 	).attribute(RegistryAttribute.OPTIONAL).buildAndRegister();
 
-    public static final Registry<MapCodec<? extends EnchantmentPatchGenerator>> ENCHANTMENT_PATCH_GENERATOR_TYPE_REG = FabricRegistryBuilder.create(
+    public static final Registry<MapCodec<? extends EnchantmentPatchGenerator>> ENCHANTMENT_PATCH_GENERATOR_TYPE_REG = FabricUtils.createRegistry(
             Defaulted.ENCHANTMENT_PATCH_GENERATOR_TYPE
     ).attribute(RegistryAttribute.OPTIONAL).buildAndRegister();
 
@@ -44,4 +44,4 @@ public class DefaultedRegistries {
         registerEnchantmentPatchGenerator("modify_list_effect", AddEffectGenerator.CODEC);
     }
 }
-*///?}
+//?}

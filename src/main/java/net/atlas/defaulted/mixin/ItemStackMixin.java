@@ -4,17 +4,24 @@ import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.DefaultedPlatform;
 import net.atlas.defaulted.compat.OwoCompat;
 import net.atlas.defaulted.extension.ItemStackExtensions;
-import net.minecraft.core.Holder;
+//? >=26.1 {
+/*import net.minecraft.core.Holder;
+*///?}
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.item.Item;
+//? >=26.1 {
+/*import net.minecraft.world.item.Item;
+*///?}
 import net.minecraft.world.item.ItemStack;
 
 import java.lang.reflect.Field;
 
+//? <26.1 {
+import net.minecraft.world.level.ItemLike;
+//?}
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
@@ -31,7 +38,7 @@ public abstract class ItemStackMixin implements ItemStackExtensions {
     @Mutable
     @Shadow
     @Final
-    private PatchedDataComponentMap components;
+    PatchedDataComponentMap components;
 
     @Shadow public abstract DataComponentPatch getComponentsPatch();
 
@@ -72,8 +79,13 @@ public abstract class ItemStackMixin implements ItemStackExtensions {
         };
     }
 
-    @Inject(method = "<init>(Lnet/minecraft/core/Holder;ILnet/minecraft/core/component/PatchedDataComponentMap;)V", at = @At("RETURN"))
+    //? >=26.1 {
+    /*@Inject(method = "<init>(Lnet/minecraft/core/Holder;ILnet/minecraft/core/component/PatchedDataComponentMap;)V", at = @At("RETURN"))
     private void appendStack(Holder<Item> itemHolder, int count, PatchedDataComponentMap components, CallbackInfo ci) {
+    *///?} <26.1 {
+    @Inject(method = "<init>(Lnet/minecraft/world/level/ItemLike;ILnet/minecraft/core/component/PatchedDataComponentMap;)V", at = @At("RETURN"))
+    public void appendStack(ItemLike itemLike, int count, PatchedDataComponentMap patchedDataComponentMap, CallbackInfo ci) {
+    //?}
         Defaulted.ALL_STACKS.add(ItemStack.class.cast(this));
     }
 

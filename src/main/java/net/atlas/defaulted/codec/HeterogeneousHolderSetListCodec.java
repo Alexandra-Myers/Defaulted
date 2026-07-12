@@ -1,4 +1,4 @@
-package net.atlas.defaulted.component;
+package net.atlas.defaulted.codec;
 
 import java.util.ArrayList;
 import java.util.List;

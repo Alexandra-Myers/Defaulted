@@ -1,4 +1,4 @@
-package net.atlas.defaulted.component;
+package net.atlas.defaulted.codec;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;

@@ -10,6 +10,9 @@ import net.atlas.defaulted.enchantment.EnchantmentBuilder;
 import net.atlas.defaulted.enchantment.EnchantmentPatchGenerator;
 import net.atlas.defaulted.enchantment.EnchantmentPatches;
 import net.atlas.defaulted.enchantment.value_provider.ValueProvider;
+//? <26.1 {
+import net.atlas.defaulted.mixin.ItemAccessor;
+//?}
 import net.atlas.defaulted.mixin.MappedRegistryAccessor;
 import net.minecraft.core.*;
 import net.minecraft.core.component.DataComponentMap;
@@ -39,6 +42,9 @@ public final class Defaulted {
     public static boolean hasOwo = false;
     public static final BiMap<String, ToolMaterial> baseTiers = HashBiMap.create();
     public static final ToolMaterialWrapper DEFAULT_WRAPPER = new ToolMaterialWrapper(ToolMaterial.DIAMOND, 3, 3);
+    //? <26.1 {
+    public static final Map<Holder<Item>, DataComponentMap> originalComponents = new HashMap<>();
+    //?}
     public static final String MOD_ID = "defaulted";
     public static final Logger LOGGER = LogManager.getLogger("defaulted");
     public static final Map<ResourceKey<Enchantment>, Enchantment> ORIGINAL_ENCHANTMENTS = new HashMap<>();
@@ -93,12 +99,26 @@ public final class Defaulted {
     @SuppressWarnings("deprecation")
     public static void patchItemComponents(Iterable<ItemPatches> reg) {
         for (Item item : BuiltInRegistries.ITEM) {
+            //? <26.1 {
+            Holder<Item> itemHolder = item.builtInRegistryHolder();
+            //?}
             DataComponentMap originalPrototype = item.components();
+            //? <26.1 {
+            if (Defaulted.originalComponents.containsKey(itemHolder)) {
+                originalPrototype = Defaulted.originalComponents.get(itemHolder);
+                ((ItemAccessor) item).setComponents(originalPrototype);
+            }
+            else Defaulted.originalComponents.put(itemHolder, originalPrototype);
+            //?}
             PatchedDataComponentMap newMap = new PatchedDataComponentMap(originalPrototype);
             reg.forEach(itemPatches -> itemPatches.apply(item, newMap));
             reg.forEach(itemPatches -> itemPatches.applyGenerators(item, newMap));
             if (newMap.asPatch().isEmpty()) continue;
-            item.builtInRegistryHolder().bindComponents(newMap);
+            //? >=26.1 {
+            /*item.builtInRegistryHolder().bindComponents(newMap);
+            *///?} <26.1 {
+            ((ItemAccessor) item).setComponents(newMap);
+            //?}
         }
         synchronized (ALL_STACKS) {
 			ALL_STACKS.forEach(ItemStack::defaulted$updatePrototype);

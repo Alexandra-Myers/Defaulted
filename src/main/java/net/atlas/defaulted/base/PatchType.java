@@ -3,7 +3,7 @@ package net.atlas.defaulted.base;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Codec;
-import net.atlas.defaulted.component.HeterogeneousHolderSetListCodec;
+import net.atlas.defaulted.codec.HeterogeneousHolderSetListCodec;
 import net.atlas.defaulted.component.ItemPatchesBuilder;
 import net.atlas.defaulted.component.PatchGenerator;
 import net.atlas.defaulted.enchantment.Cost;

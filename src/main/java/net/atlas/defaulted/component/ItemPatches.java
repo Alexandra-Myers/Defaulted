@@ -12,6 +12,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.base.BasePatches;
+import net.atlas.defaulted.codec.HeterogeneousHolderSetListCodec;
+import net.atlas.defaulted.codec.TagOnlyHolderSetCodec;
 import net.minecraft.core.*;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.PatchedDataComponentMap;

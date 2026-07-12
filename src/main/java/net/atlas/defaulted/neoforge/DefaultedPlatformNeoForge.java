@@ -1,7 +1,7 @@
 package net.atlas.defaulted.neoforge;
 
 //? neoforge {
-import com.mojang.serialization.MapCodec;
+/*import com.mojang.serialization.MapCodec;
 
 import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.DefaultedPlatform;
@@ -24,4 +24,4 @@ public class DefaultedPlatformNeoForge implements DefaultedPlatform {
         return Defaulted.isOnClientNetworkingThread();
     }
 }
-//?}
+*///?}

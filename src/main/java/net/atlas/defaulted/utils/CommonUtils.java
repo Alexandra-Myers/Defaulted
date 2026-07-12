@@ -7,15 +7,33 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
+import net.atlas.defaulted.base.BasePatches;
+//? <26.1 {
+import net.atlas.defaulted.mixin.StructureTemplateManagerAccessor;
+//?}
+//? ==1.21.11 || ==1.21.1 {
+import net.mehvahdjukaar.codecui.SchemaCodec;
+//?}
 import net.minecraft.ChatFormatting;
+//? <26.1 {
+import net.minecraft.IdentifierException;
+//?}
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.FileToIdConverter;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.RegistryOps;
+import net.minecraft.server.level.ServerLevel;
+//? <26.1 {
+import net.minecraft.util.FileUtil;
 
+import java.nio.file.InvalidPathException;
+//?}
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,6 +45,13 @@ public class CommonUtils {
             .oldTag(left -> left ? "§c" : "§r§4")
             .newTag(left -> left ? "§a" : "§r§2")
             .build();
+    public static <A> Codec<A> wrap(Codec<A> codec) {
+        //? ==1.21.11 || ==1.21.1 {
+        return SchemaCodec.wrap(codec);
+        //?} else {
+        /*return codec;
+        *///?}
+    }
     public static <A> A parse(StringReader reader, RegistryAccess registryAccess, Codec<A> codec) throws CommandSyntaxException {
         DynamicOps<Tag> ops = RegistryOps.create(NbtOps.INSTANCE, registryAccess);
         return codec.parse(ops, TagParser.create(ops).parseAsArgument(reader))
@@ -66,4 +91,31 @@ public class CommonUtils {
             case EQUAL -> diff.add(Component.literal("§7" + diffRow.getNewLine()));
         }
     }
+
+    public static Path createAndValidatePath(Identifier id, BasePatches<?, ?> patches, ServerLevel level) {
+        //? >=26.1 {
+        /*return level.getStructureManager().worldTemplates().createAndValidatePathToStructure(id, FileToIdConverter.registry(patches.key()));
+        *///?} <26.1 {
+        return createAndValidatePathToResource(((StructureTemplateManagerAccessor)level.getStructureManager()).getGeneratedDir(), id, FileToIdConverter.registry(patches.key()));
+        //?}
+    }
+
+    //? <26.1 {
+    public static Path createAndValidatePathToResource(Path generatedDir, Identifier id, FileToIdConverter converter) {
+        if (id.getPath().contains("//")) {
+            throw new IdentifierException("Invalid resource path: " + id);
+        } else {
+            try {
+                Path resource = generatedDir.resolve(id.getNamespace() + converter.idToFile(id).getPath());
+                if (resource.startsWith(generatedDir) && FileUtil.isPathNormalized(resource) && FileUtil.isPathPortable(resource)) {
+                    return resource;
+                } else {
+                    throw new IdentifierException("Invalid resource path: " + resource);
+                }
+            } catch (InvalidPathException invalidPathException) {
+                throw new IdentifierException("Invalid resource path: " + id, invalidPathException);
+            }
+        }
+    }
+    //?}
 }

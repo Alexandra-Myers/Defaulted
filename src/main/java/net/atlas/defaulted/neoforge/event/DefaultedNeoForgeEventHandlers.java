@@ -1,7 +1,7 @@
 package net.atlas.defaulted.neoforge.event;
 
 //? neoforge {
-import net.atlas.defaulted.Defaulted;
+/*import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.DefaultComponentPatchesManager;
 import net.atlas.defaulted.EnchantmentPatchesManager;
 import net.atlas.defaulted.command.DefaultedCommand;
@@ -47,4 +47,4 @@ public class DefaultedNeoForgeEventHandlers {
         EnchantmentPatchesManager.getInstance().load(event.getServer().registryAccess());
     }
 }
-//?}
+*///?}

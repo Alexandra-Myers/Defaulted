@@ -1,11 +1,14 @@
 package net.atlas.defaulted;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+//? <1.21.11 && fabric {
+/*import net.atlas.defaulted.Defaulted;
+*///?}
 import net.atlas.defaulted.component.ItemPatches;
+//? <1.21.11 && fabric {
+/*import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
+*///?}
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.Identifier;
@@ -14,7 +17,11 @@ import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import org.jetbrains.annotations.Nullable;
 
+//? <1.21.11 && fabric {
+/*public class DefaultComponentPatchesManager extends SimpleJsonResourceReloadListener<ItemPatches> implements IdentifiableResourceReloadListener {
+*///?} else {
 public class DefaultComponentPatchesManager extends SimpleJsonResourceReloadListener<ItemPatches> {
+//?}
     public static List<ItemPatches> CLIENT_CACHED = null;
     private static DefaultComponentPatchesManager INSTANCE;
     private List<ItemPatches> cached = null;
@@ -81,7 +88,19 @@ public class DefaultComponentPatchesManager extends SimpleJsonResourceReloadList
     public static void setClientCache(RegistryAccess registryAccess) {
         DefaultComponentPatchesManager.CLIENT_CACHED = getCached(registryAccess);
     }
-    
+
+    //? <1.21.11 && fabric {
+    /*@Override
+    public Identifier getFabricId() {
+        return Defaulted.id("default_component_patches");
+    }
+
+    @Override
+    public Collection<Identifier> getFabricDependencies() {
+        return List.of(Defaulted.id("enchantment_patches"));
+    }
+    *///?}
+
     public record ItemPatchesEntry(Identifier id, ItemPatches itemPatches) implements Comparable<ItemPatchesEntry> {
         @Override
         public int compareTo(ItemPatchesEntry other) {

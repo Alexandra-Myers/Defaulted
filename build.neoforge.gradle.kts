@@ -184,7 +184,7 @@ dependencies {
         jarJar("net.mehvahdjukaar:codecui-neoforge:${property("deps.codec_ui_version")}")
     }
     if (hasProperty("deps.nautilus_studio_version"))
-        implementation("net.mehvahdjukaar:nautilus_studio-neoforge:${property("deps.nautilus_studio_version")}")
+        compileOnly("net.mehvahdjukaar:nautilus_studio-neoforge:${property("deps.nautilus_studio_version")}")
 }
 
 

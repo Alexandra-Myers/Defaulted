@@ -9,7 +9,7 @@ import org.jspecify.annotations.NonNull;
 import java.util.Optional;
 
 public record MathFunction(ValueProvider left, Optional<ValueProvider> right, Operation operation) implements ValueProvider {
-    public static final MapCodec<MathFunction> CODEC = Operation.CODEC.fieldOf("operation").dispatchMap(MathFunction::operation, Operation::codec);
+    public static final MapCodec<MathFunction> CODEC = Operation.CODEC.dispatchMap("operation", MathFunction::operation, Operation::codec);
     @Override
     public double extractValue(Optional<Integer> input) {
         return this.operation().process(this.left().extractValue(input), this.right().map(valueProvider -> valueProvider.extractValue(input)).orElse(0D));

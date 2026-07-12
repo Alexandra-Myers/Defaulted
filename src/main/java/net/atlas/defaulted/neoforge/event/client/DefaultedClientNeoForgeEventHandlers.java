@@ -1,7 +1,7 @@
 package net.atlas.defaulted.neoforge.event.client;
 
 //? neoforge {
-import net.atlas.defaulted.DefaultComponentPatchesManager;
+/*import net.atlas.defaulted.DefaultComponentPatchesManager;
 import net.atlas.defaulted.EnchantmentPatchesManager;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -16,4 +16,4 @@ public class DefaultedClientNeoForgeEventHandlers {
         EnchantmentPatchesManager.clearClient();
     }
 }
-//?}
+*///?}

@@ -17,17 +17,16 @@ import net.atlas.defaulted.base.PatchType;
 import net.atlas.defaulted.command.argument.PatchTypeArgument;
 import net.atlas.defaulted.mixin.PatchedDataComponentMapAccessor;
 import net.atlas.defaulted.utils.CommonUtils;
+import net.atlas.defaulted.utils.IDUtils;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.arguments.IdentifierArgument;
 import net.minecraft.commands.arguments.ResourceArgument;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.permissions.Permissions;
 import net.minecraft.util.FileUtil;
@@ -68,33 +67,33 @@ public class DefaultedCommand {
                                         .then(Commands.literal("diff").executes(DefaultedCommand::readEnchantmentDiff)))))
                 .then(Commands.literal("generate")
                         .then(Commands.literal("build")
-                                .then(Commands.argument("id", IdentifierArgument.id())
+                                .then(Commands.argument("id", IDUtils.id())
                                         .suggests(PatchTypeArgument::suggestionsExistingBuilder)
                                         .executes(DefaultedCommand::buildPatch)))
                         .then(Commands.literal("discard")
-                                .then(Commands.argument("id", IdentifierArgument.id())
+                                .then(Commands.argument("id", IDUtils.id())
                                         .suggests(PatchTypeArgument::suggestionsExistingBuilder)
                                         .executes(DefaultedCommand::discardPatch)))
                         .then(Commands.literal("start")
                                 .then(Commands.argument("type", StringArgumentType.word())
                                         .suggests(PatchTypeArgument::suggestions)
-                                        .then(Commands.argument("id", IdentifierArgument.id())
+                                        .then(Commands.argument("id", IDUtils.id())
                                                 .executes(DefaultedCommand::createUniversal)
                                                 .then(Commands.argument("elements", StringArgumentType.greedyString())
                                                         .executes(DefaultedCommand::create)))))
                         .then(Commands.literal("set")
-                                .then(Commands.argument("id", IdentifierArgument.id())
+                                .then(Commands.argument("id", IDUtils.id())
                                         .suggests(PatchTypeArgument::suggestionsExistingBuilder)
                                         .then(Commands.argument("to_write", StringArgumentType.word())
                                                 .suggests(((context1, builder) -> PatchTypeArgument.suggestionsEditCodec(context1, builder, "id")))
                                                 .then(Commands.argument("value", StringArgumentType.greedyString()).executes(DefaultedCommand::setValue)))))
                         .then(Commands.literal("append-patch-generator")
-                                .then(Commands.argument("id", IdentifierArgument.id())
+                                .then(Commands.argument("id", IDUtils.id())
                                         .suggests(PatchTypeArgument::suggestionsExistingBuilder)
                                         .then(Commands.argument("generator", StringArgumentType.greedyString())
                                                 .executes(DefaultedCommand::appendPatchGenerator))))
                         .then(Commands.literal("priority")
-                                .then(Commands.argument("id", IdentifierArgument.id())
+                                .then(Commands.argument("id", IDUtils.id())
                                         .suggests(PatchTypeArgument::suggestionsExistingBuilder)
                                         .then(Commands.argument("priority", IntegerArgumentType.integer())
                                                 .executes(DefaultedCommand::priority))))));
@@ -102,7 +101,7 @@ public class DefaultedCommand {
 
     private static int createUniversal(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         PatchType<?, ?, ?, ?> patchType = PatchTypeArgument.getPatchType(context, "type");
-        Identifier id = IdentifierArgument.getId(context, "id");
+        Identifier id = IDUtils.getId(context, "id");
         if (!patchType.addBuilder(id)) throw ERROR_EXISTING_BUILDER.create(id);
         emit(context, Collections.singletonList(started(id)));
         return 0;
@@ -110,7 +109,7 @@ public class DefaultedCommand {
 
     private static int create(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         PatchType<?, ?, ?, ?> patchType = PatchTypeArgument.getPatchType(context, "type");
-        Identifier id = IdentifierArgument.getId(context, "id");
+        Identifier id = IDUtils.getId(context, "id");
         String elements = StringArgumentType.getString(context, "elements");
         if (!patchType.addBuilder(id, new StringReader(elements), context.getSource().registryAccess())) throw ERROR_EXISTING_BUILDER.create(id);
         emit(context, Collections.singletonList(started(id)));
@@ -118,7 +117,7 @@ public class DefaultedCommand {
     }
 
     private static int discardPatch(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        Identifier id = IdentifierArgument.getId(context, "id");
+        Identifier id = IDUtils.getId(context, "id");
         PatchType<?, ?, ?, ?> patchType = PatchType.forId(id);
         if (patchType == null) throw ERROR_NON_EXISTING_BUILDER.create(id);
         patchType.removeBuilder(id);
@@ -127,12 +126,12 @@ public class DefaultedCommand {
     }
 
     private static int buildPatch(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        Identifier id = IdentifierArgument.getId(context, "id");
+        Identifier id = IDUtils.getId(context, "id");
         PatchType<?, ?, ?, ?> patchType = PatchType.forId(id);
         if (patchType == null) throw ERROR_NON_EXISTING_BUILDER.create(id);
         BasePatches<?, ?> patches = patchType.get(id).build();
         JsonElement root = patches.save(context.getSource().registryAccess());
-        Path file = context.getSource().getLevel().getStructureManager().worldTemplates().createAndValidatePathToStructure(id, FileToIdConverter.registry(patches.key()));
+        Path file = CommonUtils.createAndValidatePath(id, patches, context.getSource().getLevel());
         try {
             save(file, root);
         } catch (IOException e) {
@@ -155,7 +154,7 @@ public class DefaultedCommand {
     }
 
     private static int appendPatchGenerator(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        Identifier id = IdentifierArgument.getId(context, "id");
+        Identifier id = IDUtils.getId(context, "id");
         PatchType<?, ?, ?, ?> patchType = PatchType.forId(id);
         if (patchType == null) throw ERROR_NON_EXISTING_BUILDER.create(id);
         BasePatchesBuilder<?, ?, ?, ?> patches = patchType.get(id);
@@ -166,7 +165,7 @@ public class DefaultedCommand {
     }
 
     private static int setValue(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        Identifier id = IdentifierArgument.getId(context, "id");
+        Identifier id = IDUtils.getId(context, "id");
         PatchType<?, ?, ?, ?> patchType = PatchType.forId(id);
         if (patchType == null) throw ERROR_NON_EXISTING_BUILDER.create(id);
         String value = StringArgumentType.getString(context, "value");
@@ -176,7 +175,7 @@ public class DefaultedCommand {
     }
 
     private static int priority(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        Identifier id = IdentifierArgument.getId(context, "id");
+        Identifier id = IDUtils.getId(context, "id");
         PatchType<?, ?, ?, ?> patchType = PatchType.forId(id);
         if (patchType == null) throw ERROR_NON_EXISTING_BUILDER.create(id);
         BasePatchesBuilder<?, ?, ?, ?> patches = patchType.get(id);
@@ -207,9 +206,17 @@ public class DefaultedCommand {
     }
 
     private static DataComponentMap prototype(Holder.Reference<Item> reference) {
-        return (reference.components() instanceof PatchedDataComponentMap patchedDataComponentMap ?
+        return (components(reference) instanceof PatchedDataComponentMap patchedDataComponentMap ?
                 PatchedDataComponentMapAccessor.class.cast(patchedDataComponentMap).getPrototype() :
-                reference.components());
+                components(reference));
+    }
+
+    private static DataComponentMap components(Holder.Reference<Item> reference) {
+        //? >=26.1 {
+        /*return reference.components();
+        *///?} <26.1 {
+        return reference.value().components();
+        //?}
     }
 
     private static int readItemPrototype(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
@@ -220,14 +227,14 @@ public class DefaultedCommand {
 
     private static int readItemPatch(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         Holder.Reference<Item> reference = ResourceArgument.getResource(context, "item", Registries.ITEM);
-        emit(context, CommonUtils.processTag(PatchTypeArgument.getReadValue(context, "to_read", PatchType.ITEM, reference.components())));
+        emit(context, CommonUtils.processTag(PatchTypeArgument.getReadValue(context, "to_read", PatchType.ITEM, components(reference))));
         return 0;
     }
 
     private static int readItemDiff(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         Holder.Reference<Item> reference = ResourceArgument.getResource(context, "item", Registries.ITEM);
         String prototype = PatchTypeArgument.getReadValue(context, "to_read", PatchType.ITEM, prototype(reference));
-        String patched = PatchTypeArgument.getReadValue(context, "to_read", PatchType.ITEM, reference.components());
+        String patched = PatchTypeArgument.getReadValue(context, "to_read", PatchType.ITEM, components(reference));
         emit(context, CommonUtils.unifiedDiff(prototype, patched));
         return 0;
     }

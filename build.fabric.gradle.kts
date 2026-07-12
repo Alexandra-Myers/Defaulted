@@ -154,8 +154,10 @@ dependencies {
         modImplementation("net.mehvahdjukaar:codecui-fabric:${property("deps.codec_ui_version")}")
         include("net.mehvahdjukaar:codecui-fabric:${property("deps.codec_ui_version")}")
     }
-    if (hasProperty("deps.nautilus_studio_version"))
+    if (hasProperty("deps.nautilus_studio_version")) {
+        modImplementation("com.terraformersmc:modmenu:${property("deps.modmenu_version")}")
         modImplementation("net.mehvahdjukaar:nautilus_studio-fabric:${property("deps.nautilus_studio_version")}")
+    }
 }
 
 
@@ -207,6 +209,10 @@ java {
 stonecutter {
     val (version, loader) = current.project.split('-', limit = 2)
     properties.tags(version, loader)
+
+    replacements.string(current.parsed >= "26.1") {
+        replace("PayloadTypeRegistry.playS2C()", "PayloadTypeRegistry.clientboundPlay()")
+    }
 
     replacements.string(current.parsed >= "1.21.11") {
         replace("ResourceLocation", "Identifier")

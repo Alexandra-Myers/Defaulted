@@ -1,7 +1,7 @@
 package net.atlas.defaulted.fabric;
 
 //? fabric {
-/*import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.MapCodec;
 
 import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.DefaultedPlatform;
@@ -20,10 +20,9 @@ public class DefaultedPlatformFabric implements DefaultedPlatform {
     public Registry<MapCodec<? extends EnchantmentPatchGenerator>> getEnchantmentPatchGenRegistry() {
         return DefaultedRegistries.ENCHANTMENT_PATCH_GENERATOR_TYPE_REG;
     }
-
     public boolean isOnClientNetworkingThread() {
         if (FabricLoader.getInstance().getEnvironmentType() != EnvType.CLIENT) return false;
         return Defaulted.isOnClientNetworkingThread();
     }
 }
-*///?}
+//?}

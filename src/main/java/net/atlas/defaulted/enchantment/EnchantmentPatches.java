@@ -7,7 +7,7 @@ import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.base.BasePatches;
-import net.atlas.defaulted.component.HeterogeneousHolderSetListCodec;
+import net.atlas.defaulted.codec.HeterogeneousHolderSetListCodec;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
