@@ -12,6 +12,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
+import org.jetbrains.annotations.Nullable;
 
 public class DefaultComponentPatchesManager extends SimpleJsonResourceReloadListener<ItemPatches> {
     public static List<ItemPatches> CLIENT_CACHED = null;
@@ -47,6 +48,11 @@ public class DefaultComponentPatchesManager extends SimpleJsonResourceReloadList
     public static List<ItemPatches> getCached(RegistryAccess registryAccess) {
         if (INSTANCE == null) return null;
         INSTANCE.load(registryAccess);
+        return getCached();
+    }
+
+    public static @Nullable List<ItemPatches> getCached() {
+        if (INSTANCE == null) return null;
         return INSTANCE.cached;
     }
 

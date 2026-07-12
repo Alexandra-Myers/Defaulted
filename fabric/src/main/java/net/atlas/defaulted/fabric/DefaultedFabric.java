@@ -1,6 +1,7 @@
 package net.atlas.defaulted.fabric;
 
 import net.atlas.defaulted.EnchantmentPatchesManager;
+import net.atlas.defaulted.command.DefaultedCommand;
 import net.atlas.defaulted.fabric.component.DefaultedRegistries;
 import net.atlas.defaulted.networking.ClientboundDefaultComponentsSyncPacket;
 import net.atlas.defaulted.networking.ClientboundEnchantmentsSyncPacket;
@@ -8,6 +9,7 @@ import net.fabricmc.api.ModInitializer;
 
 import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.DefaultComponentPatchesManager;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -48,5 +50,6 @@ public final class DefaultedFabric implements ModInitializer {
             if (ServerPlayNetworking.canSend(player, ClientboundDefaultComponentsSyncPacket.TYPE))
                 ServerPlayNetworking.send(player, new ClientboundDefaultComponentsSyncPacket(new ArrayList<>(DefaultComponentPatchesManager.getCached(player.registryAccess()))));
         });
+        CommandRegistrationCallback.EVENT.register((dispatcher, commandBuildContext, environment) -> DefaultedCommand.register(dispatcher, commandBuildContext));
     }
 }

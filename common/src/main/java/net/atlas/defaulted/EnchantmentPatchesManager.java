@@ -7,6 +7,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -47,6 +48,11 @@ public class EnchantmentPatchesManager extends SimpleJsonResourceReloadListener<
     public static List<EnchantmentPatches> getCached(RegistryAccess registryAccess) {
         if (INSTANCE == null) return null;
         INSTANCE.load(registryAccess);
+        return getCached();
+    }
+
+    public static @Nullable List<EnchantmentPatches> getCached() {
+        if (INSTANCE == null) return null;
         return INSTANCE.cached;
     }
 

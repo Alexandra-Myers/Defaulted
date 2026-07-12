@@ -150,4 +150,8 @@ public final class Defaulted {
             accessor.getToId().put(originalAndNew.getSecond(), id);
         });
     }
+
+    public static Enchantment getOriginalEnchantment(Holder.Reference<Enchantment> holder) {
+        return ORIGINAL_ENCHANTMENTS.getOrDefault(holder.key(), holder.value());
+    }
 }

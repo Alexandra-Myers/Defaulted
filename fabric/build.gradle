@@ -28,6 +28,7 @@ dependencies {
     // Fabric API. This is technically optional, but you probably want it anyway.
     implementation "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_api_version"
     compileOnly "io.wispforest:owo-lib:$project.owo_version"
+    shadow(implementation("io.github.java-diff-utils:java-diff-utils:$rootProject.java_diff_version"))
 
     common(project(path: ":common")) { transitive false }
     shadowCommon(project(path: ':common', configuration: 'transformProductionFabric'))  { transitive false }

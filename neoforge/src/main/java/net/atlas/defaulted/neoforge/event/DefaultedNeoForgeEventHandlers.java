@@ -3,18 +3,24 @@ package net.atlas.defaulted.neoforge.event;
 import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.DefaultComponentPatchesManager;
 import net.atlas.defaulted.EnchantmentPatchesManager;
+import net.atlas.defaulted.command.DefaultedCommand;
 import net.atlas.defaulted.networking.ClientboundDefaultComponentsSyncPacket;
 import net.atlas.defaulted.networking.ClientboundEnchantmentsSyncPacket;
 import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 
 public class DefaultedNeoForgeEventHandlers {
+    @SubscribeEvent
+    public static void onCommandRegistration(RegisterCommandsEvent event) {
+        DefaultedCommand.register(event.getDispatcher(), event.getBuildContext());
+    }
     @SubscribeEvent
     public static void onDatapackSync(final OnDatapackSyncEvent onDatapackSyncEvent) {
         ClientboundDefaultComponentsSyncPacket[] defaultComponentsSyncPacket = {null};
