@@ -30,12 +30,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.permissions.Permissions;
+import net.minecraft.util.FileUtil;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantment;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 
@@ -132,15 +132,26 @@ public class DefaultedCommand {
         if (patchType == null) throw ERROR_NON_EXISTING_BUILDER.create(id);
         BasePatches<?, ?> patches = patchType.get(id).build();
         JsonElement root = patches.save(context.getSource().registryAccess());
-        File outputFile = context.getSource().getLevel().getStructureManager().worldTemplates().createAndValidatePathToStructure(id, FileToIdConverter.registry(patches.key())).toFile();
+        Path file = context.getSource().getLevel().getStructureManager().worldTemplates().createAndValidatePathToStructure(id, FileToIdConverter.registry(patches.key()));
         try {
-            outputFile.createNewFile();
-            GSON.toJson(root, new PrintWriter(outputFile));
+            save(file, root);
         } catch (IOException e) {
             throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherParseException().createWithContext(new StringReader(""), e.getMessage());
         }
-        emit(context, Collections.singletonList(outputToFile(id, outputFile.getPath())));
+        patchType.removeBuilder(id);
+        emit(context, Collections.singletonList(outputToFile(id, file.toString())));
         return 0;
+    }
+
+    public static void save(final Path file, final JsonElement root) throws IOException {
+        Path parent = file.getParent();
+        if (parent == null) return;
+        FileUtil.createDirectoriesSafe(parent);
+        File outputFile = file.toFile();
+        outputFile.createNewFile();
+        try (PrintWriter writer = new PrintWriter(outputFile)) {
+            GSON.toJson(root, writer);
+        }
     }
 
     private static int appendPatchGenerator(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
