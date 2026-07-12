@@ -43,10 +43,10 @@ import java.util.List;
 public class DefaultedCommand {
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     public static final DynamicCommandExceptionType ERROR_NON_EXISTING_BUILDER = new DynamicCommandExceptionType(
-            (id) -> Component.translatableWithFallback("argument.defaulted.non_existing_builder", "Patch builder %s does not exist!", id)
+            (id) -> Component.translatableWithFallback("argument.defaulted.non_existing_builder", "Patch builder %s does not exist!", id.toString())
     );
     public static final DynamicCommandExceptionType ERROR_EXISTING_BUILDER = new DynamicCommandExceptionType(
-            (id) -> Component.translatableWithFallback("argument.defaulted.existing_builder", "Patch builder %s already exists, please build or discard before adding a new one!", id)
+            (id) -> Component.translatableWithFallback("argument.defaulted.existing_builder", "Patch builder %s already exists, please build or discard before adding a new one!", id.toString())
     );
 
     public static void register(CommandDispatcher<CommandSourceStack> commandDispatcher, CommandBuildContext context) {
@@ -175,19 +175,19 @@ public class DefaultedCommand {
     }
 
     private static Component started(Identifier id) {
-        return Component.translatableWithFallback("commands.defaulted.started_patch_builder", "Patch builder started with id %s.", id);
+        return Component.translatableWithFallback("commands.defaulted.started_patch_builder", "Patch builder started with id %s.", id.toString());
     }
 
     private static Component outputToFile(Identifier id, String path) {
-        return Component.translatableWithFallback("commands.defaulted.output_patch", "Patch %s output to %s successfully.", id, path);
+        return Component.translatableWithFallback("commands.defaulted.output_patch", "Patch %s output to %s successfully.", id.toString(), path);
     }
 
     private static Component append(Identifier id, String value) {
-        return Component.translatableWithFallback("commands.defaulted.append_patch_generator", "Added %s to patch generators for patch builder %s successfully.", value, id);
+        return Component.translatableWithFallback("commands.defaulted.append_patch_generator", "Added %s to patch generators for patch builder %s successfully.", value, id.toString());
     }
 
     private static Component set(String field, Identifier id, String value) {
-        return Component.translatableWithFallback("commands.defaulted.set", "The %s for patch builder %s was set to %s successfully.", field, id, value);
+        return Component.translatableWithFallback("commands.defaulted.set", "The %s for patch builder %s was set to %s successfully.", field, id.toString(), value);
     }
 
     private static DataComponentMap prototype(Holder.Reference<Item> reference) {
