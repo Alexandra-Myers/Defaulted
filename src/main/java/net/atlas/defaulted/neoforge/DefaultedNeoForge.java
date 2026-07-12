@@ -1,7 +1,7 @@
 package net.atlas.defaulted.neoforge;
 
 //? neoforge {
-/*import net.atlas.defaulted.EnchantmentPatchesManager;
+import net.atlas.defaulted.EnchantmentPatchesManager;
 import net.atlas.defaulted.neoforge.component.DefaultedRegistries;
 import net.atlas.defaulted.neoforge.event.DefaultedNeoForgeEventHandlers;
 import net.atlas.defaulted.networking.ClientboundDefaultComponentsSyncPacket;
@@ -54,4 +54,4 @@ public final class DefaultedNeoForge {
         else DefaultComponentPatchesManager.setClientCache(payloadContext.player().registryAccess());
     }
 }
-*///?}
+//?}

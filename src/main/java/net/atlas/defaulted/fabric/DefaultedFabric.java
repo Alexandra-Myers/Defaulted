@@ -1,7 +1,7 @@
 package net.atlas.defaulted.fabric;
 
 //? fabric {
-import net.atlas.defaulted.EnchantmentPatchesManager;
+/*import net.atlas.defaulted.EnchantmentPatchesManager;
 import net.atlas.defaulted.command.DefaultedCommand;
 import net.atlas.defaulted.fabric.component.DefaultedRegistries;
 import net.atlas.defaulted.networking.ClientboundDefaultComponentsSyncPacket;
@@ -54,4 +54,4 @@ public final class DefaultedFabric implements ModInitializer {
         CommandRegistrationCallback.EVENT.register((dispatcher, commandBuildContext, environment) -> DefaultedCommand.register(dispatcher, commandBuildContext));
     }
 }
-//?}
+*///?}

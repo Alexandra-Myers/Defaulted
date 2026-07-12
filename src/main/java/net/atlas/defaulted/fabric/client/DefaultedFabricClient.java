@@ -1,7 +1,7 @@
 package net.atlas.defaulted.fabric.client;
 
 //? fabric {
-import net.atlas.defaulted.DefaultComponentPatchesManager;
+/*import net.atlas.defaulted.DefaultComponentPatchesManager;
 import net.atlas.defaulted.EnchantmentPatchesManager;
 import net.atlas.defaulted.networking.ClientboundDefaultComponentsSyncPacket;
 import net.atlas.defaulted.networking.ClientboundEnchantmentsSyncPacket;
@@ -12,9 +12,9 @@ import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
 import net.minecraft.client.Minecraft;
 
 public class DefaultedFabricClient implements ClientModInitializer {
-    /**
+    /^*
      * Runs the mod initializer on the client environment.
-     */
+     ^/
     @Override
     public void onInitializeClient() {
         ClientPlayNetworking.registerGlobalReceiver(ClientboundDefaultComponentsSyncPacket.TYPE, (clientboundDefaultComponentsSyncPacket, context) -> {
@@ -31,4 +31,4 @@ public class DefaultedFabricClient implements ClientModInitializer {
         });
     }
 }
-//?}
+*///?}

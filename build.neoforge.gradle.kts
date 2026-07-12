@@ -142,8 +142,8 @@ repositories {
 }
 
 neoForge {
-    interfaceInjectionData.from("interfaces.json")
-     enable {
+    interfaceInjectionData.from(file("../../src/main/resources/interfaces.json"))
+    enable {
         version = property("deps.neoforge") as String
         // Disable recompilation for performance reasons.
         isDisableRecompilation = true

@@ -1,7 +1,7 @@
 package net.atlas.defaulted.fabric;
 
 //? fabric {
-import com.mojang.serialization.MapCodec;
+/*import com.mojang.serialization.MapCodec;
 
 import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.DefaultedPlatform;
@@ -26,4 +26,4 @@ public class DefaultedPlatformFabric implements DefaultedPlatform {
         return Defaulted.isOnClientNetworkingThread();
     }
 }
-//?}
+*///?}

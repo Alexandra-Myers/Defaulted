@@ -1,7 +1,7 @@
 package net.atlas.defaulted.fabric.component;
 
 //? fabric {
-import com.mojang.serialization.MapCodec;
+/*import com.mojang.serialization.MapCodec;
 
 import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.component.PatchGenerator;
@@ -44,4 +44,4 @@ public class DefaultedRegistries {
         registerEnchantmentPatchGenerator("modify_list_effect", AddEffectGenerator.CODEC);
     }
 }
-//?}
+*///?}

@@ -1,7 +1,7 @@
 package net.atlas.defaulted.neoforge.component;
 
 //? neoforge {
-/*import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.MapCodec;
 
 import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.component.PatchGenerator;
@@ -38,4 +38,4 @@ public class DefaultedRegistries {
         ENCHANTMENT_PATCH_GENERATOR_TYPES.register(modBus);
     }
 }
-*///?}
+//?}
