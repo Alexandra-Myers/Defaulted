@@ -226,10 +226,11 @@ publishMods {
     additionalFiles.from(loomx.modSourcesJar.map { it.archiveFile.get() })
 
     type = STABLE
-    displayName = "${property("mod.name")} ${property("mod.version")} for ${stonecutter.current.version} Fabric"
-    version = "${property("mod.version")}+${property("deps.minecraft")}-fabric"
+    displayName = "${property("mod.name")} ${stonecutter.current.version} ${property("mod.version")} Fabric"
+    version = "${property("mod.version")}.${property("mod.sub_version")}-${property("deps.minecraft")}-Fabric"
     changelog = provider { rootProject.file("CHANGELOG-LATEST.md").readText() }
     modLoaders.add("fabric")
+    modLoaders.add("quilt")
 
     modrinth {
         projectId = property("publish.modrinth") as String
@@ -237,7 +238,6 @@ publishMods {
         minecraftVersions.add(property("deps.minecraft") as String)
         minecraftVersions.addAll(additionalVersions)
         requires("fabric-api")
-        optional("mcqoy")
     }
 
     curseforge {
