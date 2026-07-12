@@ -32,11 +32,12 @@ public record PatchTypeArgument() {
     public static <S extends CommandSourceStack> CompletableFuture<Suggestions> suggestionsReadCodec(CommandContext<S> commandContext, SuggestionsBuilder suggestionsBuilder, PatchType<?, ?, ?, ?> type) {
         return SharedSuggestionProvider.suggest(type.readArgs(), suggestionsBuilder);
     }
-    public static <S extends CommandSourceStack, T> void writeValue(final CommandContext<S> context, Identifier id, String name, String input, PatchType<T, ?, ?, ?> toChoose) throws CommandSyntaxException {
+    public static <S extends CommandSourceStack, T> String writeValue(final CommandContext<S> context, Identifier id, String name, String input, PatchType<T, ?, ?, ?> toChoose) throws CommandSyntaxException {
         String editCodecName = context.getArgument(name, String.class);
         Codec<Object> codec = toChoose.forArg(editCodecName);
         if (codec == null) throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownArgument().create();
         toChoose.get(id).writeData(editCodecName, CommonUtils.parse(new StringReader(input), context.getSource().registryAccess(), codec));
+        return editCodecName;
     }
     public static <S extends CommandSourceStack> CompletableFuture<Suggestions> suggestionsEditCodec(CommandContext<S> commandContext, SuggestionsBuilder suggestionsBuilder, String idName) throws CommandSyntaxException {
         Identifier id = commandContext.getArgument(idName, Identifier.class);

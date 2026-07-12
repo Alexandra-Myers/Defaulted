@@ -129,18 +129,22 @@ public class PatchType<T, D, G extends BasePatchGenerator<G>, B extends BasePatc
         return this.generatorCodec;
     }
 
-    public void addBuilder(Identifier id) {
+    public boolean addBuilder(Identifier id) {
+        if (CURRENT_BUILDERS.containsKey(id)) return false;
         CURRENT_BUILDERS.put(id, this);
         this.map.put(id, this.factory.create());
+        return true;
     }
 
-    public void addBuilder(Identifier id, StringReader reader, RegistryAccess registryAccess) throws CommandSyntaxException {
-        addBuilder(id, CommonUtils.parse(reader, registryAccess, this.elementsCodec));
+    public boolean addBuilder(Identifier id, StringReader reader, RegistryAccess registryAccess) throws CommandSyntaxException {
+        return addBuilder(id, CommonUtils.parse(reader, registryAccess, this.elementsCodec));
     }
 
-    private void addBuilder(Identifier id, List<HolderSet<T>> elements) {
+    private boolean addBuilder(Identifier id, List<HolderSet<T>> elements) {
+        if (CURRENT_BUILDERS.containsKey(id)) return false;
         CURRENT_BUILDERS.put(id, this);
         this.map.put(id, this.factory.create(elements));
+        return true;
     }
 
     public static PatchType<?, ?, ?, ?> forId(Identifier id) {
@@ -149,6 +153,11 @@ public class PatchType<T, D, G extends BasePatchGenerator<G>, B extends BasePatc
 
     public B get(Identifier id) {
         return this.map.get(id);
+    }
+
+    public void removeBuilder(Identifier id) {
+        CURRENT_BUILDERS.remove(id);
+        this.map.remove(id);
     }
 
     public Codec<Object> forArg(String arg) {
