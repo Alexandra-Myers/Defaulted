@@ -1,0 +1,19 @@
+package net.atlas.defaulted.neoforge.event.client;
+
+//? neoforge {
+/*import net.atlas.defaulted.DefaultComponentPatchesManager;
+import net.atlas.defaulted.EnchantmentPatchesManager;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
+
+@EventBusSubscriber(value = Dist.CLIENT, modid = "defaulted")
+public class DefaultedClientNeoForgeEventHandlers {
+    @SubscribeEvent
+    public static void onClientDisconnect(final ClientPlayerNetworkEvent.LoggingOut loggingOut) {
+        DefaultComponentPatchesManager.clearClient();
+        EnchantmentPatchesManager.clearClient();
+    }
+}
+*///?}
