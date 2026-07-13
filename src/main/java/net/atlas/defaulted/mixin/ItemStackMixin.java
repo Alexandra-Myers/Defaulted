@@ -7,8 +7,8 @@ import net.atlas.defaulted.DefaultedPlatform;
 import net.atlas.defaulted.compat.OwoCompat;
 import net.atlas.defaulted.extension.ItemStackExtensions;
 //? >=26.1 {
-/*import net.minecraft.core.Holder;
-*///?}
+import net.minecraft.core.Holder;
+//?}
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.PatchedDataComponentMap;
@@ -17,15 +17,15 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 //?}
 //? >=26.1 {
-/*import net.minecraft.world.item.Item;
-*///?}
+import net.minecraft.world.item.Item;
+//?}
 import net.minecraft.world.item.ItemStack;
 
 import java.lang.reflect.Field;
 
 //? <26.1 {
-import net.minecraft.world.level.ItemLike;
-//?}
+/*import net.minecraft.world.level.ItemLike;
+*///?}
 //? >=1.21.5
 import org.jspecify.annotations.NonNull;
 import org.spongepowered.asm.mixin.*;
@@ -89,12 +89,12 @@ public abstract class ItemStackMixin implements ItemStackExtensions {
     //?}
 
     //? >=26.1 {
-    /*@Inject(method = "<init>(Lnet/minecraft/core/Holder;ILnet/minecraft/core/component/PatchedDataComponentMap;)V", at = @At("RETURN"))
+    @Inject(method = "<init>(Lnet/minecraft/core/Holder;ILnet/minecraft/core/component/PatchedDataComponentMap;)V", at = @At("RETURN"))
     private void appendStack(Holder<Item> itemHolder, int count, PatchedDataComponentMap components, CallbackInfo ci) {
-    *///?} <26.1 {
-    @Inject(method = "<init>(Lnet/minecraft/world/level/ItemLike;ILnet/minecraft/core/component/PatchedDataComponentMap;)V", at = @At("RETURN"))
+    //?} <26.1 {
+    /*@Inject(method = "<init>(Lnet/minecraft/world/level/ItemLike;ILnet/minecraft/core/component/PatchedDataComponentMap;)V", at = @At("RETURN"))
     public void appendStack(ItemLike itemLike, int count, PatchedDataComponentMap patchedDataComponentMap, CallbackInfo ci) {
-    //?}
+    *///?}
         Defaulted.ALL_STACKS.add(ItemStack.class.cast(this));
     }
 

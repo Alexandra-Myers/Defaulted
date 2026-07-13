@@ -5,14 +5,14 @@ import net.atlas.defaulted.DefaultComponentPatchesManager;
 import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.EnchantmentPatchesManager;
 //? 1.21.11 || 1.21.1 {
-import net.atlas.defaulted.component.ItemPatches;
+/*import net.atlas.defaulted.component.ItemPatches;
 import net.atlas.defaulted.enchantment.EnchantmentPatches;
-//?}
+*///?}
 //? 1.21.11 || 1.21.1 {
-import net.neoforged.fml.ModList;
+/*import net.neoforged.fml.ModList;
 import net.mehvahdjukaar.nautilus.NautilusStudioApi;
 import net.mehvahdjukaar.nautilus.SchemaEditor;
-//?}
+*///?}
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -25,7 +25,7 @@ import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 public class DefaultedNeoForgeClient {
     public DefaultedNeoForgeClient(ModContainer container) {
         //? 1.21.11 || 1.21.1 {
-        if (ModList.get().isLoaded("nautilus_studio")) {
+        /*if (ModList.get().isLoaded("nautilus_studio")) {
             NautilusStudioApi.register("Defaulted",
                     "Default Component Patches",
                     ItemPatches.CODEC,
@@ -37,7 +37,7 @@ public class DefaultedNeoForgeClient {
                     SchemaEditor.Side.SERVER_DATA,
                     "defaulted/enchantment_patches");
         }
-        //?}
+        *///?}
     }
     @SubscribeEvent
     public static void onClientDisconnect(final ClientPlayerNetworkEvent.LoggingOut loggingOut) {

@@ -9,18 +9,19 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import net.atlas.defaulted.base.BasePatches;
 //? <26.1 {
-import net.atlas.defaulted.mixin.StructureTemplateManagerAccessor;
-//?}
+/*import net.atlas.defaulted.mixin.StructureTemplateManagerAccessor;
+*///?}
 //? 1.21.11 || 1.21.1 {
-import net.mehvahdjukaar.codecui.SchemaCodec;
-//?}
+/*import net.mehvahdjukaar.codecui.SchemaCodec;
+*///?}
 import net.minecraft.ChatFormatting;
 //? <26.1 {
-import net.minecraft.IdentifierException;
-//?}
+/*import net.minecraft.IdentifierException;
+*///?}
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.Registries;
+//? <26.1
+//import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
@@ -33,10 +34,10 @@ import net.minecraft.server.level.ServerLevel;
 //? >=1.21.11
 import net.minecraft.server.permissions.Permissions;
 //? <26.1 {
-import net.minecraft.util.FileUtil;
+/*import net.minecraft.util.FileUtil;
 
 import java.nio.file.InvalidPathException;
-//?}
+*///?}
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,10 +52,10 @@ public class CommonUtils {
             .build();
     public static <A> Codec<A> wrap(Codec<A> codec) {
         //? 1.21.11 || 1.21.1 {
-        return SchemaCodec.wrap(codec);
-        //?} else {
-        /*return codec;
-        *///?}
+        /*return SchemaCodec.wrap(codec);
+        *///?} else {
+        return codec;
+        //?}
     }
     public static Tag readTag(/*? >=1.21.5 {*/ DynamicOps<Tag> ops, /*?}*/ StringReader reader) throws CommandSyntaxException {
         //? >=1.21.5 {
@@ -106,14 +107,14 @@ public class CommonUtils {
 
     public static Path createAndValidatePath(Identifier id, BasePatches<?, ?> patches, ServerLevel level) {
         //? >=26.1 {
-        /*return level.getStructureManager().worldTemplates().createAndValidatePathToStructure(id, FileToIdConverter.registry(patches.key()));
-        *///?} <26.1 {
-        return createAndValidatePathToResource(((StructureTemplateManagerAccessor)level.getStructureManager()).getGeneratedDir(), id, FileToIdConverter.json(Registries.elementsDirPath(patches.key())));
-        //?}
+        return level.getStructureManager().worldTemplates().createAndValidatePathToStructure(id, FileToIdConverter.registry(patches.key()));
+        //?} <26.1 {
+        /*return createAndValidatePathToResource(((StructureTemplateManagerAccessor)level.getStructureManager()).getGeneratedDir(), id, FileToIdConverter.json(Registries.elementsDirPath(patches.key())));
+        *///?}
     }
 
     //? <26.1 {
-    public static Path createAndValidatePathToResource(Path generatedDir, Identifier id, FileToIdConverter converter) {
+    /*public static Path createAndValidatePathToResource(Path generatedDir, Identifier id, FileToIdConverter converter) {
         if (id.getPath().contains("//")) {
             throw new IdentifierException("Invalid resource path: " + id);
         } else {
@@ -129,7 +130,7 @@ public class CommonUtils {
             }
         }
     }
-    //?}
+    *///?}
 
     public static boolean hasAdminPerms(CommandSourceStack commandSourceStack) {
         //? >=1.21.11 {

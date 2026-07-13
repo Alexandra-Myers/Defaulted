@@ -8,16 +8,16 @@ import net.atlas.defaulted.utils.Codecs;
 import net.atlas.defaulted.component.PatchGenerator;
 import net.minecraft.core.Holder;
 //? >=26.1 {
-/*import net.minecraft.core.HolderSet;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
-*///?}
+//?}
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvent;
 //? <26.1 {
-import net.minecraft.tags.TagKey;
-//?}
+/*import net.minecraft.tags.TagKey;
+*///?}
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.component.BlocksAttacks;
@@ -31,10 +31,10 @@ public record BlocksAttacksGenerator(Optional<Float> blockDelaySeconds,
 									 List<BlocksAttacks.DamageReduction> damageReductions,
 									 Optional<BlocksAttacks.ItemDamageFunction> itemDamage,
 									 //? >=26.1 {
-									 /*Optional<HolderSet<DamageType>> bypassedBy,
-									 *///?} <26.1 {
-									 Optional<TagKey<DamageType>> bypassedBy,
-									 //?}
+									 Optional<HolderSet<DamageType>> bypassedBy,
+									 //?} <26.1 {
+									 /*Optional<TagKey<DamageType>> bypassedBy,
+									 *///?}
 									 Optional<Holder<SoundEvent>> blockSound,
 									 Optional<Holder<SoundEvent>> disableSound,
 									 boolean appendReductions) implements PatchGenerator {
@@ -48,10 +48,10 @@ public record BlocksAttacksGenerator(Optional<Float> blockDelaySeconds,
 					.forGetter(BlocksAttacksGenerator::damageReductions),
 				BlocksAttacks.ItemDamageFunction.CODEC.optionalFieldOf("item_damage").forGetter(BlocksAttacksGenerator::itemDamage),
 				//? >=26.1 {
-				/* RegistryCodecs.homogeneousList(Registries.DAMAGE_TYPE)
-				*///?} <26.1 {
-				TagKey.codec(Registries.DAMAGE_TYPE)
-				//?}
+				 RegistryCodecs.homogeneousList(Registries.DAMAGE_TYPE)
+				//?} <26.1 {
+				/*TagKey.codec(Registries.DAMAGE_TYPE)
+				*///?}
 						.optionalFieldOf("bypassed_by").forGetter(BlocksAttacksGenerator::bypassedBy),
 				SoundEvent.CODEC.optionalFieldOf("block_sound").forGetter(BlocksAttacksGenerator::blockSound),
 				SoundEvent.CODEC.optionalFieldOf("disabled_sound").forGetter(BlocksAttacksGenerator::disableSound),

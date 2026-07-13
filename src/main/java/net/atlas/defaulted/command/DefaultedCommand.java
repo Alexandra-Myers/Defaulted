@@ -212,10 +212,10 @@ public class DefaultedCommand {
 
     private static DataComponentMap components(Holder.Reference<Item> reference) {
         //? >=26.1 {
-        /*return reference.components();
-        *///?} <26.1 {
-        return reference.value().components();
-        //?}
+        return reference.components();
+        //?} <26.1 {
+        /*return reference.value().components();
+        *///?}
     }
 
     private static int readItemPrototype(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {

@@ -6,7 +6,7 @@ import net.atlas.defaulted.utils.IDUtils;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderOwner;
 //? >=26.1
-//import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
@@ -72,10 +72,10 @@ public class AbstractedHolder<T, A extends T> implements Holder<T>, Supplier<A> 
     }
 
     //? >=26.1 {
-    /*public boolean areComponentsBound() {
+    public boolean areComponentsBound() {
         return this.delegate.areComponentsBound();
     }
-    *///?}
+    //?}
 
     public boolean is(Identifier id) {
         return id.equals(IDUtils.identifier(this.key));
@@ -103,10 +103,10 @@ public class AbstractedHolder<T, A extends T> implements Holder<T>, Supplier<A> 
     }
 
     //? >=26.1 {
-    /*public DataComponentMap components() {
+    public DataComponentMap components() {
         return this.delegate.components();
     }
-    *///?}
+    //?}
 
     public @NonNull Either<ResourceKey<T>, T> unwrap() {
         return Either.left(this.key);
