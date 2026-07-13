@@ -7,6 +7,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.atlas.defaulted.Defaulted;
+import net.atlas.defaulted.utils.Bootstrapper;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
@@ -15,27 +17,31 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.core.component.TypedDataComponent;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.Item;
 
-public class PatchConditions {
-    public static final ExtraCodecs.LateBoundIdMapper<Identifier, MapCodec<? extends PatchCondition>> CONDITION_MAPPER = new ExtraCodecs.LateBoundIdMapper<>();
-    public static final MapCodec<PatchCondition> MAP_CODEC = CONDITION_MAPPER.codec(Identifier.CODEC)
-		.dispatchMap("condition", PatchCondition::codec, mapCodec -> mapCodec);
-    public static void bootstrap() {
-        CONDITION_MAPPER.put(Identifier.withDefaultNamespace("invert"), InvertCondition.CODEC);
-        CONDITION_MAPPER.put(Identifier.withDefaultNamespace("condition_list"), ListCondition.CODEC);
-        CONDITION_MAPPER.put(Identifier.withDefaultNamespace("is_item"), ItemIsCondition.CODEC);
-        CONDITION_MAPPER.put(Identifier.withDefaultNamespace("in_tag"), ItemHasTagCondition.CODEC);
-        CONDITION_MAPPER.put(Identifier.withDefaultNamespace("has_components"), ComponentsPresentCondition.CODEC);
-        CONDITION_MAPPER.put(Identifier.withDefaultNamespace("matches_components"), ExactComponentsCondition.CODEC);
+public class PatchConditions extends Bootstrapper<MapCodec<? extends PatchConditions.PatchCondition>> {
+    public static final PatchConditions INSTANCE = new PatchConditions();
+    public static final MapCodec<PatchCondition> MAP_CODEC = INSTANCE.getRegistry().byNameCodec()
+            .dispatchMap("condition", PatchCondition::codec, mapCodec -> mapCodec);
+
+    public PatchConditions() {
+        super(Defaulted.key("patch_conditions"), "minecraft");
+    }
+
+    public void bootstrap(Registrar<MapCodec<? extends PatchCondition>> registrar) {
+        registrar.register("invert", () -> InvertCondition.CODEC);
+        registrar.register("condition_list", () -> ListCondition.CODEC);
+        registrar.register("is_item", () -> ItemIsCondition.CODEC);
+        registrar.register("in_tag", () -> ItemHasTagCondition.CODEC);
+        registrar.register("has_components", () -> ComponentsPresentCondition.CODEC);
+        registrar.register("matches_components", () -> ExactComponentsCondition.CODEC);
     }
     
     public interface PatchCondition {
-        public boolean matches(Item item, PatchedDataComponentMap patchedDataComponentMap);
-        public MapCodec<? extends PatchCondition> codec();
+        boolean matches(Item item, PatchedDataComponentMap patchedDataComponentMap);
+        MapCodec<? extends PatchCondition> codec();
     }
     public record InvertCondition(PatchCondition patchCondition) implements PatchCondition {
         public static final MapCodec<InvertCondition> CODEC = PatchConditions.MAP_CODEC.codec().fieldOf("inverted").xmap(InvertCondition::new, InvertCondition::patchCondition);

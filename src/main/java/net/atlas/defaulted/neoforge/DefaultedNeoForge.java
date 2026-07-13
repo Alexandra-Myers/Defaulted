@@ -2,7 +2,7 @@ package net.atlas.defaulted.neoforge;
 
 //? neoforge {
 /*import net.atlas.defaulted.EnchantmentPatchesManager;
-import net.atlas.defaulted.neoforge.component.DefaultedRegistries;
+import net.atlas.defaulted.init.DefaultedRegistries;
 import net.atlas.defaulted.neoforge.event.DefaultedNeoForgeEventHandlers;
 import net.atlas.defaulted.networking.ClientboundDefaultComponentsSyncPacket;
 import net.atlas.defaulted.networking.ClientboundEnchantmentsSyncPacket;

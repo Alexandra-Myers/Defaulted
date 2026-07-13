@@ -9,6 +9,7 @@ import net.atlas.defaulted.component.generators.condition.PatchConditions;
 import net.atlas.defaulted.enchantment.EnchantmentBuilder;
 import net.atlas.defaulted.enchantment.EnchantmentPatchGenerator;
 import net.atlas.defaulted.enchantment.EnchantmentPatches;
+import net.atlas.defaulted.enchantment.generators.condition.EnchantmentPatchConditions;
 import net.atlas.defaulted.enchantment.value_provider.ValueProvider;
 //? <26.1 {
 import net.atlas.defaulted.mixin.ItemAccessor;
@@ -48,10 +49,10 @@ public final class Defaulted {
     public static final String MOD_ID = "defaulted";
     public static final Logger LOGGER = LogManager.getLogger("defaulted");
     public static final Map<ResourceKey<Enchantment>, Enchantment> ORIGINAL_ENCHANTMENTS = new HashMap<>();
-    public static final ResourceKey<Registry<MapCodec<? extends PatchGenerator>>> PATCH_GENERATOR_TYPE = ResourceKey.createRegistryKey(id("patch_generator"));
-    public static final ResourceKey<Registry<MapCodec<? extends EnchantmentPatchGenerator>>> ENCHANTMENT_PATCH_GENERATOR_TYPE = ResourceKey.createRegistryKey(id("enchantment_patch_generator"));
-    public static final ResourceKey<Registry<ItemPatches>> ITEM_PATCHES_TYPE = ResourceKey.createRegistryKey(id("default_component_patches"));
-    public static final ResourceKey<Registry<EnchantmentPatches>> ENCHANTMENT_PATCHES_TYPE = ResourceKey.createRegistryKey(id("enchantment_patches"));
+    public static final ResourceKey<Registry<MapCodec<? extends PatchGenerator>>> PATCH_GENERATOR_TYPE = key("patch_generator");
+    public static final ResourceKey<Registry<MapCodec<? extends EnchantmentPatchGenerator>>> ENCHANTMENT_PATCH_GENERATOR_TYPE = key("enchantment_patch_generator");
+    public static final ResourceKey<Registry<ItemPatches>> ITEM_PATCHES_TYPE = key("default_component_patches");
+    public static final ResourceKey<Registry<EnchantmentPatches>> ENCHANTMENT_PATCHES_TYPE = key("enchantment_patches");
     /**
      * {@link ArrayList} of {@link Consumer}s to run on the sorted collection of {@link ItemPatches} after a reload or resource loading.
      */
@@ -79,13 +80,16 @@ public final class Defaulted {
         baseTiers.put("iron", ToolMaterial.IRON);
         baseTiers.put("diamond", ToolMaterial.DIAMOND);
         baseTiers.put("netherite", ToolMaterial.NETHERITE);
-        PatchConditions.bootstrap();
-        net.atlas.defaulted.enchantment.generators.condition.PatchConditions.bootstrap();
-        ValueProvider.bootstrap();
-        WeaponLevelBasedValue.bootstrap();
     }
-    
-    // Identifier is renamed to Identifier as of 26.1
+
+    public static <T> ResourceKey<Registry<T>> key(String id) {
+        return ResourceKey.createRegistryKey(Defaulted.id(id));
+    }
+
+    public static <T> ResourceKey<T> key(ResourceKey<Registry<T>> registry, String id) {
+        return ResourceKey.create(registry, Defaulted.id(id));
+    }
+
     public static Identifier id(String path) {
         return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }

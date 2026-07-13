@@ -24,6 +24,14 @@ tasks.named<ProcessResources>("processResources") {
     filesMatching(listOf("fabric.mod.json", "META-INF/neoforge.mods.toml")) {
         expand(props)
     }
+
+    val mixin = HashMap<String, String>().apply {
+        this["java"] = "JAVA_${prop("deps.java")}"
+    }
+
+    filesMatching(listOf("defaulted.mixins.json")) {
+        expand(mixin)
+    }
 }
 
 version = "${property("mod.version")}.${property("mod.sub_version")}-${property("deps.minecraft")}-fabric"

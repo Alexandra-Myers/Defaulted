@@ -3,7 +3,7 @@ package net.atlas.defaulted.fabric;
 //? fabric {
 import net.atlas.defaulted.EnchantmentPatchesManager;
 import net.atlas.defaulted.command.DefaultedCommand;
-import net.atlas.defaulted.fabric.component.DefaultedRegistries;
+import net.atlas.defaulted.init.DefaultedRegistries;
 import net.atlas.defaulted.networking.ClientboundDefaultComponentsSyncPacket;
 import net.atlas.defaulted.networking.ClientboundEnchantmentsSyncPacket;
 import net.fabricmc.api.ModInitializer;

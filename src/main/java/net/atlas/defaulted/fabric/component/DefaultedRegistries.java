@@ -3,45 +3,18 @@ package net.atlas.defaulted.fabric.component;
 //? fabric {
 import com.mojang.serialization.MapCodec;
 
-import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.component.PatchGenerator;
-import net.atlas.defaulted.component.generators.*;
 import net.atlas.defaulted.enchantment.EnchantmentPatchGenerator;
-import net.atlas.defaulted.enchantment.generators.AddEffectGenerator;
-import net.atlas.defaulted.fabric.util.FabricUtils;
-import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
+import net.atlas.defaulted.init.EnchantmentPatchGenerators;
+import net.atlas.defaulted.init.ItemPatchGenerators;
 
 public class DefaultedRegistries {
-	public static final Registry<MapCodec<? extends PatchGenerator>> PATCH_GENERATOR_TYPE_REG = FabricUtils.createRegistry(
-		Defaulted.PATCH_GENERATOR_TYPE
-	).attribute(RegistryAttribute.OPTIONAL).buildAndRegister();
-
-    public static final Registry<MapCodec<? extends EnchantmentPatchGenerator>> ENCHANTMENT_PATCH_GENERATOR_TYPE_REG = FabricUtils.createRegistry(
-            Defaulted.ENCHANTMENT_PATCH_GENERATOR_TYPE
-    ).attribute(RegistryAttribute.OPTIONAL).buildAndRegister();
-
     public static void registerPatchGenerator(String path, MapCodec<? extends PatchGenerator> mapCodec) {
-        Registry.register(PATCH_GENERATOR_TYPE_REG, ResourceKey.create(Defaulted.PATCH_GENERATOR_TYPE, Defaulted.id(path)), mapCodec);
+        ItemPatchGenerators.INSTANCE.register(path, () -> mapCodec);
     }
 
     public static void registerEnchantmentPatchGenerator(String path, MapCodec<? extends EnchantmentPatchGenerator> mapCodec) {
-        Registry.register(ENCHANTMENT_PATCH_GENERATOR_TYPE_REG, ResourceKey.create(Defaulted.ENCHANTMENT_PATCH_GENERATOR_TYPE, Defaulted.id(path)), mapCodec);
-    }
-
-    public static void init() {
-        registerPatchGenerator("armor_stats", ArmourStatsGenerator.CODEC);
-        registerPatchGenerator("conditional", ConditionalPatch.CODEC);
-        registerPatchGenerator("modify_attribute_modifiers", AttributeModifiersGenerator.CODEC);
-        registerPatchGenerator("modify_blocks_attacks", BlocksAttacksGenerator.CODEC);
-        registerPatchGenerator("modify_enchantments", EnchantmentModifierGenerator.CODEC);
-        registerPatchGenerator("modify_from_tool_material", ModifyTierStatsGenerator.CODEC);
-        registerPatchGenerator("modify_use_seconds", EditUseDurationGenerator.CODEC);
-        registerPatchGenerator("tool_material", ChangeTierGenerator.CODEC);
-        registerPatchGenerator("vanilla_weapon_stats", WeaponStatsGenerator.CODEC);
-        registerEnchantmentPatchGenerator("conditional", net.atlas.defaulted.enchantment.generators.ConditionalPatch.CODEC);
-        registerEnchantmentPatchGenerator("modify_list_effect", AddEffectGenerator.CODEC);
+        EnchantmentPatchGenerators.INSTANCE.register(path, () -> mapCodec);
     }
 }
 //?}
