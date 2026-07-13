@@ -17,12 +17,14 @@ import net.atlas.defaulted.component.generators.handler.ArmourVariable;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.PatchedDataComponentMap;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+//? <=1.21.1
+//import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 
@@ -44,21 +46,30 @@ public record ArmourStatsGenerator(ArmourVariable<Integer> durability, ArmourVar
         Double toughness = armourToughness.getValue(item);
         Double kbRes = armourKbRes.getValue(item);
         if (armor == null && toughness == null && kbRes == null && additionalModifiers.isEmpty()) return;
-        ItemAttributeModifiers oldModifiers = patchedDataComponentMap.get(DataComponents.ATTRIBUTE_MODIFIERS);
+        ItemAttributeModifiers oldModifiers = patchedDataComponentMap.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
+        //? <=1.21.1 {
+        /*ItemAttributeModifiers defaultModifiers = item.getDefaultAttributeModifiers();
+        if (oldModifiers == ItemAttributeModifiers.EMPTY && defaultModifiers != ItemAttributeModifiers.EMPTY) oldModifiers = defaultModifiers;
+        *///?}
         ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
-        List<Pair<Holder<Attribute>, ResourceLocation>> addedEntries = new ArrayList<>();
-		ResourceLocation identifier = ResourceLocation.withDefaultNamespace("armor.any");
+        List<Pair<Holder<Attribute>, Identifier>> addedEntries = new ArrayList<>();
+		Identifier identifier = Identifier.withDefaultNamespace("armor.any");
 		EquipmentSlotGroup slotGroup;
+        //? >1.21.1 {
 		if (patchedDataComponentMap.has(DataComponents.EQUIPPABLE))
 			slotGroup = EquipmentSlotGroup.bySlot(patchedDataComponentMap.get(DataComponents.EQUIPPABLE).slot());
+        //?} <=1.21.1 {
+        /*if (item instanceof Equipable equipable)
+            slotGroup = EquipmentSlotGroup.bySlot(equipable.getEquipmentSlot());
+        *///?}
         else
             slotGroup = EquipmentSlotGroup.ARMOR;
 		identifier = switch (slotGroup) {
-			case HEAD -> ResourceLocation.withDefaultNamespace("armor.helmet");
-			case CHEST -> ResourceLocation.withDefaultNamespace("armor.chestplate");
-			case LEGS -> ResourceLocation.withDefaultNamespace("armor.leggings");
-			case FEET -> ResourceLocation.withDefaultNamespace("armor.boots");
-			case BODY -> ResourceLocation.withDefaultNamespace("armor.body");
+			case HEAD -> Identifier.withDefaultNamespace("armor.helmet");
+			case CHEST -> Identifier.withDefaultNamespace("armor.chestplate");
+			case LEGS -> Identifier.withDefaultNamespace("armor.leggings");
+			case FEET -> Identifier.withDefaultNamespace("armor.boots");
+			case BODY -> Identifier.withDefaultNamespace("armor.body");
 			default -> identifier;
 		};
 
@@ -83,10 +94,10 @@ public record ArmourStatsGenerator(ArmourVariable<Integer> durability, ArmourVar
 
         additionalModifiers.forEach(armorAttributeEntry -> armorAttributeEntry.addEntry(item, builder, addedEntries, slotGroup));
         
-        if (persistPrevious && oldModifiers != null)
+        if (persistPrevious && oldModifiers != ItemAttributeModifiers.EMPTY)
             for (ItemAttributeModifiers.Entry entry : oldModifiers.modifiers()) {
                 innerloop: {
-                    for (Pair<Holder<Attribute>, ResourceLocation> attributeIdPair : addedEntries) if (entry.matches(attributeIdPair.getFirst(), attributeIdPair.getSecond())) break innerloop;
+                    for (Pair<Holder<Attribute>, Identifier> attributeIdPair : addedEntries) if (entry.matches(attributeIdPair.getFirst(), attributeIdPair.getSecond())) break innerloop;
                     builder.add(entry.attribute(), entry.modifier(), entry.slot());
                 }
             }
@@ -103,21 +114,21 @@ public record ArmourStatsGenerator(ArmourVariable<Integer> durability, ArmourVar
                 double_ -> double_.compareTo(min) > 0 ? DataResult.success(double_) : DataResult.error(() -> (String)function.apply(double_))
             );
     }
-    public record ArmorAttributeEntry(Holder<Attribute> attribute, ResourceLocation baseId, ArmourVariable<Double> amount, AttributeModifier.Operation operation) {
+    public record ArmorAttributeEntry(Holder<Attribute> attribute, Identifier baseId, ArmourVariable<Double> amount, AttributeModifier.Operation operation) {
         public static final Codec<ArmorAttributeEntry> CODEC = RecordCodecBuilder.create(
                 instance -> instance.group(
                                 Attribute.CODEC.fieldOf("type").forGetter(ArmorAttributeEntry::attribute),
-                                ResourceLocation.CODEC.fieldOf("base_id").forGetter(ArmorAttributeEntry::baseId),
+                                Identifier.CODEC.fieldOf("base_id").forGetter(ArmorAttributeEntry::baseId),
                                 ArmourVariable.codec(Codec.DOUBLE).fieldOf("amount").forGetter(ArmorAttributeEntry::amount),
                                 AttributeModifier.Operation.CODEC.fieldOf("operation").forGetter(ArmorAttributeEntry::operation)
                         )
                         .apply(instance, ArmorAttributeEntry::new)
         );
 
-        public void addEntry(Item item, ItemAttributeModifiers.Builder builder, List<Pair<Holder<Attribute>, ResourceLocation>> addedEntries, EquipmentSlotGroup slotGroup) {
+        public void addEntry(Item item, ItemAttributeModifiers.Builder builder, List<Pair<Holder<Attribute>, Identifier>> addedEntries, EquipmentSlotGroup slotGroup) {
             Double value = amount.getValue(item);
             if (value == null) return;
-            ResourceLocation id = switch (slotGroup) {
+            Identifier id = switch (slotGroup) {
                 case HEAD -> baseId.withSuffix(".helmet");
                 case CHEST -> baseId.withSuffix(".chestplate");
                 case LEGS -> baseId.withSuffix(".leggings");

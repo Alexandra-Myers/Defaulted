@@ -8,7 +8,7 @@ import net.atlas.defaulted.enchantment.EnchantmentBuilder;
 import net.atlas.defaulted.enchantment.EnchantmentPatchGenerator;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentType;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 
@@ -26,7 +26,7 @@ public record AddEffectGenerator<T>(DataComponentType<List<T>> type, List<T> toA
         list.add(EnchantmentEffectComponents.ARMOR_EFFECTIVENESS);
         list.add(EnchantmentEffectComponents.POST_ATTACK);
         //? >=1.21.11
-        //list.add(EnchantmentEffectComponents.POST_PIERCING_ATTACK);
+        list.add(EnchantmentEffectComponents.POST_PIERCING_ATTACK);
         list.add(EnchantmentEffectComponents.HIT_BLOCK);
         list.add(EnchantmentEffectComponents.ITEM_DAMAGE);
         list.add(EnchantmentEffectComponents.EQUIPMENT_DROPS);

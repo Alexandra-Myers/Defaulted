@@ -7,7 +7,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantment;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -164,7 +164,7 @@ public class EnchantmentBuilder implements DataComponentHolder {
     }
 
     @Override
-    public @NotNull DataComponentMap getComponents() {
+    public @NonNull DataComponentMap getComponents() {
         return this.effects;
     }
 }

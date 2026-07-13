@@ -7,6 +7,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.world.item.enchantment.Enchantment;
 
 public interface EnchantmentPatchGenerator extends BasePatchGenerator<EnchantmentPatchGenerator> {
-	Codec<EnchantmentPatchGenerator> CODEC = EnchantmentPatchGenerators.CODEC;
+	Codec<EnchantmentPatchGenerator> CODEC = EnchantmentPatchGenerators.INSTANCE.getRegistry().byNameCodec()
+            .dispatch("generator", EnchantmentPatchGenerator::codec, mapCodec -> mapCodec);
     void patchDataComponentMap(Holder<Enchantment> enchantment, EnchantmentBuilder builder);
 }

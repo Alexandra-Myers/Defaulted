@@ -30,13 +30,13 @@ public class EnchantmentPatchConditions extends Bootstrapper<MapCodec<? extends 
         super(Defaulted.key("enchantment_patch_conditions"), "minecraft");
     }
 
-    public void bootstrap(Registrar<MapCodec<? extends EnchantmentPatchCondition>> registrar) {
-        registrar.register("invert", () -> InvertCondition.CODEC);
-        registrar.register("condition_list", () -> ListCondition.CODEC);
-        registrar.register("is_enchantment", () -> EnchantmentIsCondition.CODEC);
-        registrar.register("in_tag", () -> EnchantmentHasTagCondition.CODEC);
-        registrar.register("has_components", () -> ComponentsPresentCondition.CODEC);
-        registrar.register("matches_components", () -> ExactComponentsCondition.CODEC);
+    public void bootstrap() {
+        register("invert", () -> InvertCondition.CODEC);
+        register("condition_list", () -> ListCondition.CODEC);
+        register("is_enchantment", () -> EnchantmentIsCondition.CODEC);
+        register("in_tag", () -> EnchantmentHasTagCondition.CODEC);
+        register("has_components", () -> ComponentsPresentCondition.CODEC);
+        register("matches_components", () -> ExactComponentsCondition.CODEC);
     }
     
     public interface EnchantmentPatchCondition {
@@ -128,7 +128,7 @@ public class EnchantmentPatchConditions extends Bootstrapper<MapCodec<? extends 
         @Override
         public boolean matches(Holder<Enchantment> enchantment, EnchantmentBuilder builder) {
             for (TypedDataComponent<?> dataComponent : exactComponents) {
-                TypedDataComponent<?> present = builder/*? <1.21.5 {*/ .getComponents() /*?}*/.getTyped(dataComponent.type());
+                TypedDataComponent<?> present = builder/*? <1.21.5 {*/ /*.getComponents() *//*?}*/.getTyped(dataComponent.type());
                 boolean result = present == null ? false : Objects.equals(dataComponent.value(), present.value());
                 if (result != allMatch) return result;
             }

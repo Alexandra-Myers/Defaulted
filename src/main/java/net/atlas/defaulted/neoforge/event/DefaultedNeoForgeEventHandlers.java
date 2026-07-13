@@ -1,14 +1,19 @@
 package net.atlas.defaulted.neoforge.event;
 
 //? neoforge {
-/*import net.atlas.defaulted.Defaulted;
+//? >1.21.1
+import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.DefaultComponentPatchesManager;
 import net.atlas.defaulted.EnchantmentPatchesManager;
 import net.atlas.defaulted.command.DefaultedCommand;
 import net.atlas.defaulted.networking.ClientboundDefaultComponentsSyncPacket;
 import net.atlas.defaulted.networking.ClientboundEnchantmentsSyncPacket;
-import net.minecraft.resources.ResourceLocation;
+//? >1.21.1
+import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.SubscribeEvent;
+//? <=1.21.1
+//import net.neoforged.neoforge.event.AddReloadListenerEvent;
+//? >1.21.1
 import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
@@ -33,18 +38,26 @@ public class DefaultedNeoForgeEventHandlers {
             if (player.connection.hasChannel(defaultComponentsSyncPacket[0])) PacketDistributor.sendToPlayer(player, defaultComponentsSyncPacket[0]);
         });
     }
+    //? >1.21.1 {
     @SubscribeEvent
     public static void onDatapackReload(final AddServerReloadListenersEvent addReloadListenerEvent) {
-        ResourceLocation defaultComponentPatches = Defaulted.id("default_component_patches");
-        ResourceLocation enchantmentPatches = Defaulted.id("enchantment_patches");
+        Identifier defaultComponentPatches = Defaulted.id("default_component_patches");
+        Identifier enchantmentPatches = Defaulted.id("enchantment_patches");
         addReloadListenerEvent.addListener(defaultComponentPatches, new DefaultComponentPatchesManager(addReloadListenerEvent.getRegistryAccess()));
         addReloadListenerEvent.addListener(enchantmentPatches, new EnchantmentPatchesManager(addReloadListenerEvent.getRegistryAccess()));
         addReloadListenerEvent.addDependency(enchantmentPatches, defaultComponentPatches);
     }
+    //?} <=1.21.1 {
+    /*@SubscribeEvent
+    public static void onDatapackReload(final AddReloadListenerEvent addReloadListenerEvent) {
+        addReloadListenerEvent.addListener(new EnchantmentPatchesManager());
+        addReloadListenerEvent.addListener(new DefaultComponentPatchesManager());
+    }
+    *///?}
     @SubscribeEvent
     public static void serverStart(final ServerStartedEvent event) {
         DefaultComponentPatchesManager.getInstance().load(event.getServer().registryAccess());
         EnchantmentPatchesManager.getInstance().load(event.getServer().registryAccess());
     }
 }
-*///?}
+//?}

@@ -5,17 +5,19 @@ import com.mojang.datafixers.util.Either;
 import net.atlas.defaulted.utils.IDUtils;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderOwner;
-import net.minecraft.resources.ResourceLocation;
+//? >=26.1
+//import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class AbstractedHolder<T> implements Holder<T>, Supplier<T> {
+public class AbstractedHolder<T, A extends T> implements Holder<T>, Supplier<A> {
     protected final ResourceKey<T> key;
     private final Holder<T> delegate;
 
@@ -28,15 +30,15 @@ public class AbstractedHolder<T> implements Holder<T>, Supplier<T> {
         this(delegate.unwrapKey().orElse(null), delegate);
     }
 
-    public @NotNull T value() {
+    public @NonNull T value() {
         return this.delegate.value();
     }
 
-    public T get() {
-        return this.value();
+    public A get() {
+        return (A) this.value();
     }
 
-    public ResourceLocation getId() {
+    public Identifier getId() {
         return IDUtils.identifier(this.key);
     }
 
@@ -69,11 +71,17 @@ public class AbstractedHolder<T> implements Holder<T>, Supplier<T> {
         return this.delegate.isBound();
     }
 
-    public boolean is(ResourceLocation id) {
+    //? >=26.1 {
+    /*public boolean areComponentsBound() {
+        return this.delegate.areComponentsBound();
+    }
+    *///?}
+
+    public boolean is(Identifier id) {
         return id.equals(IDUtils.identifier(this.key));
     }
 
-    public boolean is(@NotNull ResourceKey<T> key) {
+    public boolean is(@NonNull ResourceKey<T> key) {
         return this.key.equals(key);
     }
 
@@ -81,38 +89,44 @@ public class AbstractedHolder<T> implements Holder<T>, Supplier<T> {
         return filter.test(this.key);
     }
 
-    public boolean is(@NotNull TagKey<T> tag) {
+    public boolean is(@NonNull TagKey<T> tag) {
         return this.delegate != null && this.delegate.is(tag);
     }
 
     @Deprecated
-    public boolean is(@NotNull Holder<T> holder) {
+    public boolean is(@NonNull Holder<T> holder) {
         return this.delegate != null && this.delegate.is(holder);
     }
 
-    public @NotNull Stream<TagKey<T>> tags() {
+    public @NonNull Stream<TagKey<T>> tags() {
         return this.delegate != null ? this.delegate.tags() : Stream.empty();
     }
 
-    public @NotNull Either<ResourceKey<T>, T> unwrap() {
+    //? >=26.1 {
+    /*public DataComponentMap components() {
+        return this.delegate.components();
+    }
+    *///?}
+
+    public @NonNull Either<ResourceKey<T>, T> unwrap() {
         return Either.left(this.key);
     }
 
-    public @NotNull Optional<ResourceKey<T>> unwrapKey() {
+    public @NonNull Optional<ResourceKey<T>> unwrapKey() {
         return Optional.of(this.key);
     }
 
-    public Holder.@NotNull Kind kind() {
+    public Holder.@NonNull Kind kind() {
         return Kind.REFERENCE;
     }
 
-    public boolean canSerializeIn(@NotNull HolderOwner<T> owner) {
+    public boolean canSerializeIn(@NonNull HolderOwner<T> owner) {
         return this.delegate != null && this.delegate.canSerializeIn(owner);
     }
 
     //? neoforge {
-    /*public @NotNull Holder<T> getDelegate() {
+    public @NonNull Holder<T> getDelegate() {
         return this.delegate.getDelegate();
     }
-    *///?}
+    //?}
 }

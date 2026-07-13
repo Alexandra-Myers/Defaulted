@@ -3,19 +3,26 @@ package net.atlas.defaulted.component.generators;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public interface WeaponLevelBasedValue {
-    Codec<WeaponLevelBasedValue> CODEC = WeaponLevelBasedValues.CODEC;
+    Codec<WeaponLevelBasedValue> DISPATCH_CODEC = WeaponLevelBasedValues.INSTANCE.getRegistry().byNameCodec()
+            .dispatch(WeaponLevelBasedValue::codec, mapCodec -> mapCodec);
+    Codec<WeaponLevelBasedValue> CODEC = Codec.either(Codec.FLOAT.xmap(Constant::new, Constant::value), DISPATCH_CODEC)
+            .xmap((either) -> either.map((left) -> left, (right) -> right), (weaponLevelBasedValue) -> weaponLevelBasedValue instanceof Constant constant ? Either.left(constant) : Either.right(weaponLevelBasedValue));
     Float getResult(int weaponLevel, float addedValue, boolean applyTier);
     default Float getResult(int weaponLevel, boolean applyTier) {
         return getResult(weaponLevel, 0, applyTier);
     }
     MapCodec<? extends WeaponLevelBasedValue> codec();
     interface LevelCondition {
-        Codec<LevelCondition> CODEC = LevelConditions.CODEC;
+        Codec<LevelCondition> DISPATCH_CODEC = LevelConditions.INSTANCE.getRegistry().byNameCodec()
+                .dispatch(LevelCondition::codec, mapCodec -> mapCodec);
+        Codec<LevelCondition> CODEC = Codec.either(Codec.INT.xmap(i -> new ClampedCondition(i, i), ClampedCondition::min), DISPATCH_CODEC)
+                .xmap((either) -> either.map((left) -> left, (right) -> right), (levelCondition) -> levelCondition instanceof ClampedCondition clampedCondition ? Either.left(clampedCondition) : Either.right(levelCondition));
         boolean matches(int value);
         MapCodec<? extends LevelCondition> codec();
     }

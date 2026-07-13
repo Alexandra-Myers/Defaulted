@@ -12,27 +12,28 @@ import net.atlas.defaulted.base.BasePatches;
 import net.atlas.defaulted.mixin.StructureTemplateManagerAccessor;
 //?}
 //? 1.21.11 || 1.21.1 {
-/*import net.mehvahdjukaar.codecui.SchemaCodec;
-*///?}
+import net.mehvahdjukaar.codecui.SchemaCodec;
+//?}
 import net.minecraft.ChatFormatting;
 //? <26.1 {
-import net.minecraft.ResourceLocationException;
+import net.minecraft.IdentifierException;
 //?}
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.FileToIdConverter;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.server.level.ServerLevel;
 //? >=1.21.11
-//import net.minecraft.server.permissions.Permissions;
+import net.minecraft.server.permissions.Permissions;
 //? <26.1 {
-import net.minecraft.FileUtil;
+import net.minecraft.util.FileUtil;
 
 import java.nio.file.InvalidPathException;
 //?}
@@ -50,22 +51,22 @@ public class CommonUtils {
             .build();
     public static <A> Codec<A> wrap(Codec<A> codec) {
         //? 1.21.11 || 1.21.1 {
-        /*return SchemaCodec.wrap(codec);
-        *///?} else {
-        return codec;
-        //?}
+        return SchemaCodec.wrap(codec);
+        //?} else {
+        /*return codec;
+        *///?}
     }
-    public static Tag readTag(/*? >=1.21.5 {*/ /*DynamicOps<Tag> ops,*/ /*?}*/ StringReader reader) throws CommandSyntaxException {
+    public static Tag readTag(/*? >=1.21.5 {*/ DynamicOps<Tag> ops, /*?}*/ StringReader reader) throws CommandSyntaxException {
         //? >=1.21.5 {
-        /*return TagParser.create(ops).parseAsArgument(reader);
-        *///?} <1.21.5 {
-        TagParser parser = new TagParser(reader);
+        return TagParser.create(ops).parseAsArgument(reader);
+        //?} <1.21.5 {
+        /*TagParser parser = new TagParser(reader);
         return parser.readValue();
-        //?}
+        *///?}
     }
     public static <A> A parse(StringReader reader, RegistryAccess registryAccess, Codec<A> codec) throws CommandSyntaxException {
         DynamicOps<Tag> ops = RegistryOps.create(NbtOps.INSTANCE, registryAccess);
-        return codec.parse(ops, readTag(/*? >=1.21.5 {*/ /*ops,*/ /*?}*/ reader))
+        return codec.parse(ops, readTag(/*? >=1.21.5 {*/ ops, /*?}*/ reader))
                 .getOrThrow(s -> CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherParseException().createWithContext(reader, s));
     }
     public static <A> String readValueOf(A value, Codec<A> codec, DynamicOps<Tag> ops) {
@@ -103,28 +104,28 @@ public class CommonUtils {
         }
     }
 
-    public static Path createAndValidatePath(ResourceLocation id, BasePatches<?, ?> patches, ServerLevel level) {
+    public static Path createAndValidatePath(Identifier id, BasePatches<?, ?> patches, ServerLevel level) {
         //? >=26.1 {
         /*return level.getStructureManager().worldTemplates().createAndValidatePathToStructure(id, FileToIdConverter.registry(patches.key()));
         *///?} <26.1 {
-        return createAndValidatePathToResource(((StructureTemplateManagerAccessor)level.getStructureManager()).getGeneratedDir(), id, FileToIdConverter.registry(patches.key()));
+        return createAndValidatePathToResource(((StructureTemplateManagerAccessor)level.getStructureManager()).getGeneratedDir(), id, FileToIdConverter.json(Registries.elementsDirPath(patches.key())));
         //?}
     }
 
     //? <26.1 {
-    public static Path createAndValidatePathToResource(Path generatedDir, ResourceLocation id, FileToIdConverter converter) {
+    public static Path createAndValidatePathToResource(Path generatedDir, Identifier id, FileToIdConverter converter) {
         if (id.getPath().contains("//")) {
-            throw new ResourceLocationException("Invalid resource path: " + id);
+            throw new IdentifierException("Invalid resource path: " + id);
         } else {
             try {
                 Path resource = generatedDir.resolve(id.getNamespace() + converter.idToFile(id).getPath());
                 if (resource.startsWith(generatedDir) && FileUtil.isPathNormalized(resource) && FileUtil.isPathPortable(resource)) {
                     return resource;
                 } else {
-                    throw new ResourceLocationException("Invalid resource path: " + resource);
+                    throw new IdentifierException("Invalid resource path: " + resource);
                 }
             } catch (InvalidPathException invalidPathException) {
-                throw new ResourceLocationException("Invalid resource path: " + id, invalidPathException);
+                throw new IdentifierException("Invalid resource path: " + id, invalidPathException);
             }
         }
     }
@@ -132,9 +133,9 @@ public class CommonUtils {
 
     public static boolean hasAdminPerms(CommandSourceStack commandSourceStack) {
         //? >=1.21.11 {
-        /*return commandSourceStack.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER);
-        *///?} <1.21.11 {
-        return commandSourceStack.hasPermission(2);
-        //?}
+        return commandSourceStack.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER);
+        //?} <1.21.11 {
+        /*return commandSourceStack.hasPermission(2);
+        *///?}
     }
 }

@@ -1,18 +1,19 @@
 package net.atlas.defaulted.utils;
 
 //? >=1.21.5
-//import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.StringTag;
 
-import java.util.HexFormat;
+//? <1.21.5
+//import java.util.HexFormat;
 
 public class StringTagReplacement {
     //? <1.21.5
-    private static final HexFormat HEX_ESCAPE = HexFormat.of().withUpperCase();
+    //private static final HexFormat HEX_ESCAPE = HexFormat.of().withUpperCase();
     public static void quoteAndEscape(String string, StringBuilder stringBuilder) {
         //? >=1.21.5 {
-        /*StringTag.quoteAndEscape(string, stringBuilder);
-        *///?} <1.21.5 {
-        int length = stringBuilder.length();
+        StringTag.quoteAndEscape(string, stringBuilder);
+        //?} <1.21.5 {
+        /*int length = stringBuilder.length();
         stringBuilder.append(' ');
         char c = 0;
 
@@ -47,11 +48,11 @@ public class StringTagReplacement {
 
         stringBuilder.setCharAt(length, c);
         stringBuilder.append(c);
-        //?}
+        *///?}
     }
 
     //? <1.21.5 {
-    public static String escapeControlCharacters(char c) {
+    /*public static String escapeControlCharacters(char c) {
         return switch (c) {
             case '\b' -> "b";
             case '\t' -> "t";
@@ -61,5 +62,5 @@ public class StringTagReplacement {
             default -> c < ' ' ? "x" + HEX_ESCAPE.toHexDigits((byte) c) : null;
         };
     }
-    //?}
+    *///?}
 }

@@ -1,17 +1,17 @@
 package net.atlas.defaulted.utils;
 
 //? <1.21.5
-import com.google.common.collect.Lists;
+//import com.google.common.collect.Lists;
 import net.minecraft.nbt.*;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 //? >=1.21.5
-//import java.util.ArrayList;
+import java.util.ArrayList;
 //? <1.21.5
-import java.util.Collections;
+//import java.util.Collections;
 import java.util.List;
 //? >=1.21.5
-//import java.util.Map;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class PrettyStringTagVisitor implements TagVisitor {
@@ -25,37 +25,37 @@ public class PrettyStringTagVisitor implements TagVisitor {
 
     @Override
     public void visitString(final StringTag tag) {
-        this.builder.append(StringTag.quoteAndEscape(/*? >=1.21.5 {*/ /*tag.value()*/ /*?} <1.21.5 {*/ tag.getAsString() /*?}*/));
+        this.builder.append(StringTag.quoteAndEscape(/*? >=1.21.5 {*/ tag.value() /*?} <1.21.5 {*/ /*tag.getAsString() *//*?}*/));
     }
 
     @Override
     public void visitByte(final ByteTag tag) {
-        this.builder.append(/*? >=1.21.5 {*/ /*tag.value()*/ /*?} <1.21.5 {*/ tag.getAsNumber() /*?}*/).append('b');
+        this.builder.append(/*? >=1.21.5 {*/ tag.value() /*?} <1.21.5 {*/ /*tag.getAsNumber() *//*?}*/).append('b');
     }
 
     @Override
     public void visitShort(final ShortTag tag) {
-        this.builder.append(/*? >=1.21.5 {*/ /*tag.value()*/ /*?} <1.21.5 {*/ tag.getAsNumber() /*?}*/).append('s');
+        this.builder.append(/*? >=1.21.5 {*/ tag.value() /*?} <1.21.5 {*/ /*tag.getAsNumber() *//*?}*/).append('s');
     }
 
     @Override
     public void visitInt(final IntTag tag) {
-        this.builder.append(/*? >=1.21.5 {*/ /*tag.value()*/ /*?} <1.21.5 {*/ tag.getAsNumber() /*?}*/);
+        this.builder.append(/*? >=1.21.5 {*/ tag.value() /*?} <1.21.5 {*/ /*tag.getAsNumber() *//*?}*/);
     }
 
     @Override
     public void visitLong(final LongTag tag) {
-        this.builder.append(/*? >=1.21.5 {*/ /*tag.value()*/ /*?} <1.21.5 {*/ tag.getAsNumber() /*?}*/).append('L');
+        this.builder.append(/*? >=1.21.5 {*/ tag.value() /*?} <1.21.5 {*/ /*tag.getAsNumber() *//*?}*/).append('L');
     }
 
     @Override
     public void visitFloat(final FloatTag tag) {
-        this.builder.append(/*? >=1.21.5 {*/ /*tag.value()*/ /*?} <1.21.5 {*/ tag.getAsFloat() /*?}*/).append('f');
+        this.builder.append(/*? >=1.21.5 {*/ tag.value() /*?} <1.21.5 {*/ /*tag.getAsFloat() *//*?}*/).append('f');
     }
 
     @Override
     public void visitDouble(final DoubleTag tag) {
-        this.builder.append(/*? >=1.21.5 {*/ /*tag.value()*/ /*?} <1.21.5 {*/ tag.getAsDouble() /*?}*/).append('d');
+        this.builder.append(/*? >=1.21.5 {*/ tag.value() /*?} <1.21.5 {*/ /*tag.getAsDouble() *//*?}*/).append('d');
     }
 
     @Override
@@ -158,22 +158,22 @@ public class PrettyStringTagVisitor implements TagVisitor {
         this.builder.append('{');
         this.indentLevel++;
         //? >=1.21.5 {
-        /*List<Map.Entry<String, Tag>> entries = new ArrayList<>(tag.entrySet());
+        List<Map.Entry<String, Tag>> entries = new ArrayList<>(tag.entrySet());
         entries.sort(Map.Entry.comparingByKey());
-        *///?} <1.21.5 {
-        List<String> entries = Lists.newArrayList(tag.getAllKeys());
+        //?} <1.21.5 {
+        /*List<String> entries = Lists.newArrayList(tag.getAllKeys());
         Collections.sort(entries);
-        //?}
+        *///?}
 
         for (int i = 0; i < entries.size(); i++) {
             //? >=1.21.5 {
-            /*Map.Entry<String, Tag> entry = entries.get(i);
+            Map.Entry<String, Tag> entry = entries.get(i);
             String key = entry.getKey();
             Tag value = entry.getValue();
-            *///?} <1.21.5 {
-            String key = entries.get(i);
+            //?} <1.21.5 {
+            /*String key = entries.get(i);
             Tag value = tag.get(key);
-            //?}
+            *///?}
             assert value != null;
             if (i != 0) {
                 this.builder.append(',');
@@ -204,7 +204,7 @@ public class PrettyStringTagVisitor implements TagVisitor {
     }
 
     @Override
-    public void visitEnd(final @NotNull EndTag tag) {
+    public void visitEnd(final @NonNull EndTag tag) {
         this.builder.append("END");
     }
 

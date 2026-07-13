@@ -11,7 +11,7 @@ import net.atlas.defaulted.utils.CommonUtils;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -32,7 +32,7 @@ public record PatchTypeArgument() {
     public static <S extends CommandSourceStack> CompletableFuture<Suggestions> suggestionsReadCodec(CommandContext<S> commandContext, SuggestionsBuilder suggestionsBuilder, PatchType<?, ?, ?, ?> type) {
         return SharedSuggestionProvider.suggest(type.readArgs(), suggestionsBuilder);
     }
-    public static <S extends CommandSourceStack, T> String writeValue(final CommandContext<S> context, ResourceLocation id, String name, String input, PatchType<T, ?, ?, ?> toChoose) throws CommandSyntaxException {
+    public static <S extends CommandSourceStack, T> String writeValue(final CommandContext<S> context, Identifier id, String name, String input, PatchType<T, ?, ?, ?> toChoose) throws CommandSyntaxException {
         String editCodecName = context.getArgument(name, String.class);
         Codec<Object> codec = toChoose.forArg(editCodecName);
         if (codec == null) throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownArgument().create();
@@ -40,7 +40,7 @@ public record PatchTypeArgument() {
         return editCodecName;
     }
     public static <S extends CommandSourceStack> CompletableFuture<Suggestions> suggestionsEditCodec(CommandContext<S> commandContext, SuggestionsBuilder suggestionsBuilder, String idName) throws CommandSyntaxException {
-        ResourceLocation id = commandContext.getArgument(idName, ResourceLocation.class);
+        Identifier id = commandContext.getArgument(idName, Identifier.class);
         PatchType<?, ?, ?, ?> type = PatchType.forId(id);
         if (type == null) throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownArgument().create();
         return SharedSuggestionProvider.suggest(type.args(), suggestionsBuilder);

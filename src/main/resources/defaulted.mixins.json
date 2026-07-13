@@ -8,6 +8,7 @@
   "mixins": [
     "ActualItemMixin",
     "DataComponentPatchAccessor",
+    "EnchantmentHelperMixin",
     "ItemAccessor",
     "ItemMixin",
     "ItemStackMixin",
@@ -15,6 +16,7 @@
     "MappedRegistryAccessor",
     "PatchedDataComponentMapAccessor",
     "ReferenceHolderMixin",
+    "RegistrySyncManagerMixin",
     "StructureTemplateManagerAccessor"
   ],
   "injectors": {

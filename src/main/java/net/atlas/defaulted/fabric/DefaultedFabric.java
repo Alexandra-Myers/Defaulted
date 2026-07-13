@@ -1,7 +1,7 @@
 package net.atlas.defaulted.fabric;
 
 //? fabric {
-import net.atlas.defaulted.EnchantmentPatchesManager;
+/*import net.atlas.defaulted.EnchantmentPatchesManager;
 import net.atlas.defaulted.command.DefaultedCommand;
 import net.atlas.defaulted.init.DefaultedRegistries;
 import net.atlas.defaulted.networking.ClientboundDefaultComponentsSyncPacket;
@@ -16,10 +16,10 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 //? >=1.21.11 {
-/*import net.fabricmc.fabric.api.resource.v1.DataResourceLoader;
-*///?}
+/^import net.fabricmc.fabric.api.resource.v1.DataResourceLoader;
+^///?}
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.*;
 
@@ -36,17 +36,17 @@ public final class DefaultedFabric implements ModInitializer {
         Defaulted.init();
         Defaulted.hasOwo = FabricLoader.getInstance().isModLoaded("owo");
         DefaultedRegistries.init();
-        ResourceLocation defaultComponentPatches = Defaulted.id("default_component_patches");
-        ResourceLocation enchantmentPatches = Defaulted.id("enchantment_patches");
+        Identifier defaultComponentPatches = Defaulted.id("default_component_patches");
+        Identifier enchantmentPatches = Defaulted.id("enchantment_patches");
         registerReloadListener(defaultComponentPatches, DefaultComponentPatchesManager::new);
         registerReloadListener(enchantmentPatches, EnchantmentPatchesManager::new);
         //? >=26.1 {
-        /*DataResourceLoader.get()
+        /^DataResourceLoader.get()
                 .addListenerOrdering(enchantmentPatches, defaultComponentPatches);
-        *///?} >=1.21.11 {
-        /*DataResourceLoader.get()
+        ^///?} >=1.21.11 {
+        /^DataResourceLoader.get()
                         .addReloaderOrdering(enchantmentPatches, defaultComponentPatches);
-        *///?}
+        ^///?}
         CommonLifecycleEvents.TAGS_LOADED.register((registries, client) -> {
             if (!client) {
                 DefaultComponentPatchesManager.getInstance().load(registries);
@@ -64,4 +64,4 @@ public final class DefaultedFabric implements ModInitializer {
         CommandRegistrationCallback.EVENT.register((dispatcher, commandBuildContext, environment) -> DefaultedCommand.register(dispatcher, commandBuildContext));
     }
 }
-//?}
+*///?}

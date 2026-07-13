@@ -13,11 +13,12 @@ import net.atlas.defaulted.mixin.ItemAccessor;
 import net.atlas.defaulted.mixin.MappedRegistryAccessor;
 import net.minecraft.core.*;
 import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -27,6 +28,8 @@ import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+//? <=1.21.1
+//import net.minecraft.world.item.ToolMaterials;
 import net.minecraft.world.item.enchantment.Enchantment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,7 +40,7 @@ import com.mojang.serialization.MapCodec;
 
 public final class Defaulted {
     public static boolean hasOwo = false;
-    public static final BiMap<String, ToolMaterial> baseTiers = HashBiMap.create();
+    public static final BiMap<String, /*? >1.21.1 {*/ ToolMaterial /*?} <=1.21.1 {*/ /*Tier *//*?}*/> baseMaterials = HashBiMap.create();
     public static final ToolMaterialWrapper DEFAULT_WRAPPER = new ToolMaterialWrapper(ToolMaterial.DIAMOND, 3, 3);
     //? <26.1 {
     public static final Map<Holder<Item>, DataComponentMap> originalComponents = new HashMap<>();
@@ -47,6 +50,7 @@ public final class Defaulted {
     public static final Map<ResourceKey<Enchantment>, Enchantment> ORIGINAL_ENCHANTMENTS = new HashMap<>();
     public static final ResourceKey<Registry<MapCodec<? extends PatchGenerator>>> PATCH_GENERATOR_TYPE = key("patch_generator");
     public static final ResourceKey<Registry<MapCodec<? extends EnchantmentPatchGenerator>>> ENCHANTMENT_PATCH_GENERATOR_TYPE = key("enchantment_patch_generator");
+    public static final ResourceKey<Registry<DataComponentType<?>>> PHANTOM_COMPONENT_TYPE = ResourceKey.createRegistryKey(id("phantom_data_components"));
     public static final ResourceKey<Registry<ItemPatches>> ITEM_PATCHES_TYPE = key("default_component_patches");
     public static final ResourceKey<Registry<EnchantmentPatches>> ENCHANTMENT_PATCHES_TYPE = key("enchantment_patches");
     /**
@@ -56,7 +60,7 @@ public final class Defaulted {
     /**
      * {@link ArrayList} of {@link Consumer}s for the initial map of all item patches, empty by default, and will be overridden if data is loaded for these.
      */
-    static final List<BiConsumer<RegistryAccess, Map<ResourceLocation, ItemPatches>>> ADD_DEFAULT_PATCHES = new ArrayList<>();
+    static final List<BiConsumer<RegistryAccess, Map<Identifier, ItemPatches>>> ADD_DEFAULT_PATCHES = new ArrayList<>();
     /**
      * {@link ArrayList} of {@link Consumer}s to run on the sorted collection of {@link EnchantmentPatches} after a reload or resource loading.
      */
@@ -64,19 +68,19 @@ public final class Defaulted {
     /**
      * {@link ArrayList} of {@link Consumer}s for the initial map of all enchantment patches, empty by default, and will be overridden if data is loaded for these.
      */
-    static final List<BiConsumer<RegistryAccess, Map<ResourceLocation, EnchantmentPatches>>> ADD_DEFAULT_ENCHANT_PATCHES = new ArrayList<>();
+    static final List<BiConsumer<RegistryAccess, Map<Identifier, EnchantmentPatches>>> ADD_DEFAULT_ENCHANT_PATCHES = new ArrayList<>();
 	public static final Set<ItemStack> ALL_STACKS = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>()));
 
     public static void init() {
         // Write common init code here.
-        baseTiers.put("wood", ToolMaterial.WOOD);
-        baseTiers.put("stone", ToolMaterial.STONE);
-        baseTiers.put("gold", ToolMaterial.GOLD);
+        baseMaterials.put("wood", ToolMaterial.WOOD);
+        baseMaterials.put("stone", ToolMaterial.STONE);
+        baseMaterials.put("gold", ToolMaterial.GOLD);
         //? >1.21.9
-        //baseTiers.put("copper", ToolMaterial.COPPER);
-        baseTiers.put("iron", ToolMaterial.IRON);
-        baseTiers.put("diamond", ToolMaterial.DIAMOND);
-        baseTiers.put("netherite", ToolMaterial.NETHERITE);
+        baseMaterials.put("copper", ToolMaterial.COPPER);
+        baseMaterials.put("iron", ToolMaterial.IRON);
+        baseMaterials.put("diamond", ToolMaterial.DIAMOND);
+        baseMaterials.put("netherite", ToolMaterial.NETHERITE);
     }
 
     public static <T> ResourceKey<Registry<T>> key(String id) {
@@ -87,8 +91,8 @@ public final class Defaulted {
         return ResourceKey.create(registry, Defaulted.id(id));
     }
 
-    public static ResourceLocation id(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+    public static Identifier id(String path) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
 
     public static void setDurability(int maxDamage, PatchedDataComponentMap patchedDataComponentMap) {
@@ -132,14 +136,14 @@ public final class Defaulted {
      * Attaches a {@link Consumer} to run on the intermediary map of item patches (before they get resorted and applied).
      * @param patchApplier The {@link Consumer} to apply onto the intermediary patches.
      */
-    public static void builtinPatchCreator(BiConsumer<RegistryAccess, Map<ResourceLocation, ItemPatches>> patchApplier) {
+    public static void builtinPatchCreator(BiConsumer<RegistryAccess, Map<Identifier, ItemPatches>> patchApplier) {
         ADD_DEFAULT_PATCHES.add(patchApplier);
     }
     /**
      * Attaches a {@link Consumer} to run on the intermediary map of enchantment patches (before they get resorted and applied).
      * @param patchApplier The {@link Consumer} to apply onto the intermediary patches.
      */
-    public static void builtinEnchantmentPatchCreator(BiConsumer<RegistryAccess, Map<ResourceLocation, EnchantmentPatches>> patchApplier) {
+    public static void builtinEnchantmentPatchCreator(BiConsumer<RegistryAccess, Map<Identifier, EnchantmentPatches>> patchApplier) {
         ADD_DEFAULT_ENCHANT_PATCHES.add(patchApplier);
     }
 
@@ -162,7 +166,7 @@ public final class Defaulted {
             if (!ORIGINAL_ENCHANTMENTS.containsKey(key)) ORIGINAL_ENCHANTMENTS.put(key, base);
             modified.put(Pair.of(original, enchantment.value()), enchantment);
         });
-        if (!(enchantmentLookup instanceof MappedRegistry<Enchantment> enchantmentRegistry)) return;
+        if (!(/*? >1.21.1 {*/ enchantmentLookup /*?} <=1.21.1 {*/ /*registryAccess.registryOrThrow(Registries.ENCHANTMENT) *//*?}*/ instanceof MappedRegistry<Enchantment> enchantmentRegistry)) return;
         MappedRegistryAccessor<Enchantment> accessor = (MappedRegistryAccessor<Enchantment>) enchantmentRegistry;
         modified.forEach((originalAndNew, holder) -> {
             accessor.getByValue().remove(originalAndNew.getFirst());

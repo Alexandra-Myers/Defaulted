@@ -2,8 +2,8 @@ package net.atlas.defaulted.mixin;
 
 import net.atlas.defaulted.Defaulted;
 //? >=1.21.5 {
-/*import net.atlas.defaulted.DefaultedPlatform;
-*///?}
+import net.atlas.defaulted.DefaultedPlatform;
+//?}
 import net.atlas.defaulted.compat.OwoCompat;
 import net.atlas.defaulted.extension.ItemStackExtensions;
 //? >=26.1 {
@@ -13,9 +13,9 @@ import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.PatchedDataComponentMap;
 //? >=1.21.5 {
-/*import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-*///?}
+//?}
 //? >=26.1 {
 /*import net.minecraft.world.item.Item;
 *///?}
@@ -27,16 +27,16 @@ import java.lang.reflect.Field;
 import net.minecraft.world.level.ItemLike;
 //?}
 //? >=1.21.5
-//import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 //? >=1.21.5 {
-/*import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-*///?}
+//?}
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin implements ItemStackExtensions {
@@ -52,7 +52,7 @@ public abstract class ItemStackMixin implements ItemStackExtensions {
     @Shadow public abstract DataComponentMap getPrototype();
 
     //? >=1.21.5 {
-    /*@WrapMethod(method = "createOptionalStreamCodec")
+    @WrapMethod(method = "createOptionalStreamCodec")
     private static StreamCodec<RegistryFriendlyByteBuf, ItemStack> wrapCodec(StreamCodec<RegistryFriendlyByteBuf, DataComponentPatch> streamCodec, Operation<StreamCodec<RegistryFriendlyByteBuf, ItemStack>> original) {
         StreamCodec<RegistryFriendlyByteBuf, ItemStack> result = original.call(streamCodec);
         return defaulted$wrapStreamCodec(result);
@@ -62,7 +62,7 @@ public abstract class ItemStackMixin implements ItemStackExtensions {
     private static StreamCodec<RegistryFriendlyByteBuf, ItemStack> defaulted$wrapStreamCodec(StreamCodec<RegistryFriendlyByteBuf, ItemStack> original) {
         return new StreamCodec<>() {
             @Override
-            public @NotNull ItemStack decode(RegistryFriendlyByteBuf buffer) {
+            public @NonNull ItemStack decode(RegistryFriendlyByteBuf buffer) {
                 return original.decode(buffer);
             }
 
@@ -86,7 +86,7 @@ public abstract class ItemStackMixin implements ItemStackExtensions {
             }
         };
     }
-    *///?}
+    //?}
 
     //? >=26.1 {
     /*@Inject(method = "<init>(Lnet/minecraft/core/Holder;ILnet/minecraft/core/component/PatchedDataComponentMap;)V", at = @At("RETURN"))

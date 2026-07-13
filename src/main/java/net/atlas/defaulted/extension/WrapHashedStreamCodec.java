@@ -1,7 +1,7 @@
 package net.atlas.defaulted.extension;
 
 //? >=1.21.5 {
-/*import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.hash.HashCode;
@@ -12,7 +12,7 @@ import net.minecraft.network.HashedStack;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.HashOps;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.HashSet;
 import java.util.IdentityHashMap;
@@ -40,7 +40,7 @@ public class WrapHashedStreamCodec implements StreamCodec<RegistryFriendlyByteBu
     }
 
     @Override
-    public HashedStack.@NotNull ActualItem decode(RegistryFriendlyByteBuf buffer) {
+    public HashedStack.@NonNull ActualItem decode(RegistryFriendlyByteBuf buffer) {
         this.registryHashOps = buffer.registryAccess().createSerializationContext(HashOps.CRC32C_INSTANCE);
         HashedStack.ActualItem stack = original.decode(buffer);
         HashedPatchMap components = stack.components();
@@ -64,4 +64,4 @@ public class WrapHashedStreamCodec implements StreamCodec<RegistryFriendlyByteBu
         original.encode(buffer, stack);
     }
 }
-*///?}
+//?}

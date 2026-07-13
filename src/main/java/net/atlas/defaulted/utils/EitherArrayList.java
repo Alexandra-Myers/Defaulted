@@ -3,7 +3,6 @@ package net.atlas.defaulted.utils;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import net.minecraft.util.ExtraCodecs;
 
 import java.util.*;
 import java.util.function.Function;
@@ -41,13 +40,13 @@ public class EitherArrayList<L, R> extends ArrayList<Either<L, R>> {
 
     public static <L, R> Codec<EitherArrayList<L, R>> codec(Codec<L> leftCodec, Codec<R> rightCodec, boolean alwaysUseList) {
         Codec<Either<L, R>> eitherCodec = Codec.either(leftCodec, rightCodec);
-        return alwaysUseList ? eitherCodec.listOf().xmap(EitherArrayList::new, Function.identity()) : ExtraCodecs.compactListCodec(eitherCodec).xmap(EitherArrayList::new, Function.identity());
+        return alwaysUseList ? eitherCodec.listOf().xmap(EitherArrayList::new, Function.identity()) : Codecs.compactListCodec(eitherCodec).xmap(EitherArrayList::new, Function.identity());
     }
 
     public static <L, R> Codec<EitherArrayList<L, R>> codec(Codec<L> leftCodec, Codec<R> rightCodec, Function<List<Either<L, R>>, DataResult<List<Either<L, R>>>> validation, boolean alwaysUseList) {
         Codec<Either<L, R>> eitherCodec = Codec.either(leftCodec, rightCodec);
         Codec<List<Either<L, R>>> listCodec = eitherCodec.listOf().validate(validation);
-        return alwaysUseList ? listCodec.xmap(EitherArrayList::new, Function.identity()) : ExtraCodecs.compactListCodec(eitherCodec, listCodec).xmap(EitherArrayList::new, Function.identity());
+        return alwaysUseList ? listCodec.xmap(EitherArrayList::new, Function.identity()) : Codecs.compactListCodec(eitherCodec, listCodec).xmap(EitherArrayList::new, Function.identity());
     }
 
     public Set<L> leftSide() {

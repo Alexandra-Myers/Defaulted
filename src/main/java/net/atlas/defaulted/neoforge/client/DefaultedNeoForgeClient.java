@@ -1,7 +1,7 @@
 package net.atlas.defaulted.neoforge.client;
 
 //? neoforge {
-/*import net.atlas.defaulted.DefaultComponentPatchesManager;
+import net.atlas.defaulted.DefaultComponentPatchesManager;
 import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.EnchantmentPatchesManager;
 //? 1.21.11 || 1.21.1 {
@@ -45,4 +45,4 @@ public class DefaultedNeoForgeClient {
         EnchantmentPatchesManager.clearClient();
     }
 }
-*///?}
+//?}

@@ -1,7 +1,7 @@
 package net.atlas.defaulted.fabric.component;
 
 //? fabric {
-import com.mojang.serialization.MapCodec;
+/*import com.mojang.serialization.MapCodec;
 
 import net.atlas.defaulted.component.PatchGenerator;
 import net.atlas.defaulted.enchantment.EnchantmentPatchGenerator;
@@ -17,4 +17,4 @@ public class DefaultedRegistries {
         EnchantmentPatchGenerators.INSTANCE.register(path, () -> mapCodec);
     }
 }
-//?}
+*///?}

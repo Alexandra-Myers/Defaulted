@@ -1,10 +1,16 @@
 @file:Suppress("UnstableApiUsage")
 
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id("dev.kikugie.loom-back-compat")
     id("dev.kikugie.postprocess.jsonlang")
     id("me.modmuss50.mod-publish-plugin")
     id("com.gradleup.shadow")
+}
+
+tasks.named<ShadowJar>("shadowJar") {
+    isZip64 = true
 }
 
 tasks.named<ProcessResources>("processResources") {
@@ -229,6 +235,11 @@ stonecutter {
         replace("org.jetbrains.annotations.Nullable", "org.jspecify.annotations.Nullable")
         replace("org.jetbrains.annotations.NotNull", "org.jspecify.annotations.NonNull")
         replace("@NotNull", "@NonNull")
+    }
+
+    replacements.string(current.parsed >= "1.21.4") {
+        replace("net.minecraft.world.item.Tier", "net.minecraft.world.item.ToolMaterial")
+        replace("Tiers.", "ToolMaterial.")
     }
 }
 

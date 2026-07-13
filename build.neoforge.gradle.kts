@@ -1,8 +1,14 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id("net.neoforged.moddev")
     id("dev.kikugie.postprocess.jsonlang")
     id("me.modmuss50.mod-publish-plugin")
     id("com.gradleup.shadow")
+}
+
+tasks.named<ShadowJar>("shadowJar") {
+    isZip64 = true
 }
 
 tasks.named<ProcessResources>("processResources") {
@@ -186,13 +192,14 @@ neoForge {
 dependencies {
     compileOnly("io.wispforest:owo-lib${property("deps.owo_loader")}:${property("deps.owo_version")}")
     implementation("io.github.java-diff-utils:java-diff-utils:${property("deps.java_diff_version")}")
-    shadow("io.github.java-diff-utils:java-diff-utils:${property("deps.java_diff_version")}")
+    jarJar("io.github.java-diff-utils:java-diff-utils:${property("deps.java_diff_version")}")
+    if (stonecutter.eval(stonecutter.current.version, "<1.21.9")) add("additionalRuntimeClasspath", "io.github.java-diff-utils:java-diff-utils:${property("deps.java_diff_version")}")
     if (hasProperty("deps.codec_ui_version")) {
         implementation("net.mehvahdjukaar:codecui-neoforge:${property("deps.codec_ui_version")}")
         jarJar("net.mehvahdjukaar:codecui-neoforge:${property("deps.codec_ui_version")}")
     }
     if (hasProperty("deps.nautilus_studio_version"))
-        implementation("net.mehvahdjukaar:nautilus_studio-neoforge:${property("deps.nautilus_studio_version")}")
+        compileOnly("net.mehvahdjukaar:nautilus_studio-neoforge:${property("deps.nautilus_studio_version")}")
 }
 
 
@@ -237,6 +244,11 @@ stonecutter {
         replace("org.jetbrains.annotations.Nullable", "org.jspecify.annotations.Nullable")
         replace("org.jetbrains.annotations.NotNull", "org.jspecify.annotations.NonNull")
         replace("@NotNull", "@NonNull")
+    }
+
+    replacements.string(current.parsed >= "1.21.4") {
+        replace("net.minecraft.world.item.Tier", "net.minecraft.world.item.ToolMaterial")
+        replace("Tiers.", "ToolMaterial.")
     }
 }
 

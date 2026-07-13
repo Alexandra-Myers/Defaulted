@@ -1,22 +1,22 @@
 package net.atlas.defaulted.mixin;
 
 //? <1.21.5 {
-import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+/*import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.atlas.defaulted.DefaultedPlatform;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
-//?}
+*///?}
 //? >=1.21.5
-//import net.minecraft.resources.ResourceLocation;
+import net.atlas.defaulted.Defaulted;
 import org.spongepowered.asm.mixin.Mixin;
 
-@Mixin(/*? <1.21.5 {*/ targets = {"net.minecraft.world.item.ItemStack$1"} /*?} else {*/ /*ResourceLocation.class*/ /*?}*/)
+@Mixin(/*? <1.21.5 {*/ /*targets = {"net.minecraft.world.item.ItemStack$2"} *//*?} else {*/ Defaulted.class /*?}*/)
 public class ItemStackStreamCodecMixin {
     //? <1.21.5 {
-    @WrapMethod(method = "decode")
+    /*@WrapMethod(method = "decode")
     public ItemStack wrapDecode(RegistryFriendlyByteBuf buffer, Operation<ItemStack> original) {
         return original.call(buffer);
     }
@@ -39,5 +39,5 @@ public class ItemStackStreamCodecMixin {
         }
         original.call(buffer, newStack);
     }
-    //?}
+    *///?}
 }

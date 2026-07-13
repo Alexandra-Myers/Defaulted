@@ -8,6 +8,7 @@ import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.world.item.Item;
 
 public interface PatchGenerator extends BasePatchGenerator<PatchGenerator> {
-	Codec<PatchGenerator> CODEC = ItemPatchGenerators.CODEC;
+	Codec<PatchGenerator> CODEC = ItemPatchGenerators.INSTANCE.getRegistry().byNameCodec()
+            .dispatch("generator", PatchGenerator::codec, mapCodec -> mapCodec);
     void patchDataComponentMap(Item item, PatchedDataComponentMap patchedDataComponentMap);
 }

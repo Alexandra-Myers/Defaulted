@@ -1,15 +1,16 @@
 package net.atlas.defaulted.component.generators;
 
 //? >=1.21.5 {
-/*import com.mojang.serialization.Codec;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.atlas.defaulted.utils.Codecs;
 import net.atlas.defaulted.component.PatchGenerator;
 import net.minecraft.core.Holder;
 //? >=26.1 {
-/^import net.minecraft.core.HolderSet;
+/*import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
-^///?}
+*///?}
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.core.registries.Registries;
@@ -17,7 +18,6 @@ import net.minecraft.sounds.SoundEvent;
 //? <26.1 {
 import net.minecraft.tags.TagKey;
 //?}
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.component.BlocksAttacks;
@@ -31,8 +31,8 @@ public record BlocksAttacksGenerator(Optional<Float> blockDelaySeconds,
 									 List<BlocksAttacks.DamageReduction> damageReductions,
 									 Optional<BlocksAttacks.ItemDamageFunction> itemDamage,
 									 //? >=26.1 {
-									 /^Optional<HolderSet<DamageType>> bypassedBy,
-									 ^///?} <26.1 {
+									 /*Optional<HolderSet<DamageType>> bypassedBy,
+									 *///?} <26.1 {
 									 Optional<TagKey<DamageType>> bypassedBy,
 									 //?}
 									 Optional<Holder<SoundEvent>> blockSound,
@@ -40,16 +40,16 @@ public record BlocksAttacksGenerator(Optional<Float> blockDelaySeconds,
 									 boolean appendReductions) implements PatchGenerator {
 	public static final MapCodec<BlocksAttacksGenerator> CODEC = RecordCodecBuilder.mapCodec(
 		instance -> instance.group(
-				ExtraCodecs.NON_NEGATIVE_FLOAT.optionalFieldOf("block_delay_seconds").forGetter(BlocksAttacksGenerator::blockDelaySeconds),
-				ExtraCodecs.NON_NEGATIVE_FLOAT.optionalFieldOf("disable_cooldown_scale").forGetter(BlocksAttacksGenerator::disableCooldownScale),
+				Codecs.NON_NEGATIVE_FLOAT.optionalFieldOf("block_delay_seconds").forGetter(BlocksAttacksGenerator::blockDelaySeconds),
+				Codecs.NON_NEGATIVE_FLOAT.optionalFieldOf("disable_cooldown_scale").forGetter(BlocksAttacksGenerator::disableCooldownScale),
 				BlocksAttacks.DamageReduction.CODEC
 					.listOf()
 					.optionalFieldOf("damage_reductions", List.of(new BlocksAttacks.DamageReduction(90.0F, Optional.empty(), 0.0F, 1.0F)))
 					.forGetter(BlocksAttacksGenerator::damageReductions),
 				BlocksAttacks.ItemDamageFunction.CODEC.optionalFieldOf("item_damage").forGetter(BlocksAttacksGenerator::itemDamage),
 				//? >=26.1 {
-				/^ RegistryCodecs.homogeneousList(Registries.DAMAGE_TYPE)
-				^///?} <26.1 {
+				/* RegistryCodecs.homogeneousList(Registries.DAMAGE_TYPE)
+				*///?} <26.1 {
 				TagKey.codec(Registries.DAMAGE_TYPE)
 				//?}
 						.optionalFieldOf("bypassed_by").forGetter(BlocksAttacksGenerator::bypassedBy),
@@ -88,4 +88,4 @@ public record BlocksAttacksGenerator(Optional<Float> blockDelaySeconds,
 		return CODEC;
 	}
 }
-*///?}
+//?}

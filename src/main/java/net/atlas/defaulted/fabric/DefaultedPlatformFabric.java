@@ -1,7 +1,7 @@
 package net.atlas.defaulted.fabric;
 
 //? fabric {
-import net.atlas.defaulted.Defaulted;
+/*import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.DefaultedPlatform;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
@@ -13,4 +13,4 @@ public class DefaultedPlatformFabric implements DefaultedPlatform {
         return Defaulted.isOnClientNetworkingThread();
     }
 }
-//?}
+*///?}

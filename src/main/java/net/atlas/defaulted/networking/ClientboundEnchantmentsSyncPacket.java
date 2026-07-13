@@ -6,7 +6,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 
@@ -15,7 +15,7 @@ public record ClientboundEnchantmentsSyncPacket(ArrayList<EnchantmentPatches> li
     public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundEnchantmentsSyncPacket> CODEC = ByteBufCodecs.collection(ArrayList::new, ByteBufCodecs.fromCodecWithRegistriesTrusted(EnchantmentPatches.CODEC)).map(ClientboundEnchantmentsSyncPacket::new, ClientboundEnchantmentsSyncPacket::list);
 
     @Override
-    public @NotNull Type<?> type() {
+    public @NonNull Type<?> type() {
         return TYPE;
     }
 }

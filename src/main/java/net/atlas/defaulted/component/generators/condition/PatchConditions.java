@@ -30,13 +30,13 @@ public class PatchConditions extends Bootstrapper<MapCodec<? extends PatchCondit
         super(Defaulted.key("patch_conditions"), "minecraft");
     }
 
-    public void bootstrap(Registrar<MapCodec<? extends PatchCondition>> registrar) {
-        registrar.register("invert", () -> InvertCondition.CODEC);
-        registrar.register("condition_list", () -> ListCondition.CODEC);
-        registrar.register("is_item", () -> ItemIsCondition.CODEC);
-        registrar.register("in_tag", () -> ItemHasTagCondition.CODEC);
-        registrar.register("has_components", () -> ComponentsPresentCondition.CODEC);
-        registrar.register("matches_components", () -> ExactComponentsCondition.CODEC);
+    public void bootstrap() {
+        register("invert", () -> InvertCondition.CODEC);
+        register("condition_list", () -> ListCondition.CODEC);
+        register("is_item", () -> ItemIsCondition.CODEC);
+        register("in_tag", () -> ItemHasTagCondition.CODEC);
+        register("has_components", () -> ComponentsPresentCondition.CODEC);
+        register("matches_components", () -> ExactComponentsCondition.CODEC);
     }
     
     public interface PatchCondition {

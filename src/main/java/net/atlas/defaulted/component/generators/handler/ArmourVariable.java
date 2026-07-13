@@ -2,7 +2,10 @@ package net.atlas.defaulted.component.generators.handler;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+//? >1.21.1
 import net.minecraft.core.component.DataComponents;
+//? <=1.21.1
+//import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 
 import java.util.Objects;
@@ -24,14 +27,6 @@ public record ArmourVariable<T>(Optional<T> any, Optional<T> helmet, Optional<T>
 	public ArmourVariable(T any, T helmet, T chestplate, T leggings, T boots, T body) {
 		this(Optional.ofNullable(any), Optional.ofNullable(helmet), Optional.ofNullable(chestplate), Optional.ofNullable(leggings), Optional.ofNullable(boots), Optional.ofNullable(body));
 	}
-	public ArmourVariable(Optional<T> any, Optional<T> helmet, Optional<T> chestplate, Optional<T> leggings, Optional<T> boots, Optional<T> body) {
-		this.any = any;
-		this.helmet = helmet;
-		this.chestplate = chestplate;
-		this.leggings = leggings;
-		this.boots = boots;
-		this.body = body;
-	}
     @SuppressWarnings("unchecked")
     public static <T> ArmourVariable<T> empty() {
         return (ArmourVariable<T>) EMPTY;
@@ -40,8 +35,13 @@ public record ArmourVariable<T>(Optional<T> any, Optional<T> helmet, Optional<T>
 		return new ArmourVariable<>(any, null, null, null, null, null);
 	}
 	public T getValue(Item item) {
+		//? >1.21.1 {
 		if (item.components().has(DataComponents.EQUIPPABLE)) {
 			return switch (item.components().get(DataComponents.EQUIPPABLE).slot()) {
+		//?} <=1.21.1 {
+		/*if (item instanceof ArmorItem armorItem) {
+			return switch (armorItem.getEquipmentSlot()) {
+		*///?}
 				case HEAD -> helmet.orElseGet(() -> any.orElse(null));
 				case CHEST -> chestplate.orElseGet(() -> any.orElse(null));
 				case LEGS -> leggings.orElseGet(() -> any.orElse(null));
