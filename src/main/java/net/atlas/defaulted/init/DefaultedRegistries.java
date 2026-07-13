@@ -8,7 +8,7 @@ import net.atlas.defaulted.enchantment.value_provider.ValueProviders;
 //? fabric {
 /*import net.atlas.defaulted.fabric.util.FabricUtils;
 //? >1.21.1
-//import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
+import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 *///?} neoforge {
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -43,7 +43,7 @@ public class DefaultedRegistries {
         //? fabric {
         /*return FabricUtils.createRegistry(
                 key
-        )/^? >1.21.1 {^/ /^.attribute(RegistryAttribute.OPTIONAL) ^//^?}^/.buildAndRegister();
+        )/^? >1.21.1 {^/ .attribute(RegistryAttribute.OPTIONAL) /^?}^/.buildAndRegister();
         *///?} neoforge {
         return register.makeRegistry(builder -> builder.sync(false));
         //?}

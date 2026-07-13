@@ -2,6 +2,7 @@ package net.atlas.defaulted.utils;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
+//? >1.21.1
 import net.minecraft.util.ExtraCodecs;
 
 import java.util.List;

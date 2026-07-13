@@ -1,4 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import java.util.Locale
 
 plugins {
     id("net.neoforged.moddev")
@@ -15,7 +16,7 @@ tasks.named<ProcessResources>("processResources") {
     fun prop(name: String) = project.property(name) as String
 
     val props = HashMap<String, String>().apply {
-        this["version"] = prop("mod.version") + "-" + prop("deps.minecraft")
+        this["version"] = prop("mod.version")
         this["minecraft"] = prop("mod.mc_dep_forgelike")
         this["neoforge_version"] = prop("deps.neoforge")
         this["mod_name"] = prop("mod.name")
@@ -263,9 +264,19 @@ publishMods {
     file = tasks.jar.map { it.archiveFile.get() }
     additionalFiles.from(tasks.named<org.gradle.jvm.tasks.Jar>("sourcesJar").map { it.archiveFile.get() })
 
-    type = STABLE
-    displayName = "${property("mod.name")} ${stonecutter.current.version} ${property("mod.version")} NeoForge"
-    version = "${property("mod.version")}.${property("mod.sub_version")}-${property("deps.minecraft")}-NeoForge"
+    var release = "${property("mod.sub_version")}" == "release"
+    type =
+        if (release) STABLE
+        else BETA
+    var subVer =
+        if (release) ""
+        else ".${property("mod.sub_version")}"
+    var displaySubVer =
+        if (release) ""
+        else " ${(property("mod.sub_version") as String).replace(".", " ").uppercase(Locale.getDefault())}"
+
+    displayName = "${property("mod.name")} ${stonecutter.current.version + displaySubVer} ${property("mod.version")} NeoForge"
+    version = "${property("mod.version")}${subVer}-${property("deps.minecraft")}-NeoForge"
     changelog = provider { rootProject.file("CHANGELOG-LATEST.md").readText() }
     modLoaders.add("neoforge")
 

@@ -11,9 +11,6 @@ import net.atlas.defaulted.base.BasePatches;
 //? <26.1 {
 /*import net.atlas.defaulted.mixin.StructureTemplateManagerAccessor;
 *///?}
-//? 1.21.11 || 1.21.1 {
-/*import net.mehvahdjukaar.codecui.SchemaCodec;
-*///?}
 import net.minecraft.ChatFormatting;
 //? <26.1 {
 /*import net.minecraft.IdentifierException;
@@ -50,13 +47,6 @@ public class CommonUtils {
             .oldTag(left -> left ? "§c" : "§r§4")
             .newTag(left -> left ? "§a" : "§r§2")
             .build();
-    public static <A> Codec<A> wrap(Codec<A> codec) {
-        //? 1.21.11 || 1.21.1 {
-        /*return SchemaCodec.wrap(codec);
-        *///?} else {
-        return codec;
-        //?}
-    }
     public static Tag readTag(/*? >=1.21.5 {*/ DynamicOps<Tag> ops, /*?}*/ StringReader reader) throws CommandSyntaxException {
         //? >=1.21.5 {
         return TagParser.create(ops).parseAsArgument(reader);

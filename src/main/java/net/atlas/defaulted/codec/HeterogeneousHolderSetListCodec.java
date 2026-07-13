@@ -32,7 +32,7 @@ public class HeterogeneousHolderSetListCodec<E> implements Codec<List<HolderSet<
 	private HeterogeneousHolderSetListCodec(final ResourceKey<? extends Registry<E>> registry, final Codec<Holder<E>> elementCodec, final boolean alwaysUseList) {
 		this.registry = registry;
 		this.elementCodec = elementCodec;
-		this.innerListCodec = EitherArrayList.codec(TagKey.hashedCodec(registry), elementCodec, alwaysUseList);
+		this.innerListCodec = EitherArrayList.codec("tag", "element", TagKey.hashedCodec(registry), elementCodec, alwaysUseList);
 	}
 
 	@Override
@@ -97,5 +97,9 @@ public class HeterogeneousHolderSetListCodec<E> implements Codec<List<HolderSet<
 	private <T> DataResult<T> encodeWithoutRegistry(final List<HolderSet<E>> input, final DynamicOps<T> ops, final T prefix) {
 		Optional<List<Holder<E>>> toEncode = input.stream().filter(holders -> holders.unwrap().right().isPresent()).map(holders -> holders.unwrap().right().get()).findFirst();
 		return toEncode.isPresent() ? this.elementCodec.listOf().encode(toEncode.get(), ops, prefix) : DataResult.error(() -> "Can't encode " + input + " without registries");
+	}
+
+	public Codec<EitherArrayList<TagKey<E>, Holder<E>>> getListCodec() {
+		return this.innerListCodec;
 	}
 }

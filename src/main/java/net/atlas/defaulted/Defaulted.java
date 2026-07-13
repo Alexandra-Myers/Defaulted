@@ -1,6 +1,7 @@
 package net.atlas.defaulted;
 
 import com.mojang.datafixers.util.Pair;
+import net.atlas.defaulted.compat.CodecUICompat;
 import net.atlas.defaulted.component.ItemPatches;
 import net.atlas.defaulted.component.PatchGenerator;
 import net.atlas.defaulted.component.ToolMaterialWrapper;
@@ -81,6 +82,7 @@ public final class Defaulted {
         baseMaterials.put("iron", ToolMaterial.IRON);
         baseMaterials.put("diamond", ToolMaterial.DIAMOND);
         baseMaterials.put("netherite", ToolMaterial.NETHERITE);
+        CodecUICompat.registerSchemaHandlers();
     }
 
     public static <T> ResourceKey<Registry<T>> key(String id) {

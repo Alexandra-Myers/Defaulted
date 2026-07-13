@@ -69,4 +69,8 @@ public class TagOnlyHolderSetCodec<E> implements Codec<HolderSet<E>> {
 
 		return DataResult.error(() -> "Can't encode element " + input + " without registry");
 	}
+
+	public Codec<TagKey<E>> getCodec() {
+		return this.codec;
+	}
 }

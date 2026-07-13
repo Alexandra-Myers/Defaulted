@@ -1,0 +1,9 @@
+- Added support as built-in type for Nautilus Studio
+- Added `/defaulted` root command. Format:
+  - `/defaulted item <item> components [get-prototype|get-patch|diff]`: Gets item components of `<item>`, and displays either the original (prototype), current (patch) or a unified diff between the prototype and patch
+  - `/defaulted enchantment <enchantment> [description|supported_items|primary_items|weight|max_level|min_cost|max_cost|anvil_cost|slots|exclusive_set|effects] [get-prototype|get-patch|diff]`: Gets value for provided field of `<enchantment>`, and displays either the original (prototype), current (patch) or a unified diff between the prototype and patch
+  - `/defaulted generate start [item|enchantment] <id> (<elements>)`: Starts a patch builder with id `<id>` for elements `<elements>`
+  - `/defaulted generate append-patch-generator <id> <generator>`: Appends a patch generator `<generator>` to patch builder `<id>` provided one exists
+  - `/defaulted generate set <id> [patch|description|supported_items|primary_items|force_primary_items_replacement|weight|max_level|min_cost|max_cost|anvil_cost|slots|added_slots|removed_slots|exclusive_set] <value>`: Sets the provided field for patch builder `<id>` to `<value>`
+  - `/defaulted generate discard <id>`: Deletes the patch builder `<id>`
+  - `/defaulted generate build <id>`: Builds patch builder `<id>` into a patch in either `<world_folder>/generated/<namespace>/defaulted/default_component_patches/<path>.json` or `<world_folder>/generated/<namespace>/defaulted/enchantment_patches/<path>.json` and then deletes the patch builder

@@ -17,7 +17,8 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class AbstractedHolder<T, A extends T> implements Holder<T>, Supplier<A> {
+@SuppressWarnings("unused")
+public class AbstractedHolder<T, A extends T> implements /*? neoforge {*/ Holder<T>, /*?}*/ Supplier<A> {
     protected final ResourceKey<T> key;
     private final Holder<T> delegate;
 
@@ -51,7 +52,7 @@ public class AbstractedHolder<T, A extends T> implements Holder<T>, Supplier<A> 
             return true;
         } else {
             if (obj instanceof Holder<?> h)
-                return h.kind() == Kind.REFERENCE && h.unwrapKey().equals(Optional.of(this.key));
+                return h.kind() == Holder.Kind.REFERENCE && h.unwrapKey().equals(Optional.of(this.key));
             return false;
         }
     }
@@ -117,7 +118,7 @@ public class AbstractedHolder<T, A extends T> implements Holder<T>, Supplier<A> 
     }
 
     public Holder.@NonNull Kind kind() {
-        return Kind.REFERENCE;
+        return Holder.Kind.REFERENCE;
     }
 
     public boolean canSerializeIn(@NonNull HolderOwner<T> owner) {

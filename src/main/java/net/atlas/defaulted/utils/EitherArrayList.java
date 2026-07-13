@@ -3,6 +3,12 @@ package net.atlas.defaulted.utils;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+//? 1.21.1 || 1.21.11 {
+/*import net.mehvahdjukaar.codecui.Schema;
+import net.mehvahdjukaar.codecui.SchemaCodec;
+import net.mehvahdjukaar.codecui.SchemaCodecs;
+import net.mehvahdjukaar.codecui.internal.SchemaResolver;
+*///?}
 
 import java.util.*;
 import java.util.function.Function;
@@ -39,14 +45,46 @@ public class EitherArrayList<L, R> extends ArrayList<Either<L, R>> {
     }
 
     public static <L, R> Codec<EitherArrayList<L, R>> codec(Codec<L> leftCodec, Codec<R> rightCodec, boolean alwaysUseList) {
+        return codec(null, null, leftCodec, rightCodec, alwaysUseList);
+    }
+
+    @SuppressWarnings("unused")
+    public static <L, R> Codec<EitherArrayList<L, R>> codec(String lName, String rName, Codec<L> leftCodec, Codec<R> rightCodec, boolean alwaysUseList) {
         Codec<Either<L, R>> eitherCodec = Codec.either(leftCodec, rightCodec);
+        //? 1.21.1 || 1.21.11 {
+        /*Schema<L> leftSchema = SchemaResolver.get().resolve(leftCodec);
+        Schema<R> rightSchema = SchemaResolver.get().resolve(rightCodec);
+        Schema<List<Either<L, R>>> listSchema = new Schema.ListOf<>(Schema.anyOf(Schema.option(lName, leftSchema), Schema.option(rName, rightSchema)), 0, Integer.MAX_VALUE);
+
+        //noinspection RedundantCast
+        return alwaysUseList ? SchemaCodecs.xmap(SchemaCodec.of(eitherCodec.listOf(), listSchema), EitherArrayList::new, eithers -> (List<Either<L,R>>) eithers) : SchemaCodecs.xmap(SchemaCodec.of(Codecs.compactListCodec(eitherCodec), Schema.anyOf(Schema.option(lName, leftSchema),
+                Schema.option(rName, rightSchema),
+                Schema.option("list", listSchema))), EitherArrayList::new, eithers -> (List<Either<L,R>>) eithers);
+        *///?} else {
         return alwaysUseList ? eitherCodec.listOf().xmap(EitherArrayList::new, Function.identity()) : Codecs.compactListCodec(eitherCodec).xmap(EitherArrayList::new, Function.identity());
+         //?}
     }
 
     public static <L, R> Codec<EitherArrayList<L, R>> codec(Codec<L> leftCodec, Codec<R> rightCodec, Function<List<Either<L, R>>, DataResult<List<Either<L, R>>>> validation, boolean alwaysUseList) {
+        return codec(null, null, leftCodec, rightCodec, validation, alwaysUseList);
+    }
+
+    @SuppressWarnings("unused")
+    public static <L, R> Codec<EitherArrayList<L, R>> codec(String lName, String rName, Codec<L> leftCodec, Codec<R> rightCodec, Function<List<Either<L, R>>, DataResult<List<Either<L, R>>>> validation, boolean alwaysUseList) {
         Codec<Either<L, R>> eitherCodec = Codec.either(leftCodec, rightCodec);
         Codec<List<Either<L, R>>> listCodec = eitherCodec.listOf().validate(validation);
+        //? 1.21.1 || 1.21.11 {
+        /*Schema<L> leftSchema = SchemaResolver.get().resolve(leftCodec);
+        Schema<R> rightSchema = SchemaResolver.get().resolve(rightCodec);
+        Schema<List<Either<L, R>>> listSchema = new Schema.ListOf<>(Schema.anyOf(Schema.option(lName, leftSchema), Schema.option(rName, rightSchema)), 0, Integer.MAX_VALUE);
+
+        //noinspection RedundantCast
+        return alwaysUseList ? SchemaCodecs.xmap(SchemaCodec.of(listCodec, listSchema), EitherArrayList::new, eithers -> (List<Either<L,R>>) eithers) : SchemaCodecs.xmap(SchemaCodec.of(Codecs.compactListCodec(eitherCodec, listCodec), Schema.anyOf(Schema.option(lName, leftSchema),
+                Schema.option(rName, rightSchema),
+                Schema.option("list", listSchema))), EitherArrayList::new, eithers -> (List<Either<L,R>>) eithers);
+        *///?} else {
         return alwaysUseList ? listCodec.xmap(EitherArrayList::new, Function.identity()) : Codecs.compactListCodec(eitherCodec, listCodec).xmap(EitherArrayList::new, Function.identity());
+         //?}
     }
 
     public Set<L> leftSide() {
