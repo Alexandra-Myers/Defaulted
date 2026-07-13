@@ -28,7 +28,7 @@ public class AbstractedHolder<T> implements Holder<T>, Supplier<T> {
         this(delegate.unwrapKey().orElse(null), delegate);
     }
 
-    public T value() {
+    public @NotNull T value() {
         return this.delegate.value();
     }
 
