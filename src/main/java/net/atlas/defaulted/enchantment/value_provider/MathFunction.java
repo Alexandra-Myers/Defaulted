@@ -4,7 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.StringRepresentable;
-import org.jspecify.annotations.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -81,7 +81,7 @@ public record MathFunction(ValueProvider left, Optional<ValueProvider> right, Op
         }
 
         @Override
-        public @NonNull String getSerializedName() {
+        public @NotNull String getSerializedName() {
             return this.name;
         }
     }

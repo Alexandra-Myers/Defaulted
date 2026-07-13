@@ -5,7 +5,7 @@ import com.mojang.serialization.MapCodec;
 import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.component.PatchGenerator;
 import net.atlas.defaulted.component.generators.*;
-import net.atlas.defaulted.utils.Bootstrapper;
+import net.atlas.defaulted.init.registry.Bootstrapper;
 
 public class ItemPatchGenerators extends Bootstrapper<MapCodec<? extends PatchGenerator>> {
     public static final ItemPatchGenerators INSTANCE = new ItemPatchGenerators();

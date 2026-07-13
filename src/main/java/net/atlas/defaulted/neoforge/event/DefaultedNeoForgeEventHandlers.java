@@ -7,7 +7,7 @@ import net.atlas.defaulted.EnchantmentPatchesManager;
 import net.atlas.defaulted.command.DefaultedCommand;
 import net.atlas.defaulted.networking.ClientboundDefaultComponentsSyncPacket;
 import net.atlas.defaulted.networking.ClientboundEnchantmentsSyncPacket;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
@@ -35,8 +35,8 @@ public class DefaultedNeoForgeEventHandlers {
     }
     @SubscribeEvent
     public static void onDatapackReload(final AddServerReloadListenersEvent addReloadListenerEvent) {
-        Identifier defaultComponentPatches = Defaulted.id("default_component_patches");
-        Identifier enchantmentPatches = Defaulted.id("enchantment_patches");
+        ResourceLocation defaultComponentPatches = Defaulted.id("default_component_patches");
+        ResourceLocation enchantmentPatches = Defaulted.id("enchantment_patches");
         addReloadListenerEvent.addListener(defaultComponentPatches, new DefaultComponentPatchesManager(addReloadListenerEvent.getRegistryAccess()));
         addReloadListenerEvent.addListener(enchantmentPatches, new EnchantmentPatchesManager(addReloadListenerEvent.getRegistryAccess()));
         addReloadListenerEvent.addDependency(enchantmentPatches, defaultComponentPatches);

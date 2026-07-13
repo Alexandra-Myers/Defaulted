@@ -225,6 +225,10 @@ stonecutter {
     replacements.string(current.parsed >= "1.21.11") {
         replace("ResourceLocation", "Identifier")
         replace("net.minecraft.Util", "net.minecraft.util.Util")
+        replace("net.minecraft.FileUtil", "net.minecraft.util.FileUtil")
+        replace("org.jetbrains.annotations.Nullable", "org.jspecify.annotations.Nullable")
+        replace("org.jetbrains.annotations.NotNull", "org.jspecify.annotations.NonNull")
+        replace("@NotNull", "@NonNull")
     }
 }
 

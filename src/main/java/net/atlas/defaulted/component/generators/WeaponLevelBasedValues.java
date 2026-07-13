@@ -4,7 +4,7 @@ import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import net.atlas.defaulted.Defaulted;
-import net.atlas.defaulted.utils.Bootstrapper;
+import net.atlas.defaulted.init.registry.Bootstrapper;
 import net.atlas.defaulted.component.generators.WeaponLevelBasedValue.*;
 
 public class WeaponLevelBasedValues extends Bootstrapper<MapCodec<? extends WeaponLevelBasedValue>> {

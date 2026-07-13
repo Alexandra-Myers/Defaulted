@@ -18,12 +18,12 @@ import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.ComponentSerialization;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.resources.RegistryFixedCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.util.Unit;
-import net.minecraft.util.Util;
+import net.minecraft.Util;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -34,7 +34,7 @@ import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
 public class PatchType<T, D, G extends BasePatchGenerator<G>, B extends BasePatchesBuilder<T, G, ?, ?>> implements StringRepresentable {
-    private static final HashMap<Identifier, PatchType<?, ?, ?, ?>> CURRENT_BUILDERS = new HashMap<>();
+    private static final HashMap<ResourceLocation, PatchType<?, ?, ?, ?>> CURRENT_BUILDERS = new HashMap<>();
     private static final List<PatchType<?, ?, ?, ?>> TYPES = new ArrayList<>();
     public static final PatchType<Item, DataComponentMap, PatchGenerator, ItemPatchesBuilder> ITEM = new PatchType<>("item",
             ItemPatchesBuilder::new,
@@ -95,7 +95,7 @@ public class PatchType<T, D, G extends BasePatchGenerator<G>, B extends BasePatc
     private final String name;
     private final BasePatchesBuilder.Factory<T, B> factory;
     private final Codec<List<HolderSet<T>>> elementsCodec;
-    private final HashMap<Identifier, B> map = new HashMap<>();
+    private final HashMap<ResourceLocation, B> map = new HashMap<>();
     private final Codec<G> generatorCodec;
     private final Map<String, Codec<?>> builderArgs;
     private final Map<String, Codec<?>> readArgs;
@@ -122,7 +122,7 @@ public class PatchType<T, D, G extends BasePatchGenerator<G>, B extends BasePatc
         return TYPES.stream().map(PatchType::getSerializedName);
     }
 
-    public static Stream<Identifier> builders() {
+    public static Stream<ResourceLocation> builders() {
         return CURRENT_BUILDERS.keySet().stream();
     }
 
@@ -130,33 +130,33 @@ public class PatchType<T, D, G extends BasePatchGenerator<G>, B extends BasePatc
         return this.generatorCodec;
     }
 
-    public boolean addBuilder(Identifier id) {
+    public boolean addBuilder(ResourceLocation id) {
         if (CURRENT_BUILDERS.containsKey(id)) return false;
         CURRENT_BUILDERS.put(id, this);
         this.map.put(id, this.factory.create());
         return true;
     }
 
-    public boolean addBuilder(Identifier id, StringReader reader, RegistryAccess registryAccess) throws CommandSyntaxException {
+    public boolean addBuilder(ResourceLocation id, StringReader reader, RegistryAccess registryAccess) throws CommandSyntaxException {
         return addBuilder(id, CommonUtils.parse(reader, registryAccess, this.elementsCodec));
     }
 
-    private boolean addBuilder(Identifier id, List<HolderSet<T>> elements) {
+    private boolean addBuilder(ResourceLocation id, List<HolderSet<T>> elements) {
         if (CURRENT_BUILDERS.containsKey(id)) return false;
         CURRENT_BUILDERS.put(id, this);
         this.map.put(id, this.factory.create(elements));
         return true;
     }
 
-    public static PatchType<?, ?, ?, ?> forId(Identifier id) {
+    public static PatchType<?, ?, ?, ?> forId(ResourceLocation id) {
         return CURRENT_BUILDERS.get(id);
     }
 
-    public B get(Identifier id) {
+    public B get(ResourceLocation id) {
         return this.map.get(id);
     }
 
-    public void removeBuilder(Identifier id) {
+    public void removeBuilder(ResourceLocation id) {
         CURRENT_BUILDERS.remove(id);
         this.map.remove(id);
     }

@@ -8,7 +8,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.atlas.defaulted.Defaulted;
-import net.atlas.defaulted.utils.Bootstrapper;
+import net.atlas.defaulted.init.registry.Bootstrapper;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;

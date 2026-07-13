@@ -10,7 +10,7 @@ import net.atlas.defaulted.component.PatchGenerator;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.PatchedDataComponentMap;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
@@ -40,11 +40,11 @@ public record AttributeModifiersGenerator(ItemAttributeModifiers toAdd, List<Rem
         return CODEC;
     }
     
-    public record RemovalEntry(Holder<Attribute> attribute, Identifier id) {
+    public record RemovalEntry(Holder<Attribute> attribute, ResourceLocation id) {
         public static final Codec<RemovalEntry> CODEC = RecordCodecBuilder.create(instance ->
             instance.group(Attribute.CODEC.fieldOf("type").forGetter(RemovalEntry::attribute),
-                Identifier.CODEC.fieldOf("id").forGetter(RemovalEntry::id)).apply(instance, RemovalEntry::new));
-        public boolean matches(Holder<Attribute> holder, Identifier resourceLocation) {
+                ResourceLocation.CODEC.fieldOf("id").forGetter(RemovalEntry::id)).apply(instance, RemovalEntry::new));
+        public boolean matches(Holder<Attribute> holder, ResourceLocation resourceLocation) {
 			return holder.equals(this.attribute) && this.id.equals(resourceLocation);
 		}
     }

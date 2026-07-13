@@ -27,9 +27,8 @@ import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
-import net.minecraft.server.permissions.Permissions;
-import net.minecraft.util.FileUtil;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.FileUtil;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantment;
 
@@ -50,7 +49,7 @@ public class DefaultedCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> commandDispatcher, CommandBuildContext context) {
         commandDispatcher.register(Commands.literal("defaulted")
-                .requires(commandSourceStack -> commandSourceStack.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
+                .requires(CommonUtils::hasAdminPerms)
                 .then(Commands.literal("item")
                         .then(Commands.argument("item", ResourceArgument.resource(context, Registries.ITEM))
                                 .then(Commands.argument("to_read", StringArgumentType.word())
@@ -101,7 +100,7 @@ public class DefaultedCommand {
 
     private static int createUniversal(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         PatchType<?, ?, ?, ?> patchType = PatchTypeArgument.getPatchType(context, "type");
-        Identifier id = IDUtils.getId(context, "id");
+        ResourceLocation id = IDUtils.getId(context, "id");
         if (!patchType.addBuilder(id)) throw ERROR_EXISTING_BUILDER.create(id);
         emit(context, Collections.singletonList(started(id)));
         return 0;
@@ -109,7 +108,7 @@ public class DefaultedCommand {
 
     private static int create(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         PatchType<?, ?, ?, ?> patchType = PatchTypeArgument.getPatchType(context, "type");
-        Identifier id = IDUtils.getId(context, "id");
+        ResourceLocation id = IDUtils.getId(context, "id");
         String elements = StringArgumentType.getString(context, "elements");
         if (!patchType.addBuilder(id, new StringReader(elements), context.getSource().registryAccess())) throw ERROR_EXISTING_BUILDER.create(id);
         emit(context, Collections.singletonList(started(id)));
@@ -117,7 +116,7 @@ public class DefaultedCommand {
     }
 
     private static int discardPatch(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        Identifier id = IDUtils.getId(context, "id");
+        ResourceLocation id = IDUtils.getId(context, "id");
         PatchType<?, ?, ?, ?> patchType = PatchType.forId(id);
         if (patchType == null) throw ERROR_NON_EXISTING_BUILDER.create(id);
         patchType.removeBuilder(id);
@@ -126,7 +125,7 @@ public class DefaultedCommand {
     }
 
     private static int buildPatch(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        Identifier id = IDUtils.getId(context, "id");
+        ResourceLocation id = IDUtils.getId(context, "id");
         PatchType<?, ?, ?, ?> patchType = PatchType.forId(id);
         if (patchType == null) throw ERROR_NON_EXISTING_BUILDER.create(id);
         BasePatches<?, ?> patches = patchType.get(id).build();
@@ -154,7 +153,7 @@ public class DefaultedCommand {
     }
 
     private static int appendPatchGenerator(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        Identifier id = IDUtils.getId(context, "id");
+        ResourceLocation id = IDUtils.getId(context, "id");
         PatchType<?, ?, ?, ?> patchType = PatchType.forId(id);
         if (patchType == null) throw ERROR_NON_EXISTING_BUILDER.create(id);
         BasePatchesBuilder<?, ?, ?, ?> patches = patchType.get(id);
@@ -165,7 +164,7 @@ public class DefaultedCommand {
     }
 
     private static int setValue(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        Identifier id = IDUtils.getId(context, "id");
+        ResourceLocation id = IDUtils.getId(context, "id");
         PatchType<?, ?, ?, ?> patchType = PatchType.forId(id);
         if (patchType == null) throw ERROR_NON_EXISTING_BUILDER.create(id);
         String value = StringArgumentType.getString(context, "value");
@@ -175,7 +174,7 @@ public class DefaultedCommand {
     }
 
     private static int priority(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        Identifier id = IDUtils.getId(context, "id");
+        ResourceLocation id = IDUtils.getId(context, "id");
         PatchType<?, ?, ?, ?> patchType = PatchType.forId(id);
         if (patchType == null) throw ERROR_NON_EXISTING_BUILDER.create(id);
         BasePatchesBuilder<?, ?, ?, ?> patches = patchType.get(id);
@@ -185,23 +184,23 @@ public class DefaultedCommand {
         return 0;
     }
 
-    private static Component started(Identifier id) {
+    private static Component started(ResourceLocation id) {
         return Component.translatableWithFallback("commands.defaulted.started_patch_builder", "Patch builder started with id %s.", id.toString());
     }
 
-    private static Component discarded(Identifier id) {
+    private static Component discarded(ResourceLocation id) {
         return Component.translatableWithFallback("commands.defaulted.discarded_patch_builder", "Patch builder with id %s discarded.", id.toString());
     }
 
-    private static Component outputToFile(Identifier id, String path) {
+    private static Component outputToFile(ResourceLocation id, String path) {
         return Component.translatableWithFallback("commands.defaulted.output_patch", "Patch %s output to %s successfully.", id.toString(), path);
     }
 
-    private static Component append(Identifier id, String value) {
+    private static Component append(ResourceLocation id, String value) {
         return Component.translatableWithFallback("commands.defaulted.append_patch_generator", "Added %s to patch generators for patch builder %s successfully.", value, id.toString());
     }
 
-    private static Component set(String field, Identifier id, String value) {
+    private static Component set(String field, ResourceLocation id, String value) {
         return Component.translatableWithFallback("commands.defaulted.set", "The %s for patch builder %s was set to %s successfully.", field, id.toString(), value);
     }
 

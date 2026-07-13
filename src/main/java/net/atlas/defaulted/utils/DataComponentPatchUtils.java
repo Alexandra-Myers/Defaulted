@@ -9,7 +9,7 @@ import net.atlas.defaulted.mixin.DataComponentPatchAccessor;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponentType;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Unit;
 
 import java.util.Map;
@@ -66,7 +66,7 @@ public class DataComponentPatchUtils {
                     string = string.substring("!".length());
                 }
 
-                Identifier id = Identifier.tryParse(string);
+                ResourceLocation id = ResourceLocation.tryParse(string);
                 DataComponentType<?> type = registry.getValue(id);
                 if (type == null) {
                     return DataResult.error(() -> "No component with type: '" + id + "'");
@@ -75,7 +75,7 @@ public class DataComponentPatchUtils {
                 }
             }, (key) -> {
                 DataComponentType<?> type = key.type();
-                Identifier id = registry.getKey(type);
+                ResourceLocation id = registry.getKey(type);
                 return id == null ? DataResult.error(() -> "Unregistered component: " + type) : DataResult.success(key.removed() ? "!" + id : id.toString());
             });
         }

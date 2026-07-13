@@ -17,7 +17,7 @@ import net.atlas.defaulted.component.generators.handler.ArmourVariable;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.PatchedDataComponentMap;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -46,19 +46,19 @@ public record ArmourStatsGenerator(ArmourVariable<Integer> durability, ArmourVar
         if (armor == null && toughness == null && kbRes == null && additionalModifiers.isEmpty()) return;
         ItemAttributeModifiers oldModifiers = patchedDataComponentMap.get(DataComponents.ATTRIBUTE_MODIFIERS);
         ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
-        List<Pair<Holder<Attribute>, Identifier>> addedEntries = new ArrayList<>();
-		Identifier identifier = Identifier.withDefaultNamespace("armor.any");
+        List<Pair<Holder<Attribute>, ResourceLocation>> addedEntries = new ArrayList<>();
+		ResourceLocation identifier = ResourceLocation.withDefaultNamespace("armor.any");
 		EquipmentSlotGroup slotGroup;
 		if (patchedDataComponentMap.has(DataComponents.EQUIPPABLE))
 			slotGroup = EquipmentSlotGroup.bySlot(patchedDataComponentMap.get(DataComponents.EQUIPPABLE).slot());
         else
             slotGroup = EquipmentSlotGroup.ARMOR;
 		identifier = switch (slotGroup) {
-			case HEAD -> Identifier.withDefaultNamespace("armor.helmet");
-			case CHEST -> Identifier.withDefaultNamespace("armor.chestplate");
-			case LEGS -> Identifier.withDefaultNamespace("armor.leggings");
-			case FEET -> Identifier.withDefaultNamespace("armor.boots");
-			case BODY -> Identifier.withDefaultNamespace("armor.body");
+			case HEAD -> ResourceLocation.withDefaultNamespace("armor.helmet");
+			case CHEST -> ResourceLocation.withDefaultNamespace("armor.chestplate");
+			case LEGS -> ResourceLocation.withDefaultNamespace("armor.leggings");
+			case FEET -> ResourceLocation.withDefaultNamespace("armor.boots");
+			case BODY -> ResourceLocation.withDefaultNamespace("armor.body");
 			default -> identifier;
 		};
 
@@ -86,7 +86,7 @@ public record ArmourStatsGenerator(ArmourVariable<Integer> durability, ArmourVar
         if (persistPrevious && oldModifiers != null)
             for (ItemAttributeModifiers.Entry entry : oldModifiers.modifiers()) {
                 innerloop: {
-                    for (Pair<Holder<Attribute>, Identifier> attributeIdPair : addedEntries) if (entry.matches(attributeIdPair.getFirst(), attributeIdPair.getSecond())) break innerloop;
+                    for (Pair<Holder<Attribute>, ResourceLocation> attributeIdPair : addedEntries) if (entry.matches(attributeIdPair.getFirst(), attributeIdPair.getSecond())) break innerloop;
                     builder.add(entry.attribute(), entry.modifier(), entry.slot());
                 }
             }
@@ -103,21 +103,21 @@ public record ArmourStatsGenerator(ArmourVariable<Integer> durability, ArmourVar
                 double_ -> double_.compareTo(min) > 0 ? DataResult.success(double_) : DataResult.error(() -> (String)function.apply(double_))
             );
     }
-    public record ArmorAttributeEntry(Holder<Attribute> attribute, Identifier baseId, ArmourVariable<Double> amount, AttributeModifier.Operation operation) {
+    public record ArmorAttributeEntry(Holder<Attribute> attribute, ResourceLocation baseId, ArmourVariable<Double> amount, AttributeModifier.Operation operation) {
         public static final Codec<ArmorAttributeEntry> CODEC = RecordCodecBuilder.create(
                 instance -> instance.group(
                                 Attribute.CODEC.fieldOf("type").forGetter(ArmorAttributeEntry::attribute),
-                                Identifier.CODEC.fieldOf("base_id").forGetter(ArmorAttributeEntry::baseId),
+                                ResourceLocation.CODEC.fieldOf("base_id").forGetter(ArmorAttributeEntry::baseId),
                                 ArmourVariable.codec(Codec.DOUBLE).fieldOf("amount").forGetter(ArmorAttributeEntry::amount),
                                 AttributeModifier.Operation.CODEC.fieldOf("operation").forGetter(ArmorAttributeEntry::operation)
                         )
                         .apply(instance, ArmorAttributeEntry::new)
         );
 
-        public void addEntry(Item item, ItemAttributeModifiers.Builder builder, List<Pair<Holder<Attribute>, Identifier>> addedEntries, EquipmentSlotGroup slotGroup) {
+        public void addEntry(Item item, ItemAttributeModifiers.Builder builder, List<Pair<Holder<Attribute>, ResourceLocation>> addedEntries, EquipmentSlotGroup slotGroup) {
             Double value = amount.getValue(item);
             if (value == null) return;
-            Identifier id = switch (slotGroup) {
+            ResourceLocation id = switch (slotGroup) {
                 case HEAD -> baseId.withSuffix(".helmet");
                 case CHEST -> baseId.withSuffix(".chestplate");
                 case LEGS -> baseId.withSuffix(".leggings");

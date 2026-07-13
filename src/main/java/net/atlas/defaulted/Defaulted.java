@@ -4,13 +4,9 @@ import com.mojang.datafixers.util.Pair;
 import net.atlas.defaulted.component.ItemPatches;
 import net.atlas.defaulted.component.PatchGenerator;
 import net.atlas.defaulted.component.ToolMaterialWrapper;
-import net.atlas.defaulted.component.generators.WeaponLevelBasedValue;
-import net.atlas.defaulted.component.generators.condition.PatchConditions;
 import net.atlas.defaulted.enchantment.EnchantmentBuilder;
 import net.atlas.defaulted.enchantment.EnchantmentPatchGenerator;
 import net.atlas.defaulted.enchantment.EnchantmentPatches;
-import net.atlas.defaulted.enchantment.generators.condition.EnchantmentPatchConditions;
-import net.atlas.defaulted.enchantment.value_provider.ValueProvider;
 //? <26.1 {
 import net.atlas.defaulted.mixin.ItemAccessor;
 //?}
@@ -21,7 +17,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -60,7 +56,7 @@ public final class Defaulted {
     /**
      * {@link ArrayList} of {@link Consumer}s for the initial map of all item patches, empty by default, and will be overridden if data is loaded for these.
      */
-    static final List<BiConsumer<RegistryAccess, Map<Identifier, ItemPatches>>> ADD_DEFAULT_PATCHES = new ArrayList<>();
+    static final List<BiConsumer<RegistryAccess, Map<ResourceLocation, ItemPatches>>> ADD_DEFAULT_PATCHES = new ArrayList<>();
     /**
      * {@link ArrayList} of {@link Consumer}s to run on the sorted collection of {@link EnchantmentPatches} after a reload or resource loading.
      */
@@ -68,7 +64,7 @@ public final class Defaulted {
     /**
      * {@link ArrayList} of {@link Consumer}s for the initial map of all enchantment patches, empty by default, and will be overridden if data is loaded for these.
      */
-    static final List<BiConsumer<RegistryAccess, Map<Identifier, EnchantmentPatches>>> ADD_DEFAULT_ENCHANT_PATCHES = new ArrayList<>();
+    static final List<BiConsumer<RegistryAccess, Map<ResourceLocation, EnchantmentPatches>>> ADD_DEFAULT_ENCHANT_PATCHES = new ArrayList<>();
 	public static final Set<ItemStack> ALL_STACKS = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>()));
 
     public static void init() {
@@ -90,8 +86,8 @@ public final class Defaulted {
         return ResourceKey.create(registry, Defaulted.id(id));
     }
 
-    public static Identifier id(String path) {
-        return Identifier.fromNamespaceAndPath(MOD_ID, path);
+    public static ResourceLocation id(String path) {
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
 
     public static void setDurability(int maxDamage, PatchedDataComponentMap patchedDataComponentMap) {
@@ -135,14 +131,14 @@ public final class Defaulted {
      * Attaches a {@link Consumer} to run on the intermediary map of item patches (before they get resorted and applied).
      * @param patchApplier The {@link Consumer} to apply onto the intermediary patches.
      */
-    public static void builtinPatchCreator(BiConsumer<RegistryAccess, Map<Identifier, ItemPatches>> patchApplier) {
+    public static void builtinPatchCreator(BiConsumer<RegistryAccess, Map<ResourceLocation, ItemPatches>> patchApplier) {
         ADD_DEFAULT_PATCHES.add(patchApplier);
     }
     /**
      * Attaches a {@link Consumer} to run on the intermediary map of enchantment patches (before they get resorted and applied).
      * @param patchApplier The {@link Consumer} to apply onto the intermediary patches.
      */
-    public static void builtinEnchantmentPatchCreator(BiConsumer<RegistryAccess, Map<Identifier, EnchantmentPatches>> patchApplier) {
+    public static void builtinEnchantmentPatchCreator(BiConsumer<RegistryAccess, Map<ResourceLocation, EnchantmentPatches>> patchApplier) {
         ADD_DEFAULT_ENCHANT_PATCHES.add(patchApplier);
     }
 

@@ -6,7 +6,7 @@ import net.atlas.defaulted.Defaulted;
 import net.atlas.defaulted.enchantment.EnchantmentPatchGenerator;
 import net.atlas.defaulted.enchantment.generators.AddEffectGenerator;
 import net.atlas.defaulted.enchantment.generators.ConditionalPatch;
-import net.atlas.defaulted.utils.Bootstrapper;
+import net.atlas.defaulted.init.registry.Bootstrapper;
 
 public class EnchantmentPatchGenerators extends Bootstrapper<MapCodec<? extends EnchantmentPatchGenerator>> {
     public static final EnchantmentPatchGenerators INSTANCE = new EnchantmentPatchGenerators();

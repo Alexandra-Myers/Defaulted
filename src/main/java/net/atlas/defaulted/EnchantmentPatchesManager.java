@@ -1,15 +1,12 @@
 package net.atlas.defaulted;
 
-//? <1.21.11 && fabric {
-/*import net.atlas.defaulted.Defaulted;
- *///?}
 import net.atlas.defaulted.enchantment.EnchantmentPatches;
 //? <1.21.11 && fabric {
-/*import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
- *///?}
+import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
+//?}
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -21,14 +18,14 @@ import java.util.List;
 import java.util.Map;
 
 //? <1.21.11 && fabric {
-/*public class EnchantmentPatchesManager extends SimpleJsonResourceReloadListener<EnchantmentPatches> implements IdentifiableResourceReloadListener {
-*///?} else {
-public class EnchantmentPatchesManager extends SimpleJsonResourceReloadListener<EnchantmentPatches> {
-//?}
+public class EnchantmentPatchesManager extends SimpleJsonResourceReloadListener<EnchantmentPatches> implements IdentifiableResourceReloadListener {
+//?} else {
+/*public class EnchantmentPatchesManager extends SimpleJsonResourceReloadListener<EnchantmentPatches> {
+*///?}
     public static List<EnchantmentPatches> CLIENT_CACHED = null;
     private static EnchantmentPatchesManager INSTANCE;
     private List<EnchantmentPatches> cached = null;
-    private Map<Identifier, EnchantmentPatches> intermediary = new HashMap<>();
+    private Map<ResourceLocation, EnchantmentPatches> intermediary = new HashMap<>();
     public EnchantmentPatchesManager(HolderLookup.Provider arg) {
         super(arg, EnchantmentPatches.CODEC, Defaulted.ENCHANTMENT_PATCHES_TYPE);
         INSTANCE = this;
@@ -40,14 +37,14 @@ public class EnchantmentPatchesManager extends SimpleJsonResourceReloadListener<
     }
 
     @Override
-    protected Map<Identifier, EnchantmentPatches> prepare(ResourceManager resourceManager,
+    protected Map<ResourceLocation, EnchantmentPatches> prepare(ResourceManager resourceManager,
             ProfilerFiller profilerFiller) {
         clear();
         return super.prepare(resourceManager, profilerFiller);
     }
 
     @Override
-    protected void apply(Map<Identifier, EnchantmentPatches> patches, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
+    protected void apply(Map<ResourceLocation, EnchantmentPatches> patches, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
         intermediary = patches;
     }
 
@@ -94,13 +91,13 @@ public class EnchantmentPatchesManager extends SimpleJsonResourceReloadListener<
     }
 
     //? <1.21.11 && fabric {
-    /*@Override
-    public Identifier getFabricId() {
+    @Override
+    public ResourceLocation getFabricId() {
         return Defaulted.id("enchantment_patches");
     }
-    *///?}
+    //?}
 
-    public record EnchantmentPatchesEntry(Identifier id, EnchantmentPatches enchantmentPatches) implements Comparable<EnchantmentPatchesEntry> {
+    public record EnchantmentPatchesEntry(ResourceLocation id, EnchantmentPatches enchantmentPatches) implements Comparable<EnchantmentPatchesEntry> {
         @Override
         public int compareTo(EnchantmentPatchesEntry other) {
             int priority = enchantmentPatches.compareTo(other.enchantmentPatches);

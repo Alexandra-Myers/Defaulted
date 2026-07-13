@@ -1,7 +1,7 @@
 package net.atlas.defaulted.utils;
 
 import net.minecraft.nbt.*;
-import org.jspecify.annotations.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -184,7 +184,7 @@ public class PrettyStringTagVisitor implements TagVisitor {
     }
 
     @Override
-    public void visitEnd(final @NonNull EndTag tag) {
+    public void visitEnd(final @NotNull EndTag tag) {
         this.builder.append("END");
     }
 

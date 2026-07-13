@@ -8,7 +8,7 @@ plugins {
     id("me.modmuss50.mod-publish-plugin") version "0.8.+" apply false
 }
 
-stonecutter active "1.21.11-fabric"
+stonecutter active "1.21.9-fabric"
 
 tasks.register("runActiveClient") {
     group = "stonecutter"
