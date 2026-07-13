@@ -1,6 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import java.util.Locale
 
 plugins {
     id("dev.kikugie.loom-back-compat")
@@ -254,9 +255,19 @@ publishMods {
     file = loomx.modJar.map { it.archiveFile.get() }
     additionalFiles.from(loomx.modSourcesJar.map { it.archiveFile.get() })
 
-    type = STABLE
-    displayName = "${property("mod.name")} ${stonecutter.current.version} ${property("mod.version")} Fabric"
-    version = "${property("mod.version")}.${property("mod.sub_version")}-${property("deps.minecraft")}-Fabric"
+    var release = "${property("mod.sub_version")}" == "release"
+    type =
+        if (release) STABLE
+        else BETA
+    var subVer =
+        if (release) ""
+        else ".${property("mod.sub_version")}"
+    var displaySubVer =
+        if (release) ""
+        else " ${(property("mod.sub_version") as String).replace(".", " ").uppercase(Locale.getDefault())}"
+
+    displayName = "${property("mod.name")} ${stonecutter.current.version + displaySubVer} ${property("mod.version")} Fabric"
+    version = "${property("mod.version")}${subVer}-${property("deps.minecraft")}-Fabric"
     changelog = provider { rootProject.file("CHANGELOG-LATEST.md").readText() }
     modLoaders.add("fabric")
     modLoaders.add("quilt")
