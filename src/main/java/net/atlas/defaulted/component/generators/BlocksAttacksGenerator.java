@@ -1,14 +1,15 @@
 package net.atlas.defaulted.component.generators;
 
-import com.mojang.serialization.Codec;
+//? >=1.21.5 {
+/*import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.atlas.defaulted.component.PatchGenerator;
 import net.minecraft.core.Holder;
 //? >=26.1 {
-/*import net.minecraft.core.HolderSet;
+/^import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
-*///?}
+^///?}
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.core.registries.Registries;
@@ -30,8 +31,8 @@ public record BlocksAttacksGenerator(Optional<Float> blockDelaySeconds,
 									 List<BlocksAttacks.DamageReduction> damageReductions,
 									 Optional<BlocksAttacks.ItemDamageFunction> itemDamage,
 									 //? >=26.1 {
-									 /*Optional<HolderSet<DamageType>> bypassedBy,
-									 *///?} <26.1 {
+									 /^Optional<HolderSet<DamageType>> bypassedBy,
+									 ^///?} <26.1 {
 									 Optional<TagKey<DamageType>> bypassedBy,
 									 //?}
 									 Optional<Holder<SoundEvent>> blockSound,
@@ -47,8 +48,8 @@ public record BlocksAttacksGenerator(Optional<Float> blockDelaySeconds,
 					.forGetter(BlocksAttacksGenerator::damageReductions),
 				BlocksAttacks.ItemDamageFunction.CODEC.optionalFieldOf("item_damage").forGetter(BlocksAttacksGenerator::itemDamage),
 				//? >=26.1 {
-				/* RegistryCodecs.homogeneousList(Registries.DAMAGE_TYPE)
-				*///?} <26.1 {
+				/^ RegistryCodecs.homogeneousList(Registries.DAMAGE_TYPE)
+				^///?} <26.1 {
 				TagKey.codec(Registries.DAMAGE_TYPE)
 				//?}
 						.optionalFieldOf("bypassed_by").forGetter(BlocksAttacksGenerator::bypassedBy),
@@ -87,3 +88,4 @@ public record BlocksAttacksGenerator(Optional<Float> blockDelaySeconds,
 		return CODEC;
 	}
 }
+*///?}

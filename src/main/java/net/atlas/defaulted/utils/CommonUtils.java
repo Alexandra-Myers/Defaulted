@@ -55,9 +55,17 @@ public class CommonUtils {
         return codec;
         //?}
     }
+    public static Tag readTag(/*? >=1.21.5 {*/ /*DynamicOps<Tag> ops,*/ /*?}*/ StringReader reader) throws CommandSyntaxException {
+        //? >=1.21.5 {
+        /*return TagParser.create(ops).parseAsArgument(reader);
+        *///?} <1.21.5 {
+        TagParser parser = new TagParser(reader);
+        return parser.readValue();
+        //?}
+    }
     public static <A> A parse(StringReader reader, RegistryAccess registryAccess, Codec<A> codec) throws CommandSyntaxException {
         DynamicOps<Tag> ops = RegistryOps.create(NbtOps.INSTANCE, registryAccess);
-        return codec.parse(ops, TagParser.create(ops).parseAsArgument(reader))
+        return codec.parse(ops, readTag(/*? >=1.21.5 {*/ /*ops,*/ /*?}*/ reader))
                 .getOrThrow(s -> CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherParseException().createWithContext(reader, s));
     }
     public static <A> String readValueOf(A value, Codec<A> codec, DynamicOps<Tag> ops) {

@@ -1,6 +1,7 @@
 package net.atlas.defaulted.extension;
 
-import com.google.common.cache.CacheBuilder;
+//? >=1.21.5 {
+/*import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.hash.HashCode;
@@ -63,3 +64,4 @@ public class WrapHashedStreamCodec implements StreamCodec<RegistryFriendlyByteBu
         original.encode(buffer, stack);
     }
 }
+*///?}

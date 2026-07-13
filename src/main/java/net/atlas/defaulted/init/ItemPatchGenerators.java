@@ -20,7 +20,8 @@ public class ItemPatchGenerators extends Bootstrapper<MapCodec<? extends PatchGe
         registrar.register("armor_stats", () -> ArmourStatsGenerator.CODEC);
         registrar.register("conditional", () -> ConditionalPatch.CODEC);
         registrar.register("modify_attribute_modifiers", () -> AttributeModifiersGenerator.CODEC);
-        registrar.register("modify_blocks_attacks", () -> BlocksAttacksGenerator.CODEC);
+        //? >=1.21.5
+        //registrar.register("modify_blocks_attacks", () -> BlocksAttacksGenerator.CODEC);
         registrar.register("modify_enchantments", () -> EnchantmentModifierGenerator.CODEC);
         registrar.register("modify_from_tool_material", () -> ModifyTierStatsGenerator.CODEC);
         registrar.register("modify_use_seconds", () -> EditUseDurationGenerator.CODEC);

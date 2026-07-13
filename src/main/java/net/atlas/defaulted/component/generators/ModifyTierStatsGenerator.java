@@ -47,7 +47,7 @@ public record ModifyTierStatsGenerator(List<TierComponents> components,  Optiona
                     LogManager.getLogger("Defaulted").warn("Attempted to update tool component for tiered item " + item.builtInRegistryHolder() + " but mineable tag is not present!");
                     return;
                 }
-                patchedDataComponentMap.set(DataComponents.TOOL, new Tool(List.of(Tool.Rule.deniesDrops(BuiltInRegistries.BLOCK.getOrThrow(tier.incorrectBlocksForDrops())), Tool.Rule.minesAndDrops(BuiltInRegistries.BLOCK.getOrThrow(toolMineable.get()), tier.speed())), 1.0F, 1, true));
+                patchedDataComponentMap.set(DataComponents.TOOL, new Tool(List.of(Tool.Rule.deniesDrops(BuiltInRegistries.BLOCK.getOrThrow(tier.incorrectBlocksForDrops())), Tool.Rule.minesAndDrops(BuiltInRegistries.BLOCK.getOrThrow(toolMineable.get()), tier.speed())), 1.0F, 1/*? >=1.21.5 {*/ /*, true *//*?}*/));
             }
         }
     }

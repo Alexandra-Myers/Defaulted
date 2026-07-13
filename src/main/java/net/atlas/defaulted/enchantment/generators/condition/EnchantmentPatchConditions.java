@@ -128,7 +128,7 @@ public class EnchantmentPatchConditions extends Bootstrapper<MapCodec<? extends 
         @Override
         public boolean matches(Holder<Enchantment> enchantment, EnchantmentBuilder builder) {
             for (TypedDataComponent<?> dataComponent : exactComponents) {
-                TypedDataComponent<?> present = builder.getTyped(dataComponent.type());
+                TypedDataComponent<?> present = builder/*? <1.21.5 {*/ .getComponents() /*?}*/.getTyped(dataComponent.type());
                 boolean result = present == null ? false : Objects.equals(dataComponent.value(), present.value());
                 if (result != allMatch) return result;
             }

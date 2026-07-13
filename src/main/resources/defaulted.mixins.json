@@ -11,6 +11,7 @@
     "ItemAccessor",
     "ItemMixin",
     "ItemStackMixin",
+    "ItemStackStreamCodecMixin",
     "MappedRegistryAccessor",
     "PatchedDataComponentMapAccessor",
     "ReferenceHolderMixin",
