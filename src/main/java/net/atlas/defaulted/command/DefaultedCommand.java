@@ -56,14 +56,16 @@ public class DefaultedCommand {
                                         .suggests((context1, builder) -> PatchTypeArgument.suggestionsReadCodec(context1, builder, PatchType.ITEM))
                                         .then(Commands.literal("get-prototype").executes(DefaultedCommand::readItemPrototype))
                                         .then(Commands.literal("get-patched").executes(DefaultedCommand::readItemPatch))
-                                        .then(Commands.literal("diff").executes(DefaultedCommand::readItemDiff)))))
+                                        .then(Commands.literal("diff").executes(DefaultedCommand::readItemDiff))
+                                        .then(Commands.literal("split-diff").executes(DefaultedCommand::readSplitItemDiff)))))
                 .then(Commands.literal("enchantment")
                         .then(Commands.argument("enchantment", ResourceArgument.resource(context, Registries.ENCHANTMENT))
                                 .then(Commands.argument("to_read", StringArgumentType.word())
                                         .suggests((context1, builder) -> PatchTypeArgument.suggestionsReadCodec(context1, builder, PatchType.ENCHANTMENT))
                                         .then(Commands.literal("get-prototype").executes(DefaultedCommand::readEnchantmentPrototype))
                                         .then(Commands.literal("get-patched").executes(DefaultedCommand::readEnchantmentPatch))
-                                        .then(Commands.literal("diff").executes(DefaultedCommand::readEnchantmentDiff)))))
+                                        .then(Commands.literal("diff").executes(DefaultedCommand::readEnchantmentDiff))
+                                        .then(Commands.literal("split-diff").executes(DefaultedCommand::readSplitEnchantmentDiff)))))
                 .then(Commands.literal("generate")
                         .then(Commands.literal("build")
                                 .then(Commands.argument("id", IDUtils.id())
@@ -231,11 +233,11 @@ public class DefaultedCommand {
     }
 
     private static int readItemDiff(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        Holder.Reference<Item> reference = ResourceArgument.getResource(context, "item", Registries.ITEM);
-        String prototype = PatchTypeArgument.getReadValue(context, "to_read", PatchType.ITEM, prototype(reference));
-        String patched = PatchTypeArgument.getReadValue(context, "to_read", PatchType.ITEM, components(reference));
-        emit(context, CommonUtils.unifiedDiff(prototype, patched));
-        return 0;
+        return itemDiff(context, true);
+    }
+
+    private static int readSplitItemDiff(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        return itemDiff(context, false);
     }
 
     private static int readEnchantmentPrototype(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
@@ -251,11 +253,31 @@ public class DefaultedCommand {
     }
 
     private static int readEnchantmentDiff(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        return enchantmentDiff(context, true);
+    }
+
+    private static int readSplitEnchantmentDiff(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        return enchantmentDiff(context, false);
+    }
+
+    private static int itemDiff(CommandContext<CommandSourceStack> context, boolean unified) throws CommandSyntaxException {
+        Holder.Reference<Item> reference = ResourceArgument.getResource(context, "item", Registries.ITEM);
+        String prototype = PatchTypeArgument.getReadValue(context, "to_read", PatchType.ITEM, prototype(reference));
+        String patched = PatchTypeArgument.getReadValue(context, "to_read", PatchType.ITEM, components(reference));
+        emitDiff(context, prototype, patched, unified);
+        return 0;
+    }
+
+    private static int enchantmentDiff(CommandContext<CommandSourceStack> context, boolean unified) throws CommandSyntaxException {
         Holder.Reference<Enchantment> reference = ResourceArgument.getResource(context, "enchantment", Registries.ENCHANTMENT);
         String prototype = PatchTypeArgument.getReadValue(context, "to_read", PatchType.ENCHANTMENT, Defaulted.getOriginalEnchantment(reference));
         String patched = PatchTypeArgument.getReadValue(context, "to_read", PatchType.ENCHANTMENT, reference.value());
-        emit(context, CommonUtils.unifiedDiff(prototype, patched));
+        emitDiff(context, prototype, patched, unified);
         return 0;
+    }
+
+    private static void emitDiff(CommandContext<CommandSourceStack> context, String prototype, String patched, boolean unified) {
+        emit(context, unified ? CommonUtils.unifiedDiff(prototype, patched) : CommonUtils.splitDiff(prototype, patched));
     }
 
     private static void emit(CommandContext<CommandSourceStack> context, List<? extends Component> output) {

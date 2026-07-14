@@ -1,4 +1,4 @@
-package net.atlas.defaulted.utils;
+package net.atlas.defaulted.extension;
 
 //? <=1.21.1 {
 /*import com.google.common.collect.BiMap;

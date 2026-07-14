@@ -164,7 +164,7 @@ dependencies {
     modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric-api")}")
     modCompileOnly("io.wispforest:owo-lib:${property("deps.owo_version")}")
     implementation("io.github.java-diff-utils:java-diff-utils:${property("deps.java_diff_version")}")
-    shadow("io.github.java-diff-utils:java-diff-utils:${property("deps.java_diff_version")}")
+    include("io.github.java-diff-utils:java-diff-utils:${property("deps.java_diff_version")}")
     if (hasProperty("deps.codec_ui_version")) {
         modImplementation("net.mehvahdjukaar:codecui-fabric:${property("deps.codec_ui_version")}")
         include("net.mehvahdjukaar:codecui-fabric:${property("deps.codec_ui_version")}")

@@ -78,6 +78,14 @@ public class CommonUtils {
         rows.forEach(row -> addUnifiedDiffLines(diff, row));
         return diff;
     }
+    public static List<MutableComponent> splitDiff(String oldStr, String newStr) {
+        List<String> oldLines = Arrays.stream(oldStr.split("\n")).toList();
+        List<String> newLines = Arrays.stream(newStr.split("\n")).toList();
+        List<DiffRow> rows = GENERATOR.generateDiffRows(oldLines, newLines);
+        List<MutableComponent> diff = new ArrayList<>();
+        rows.forEach(row -> addSplitDiffLines(diff, row));
+        return diff;
+    }
 
     public static void addUnifiedDiffLines(List<MutableComponent> diff, DiffRow diffRow) {
         switch (diffRow.getTag()) {
@@ -91,7 +99,18 @@ public class CommonUtils {
                 diff.add(Component.literal("§2+")
                         .append(Component.literal("§2" + diffRow.getNewLine())));
             }
-            case EQUAL -> diff.add(Component.literal("§7" + diffRow.getNewLine()));
+            case EQUAL -> diff.add(Component.literal(" §7" + diffRow.getNewLine()));
+        }
+    }
+
+    public static void addSplitDiffLines(List<MutableComponent> diff, DiffRow diffRow) {
+        String verticalBar = "§7 | ";
+        switch (diffRow.getTag()) {
+            case INSERT -> diff.add(Component.literal("§2+" + diffRow.getNewLine()));
+            case DELETE -> diff.add(Component.literal("§4-" + diffRow.getOldLine()));
+            case CHANGE -> diff.add(Component.literal("§4-" + diffRow.getOldLine() + verticalBar)
+                    .append(Component.literal("§2+" + diffRow.getNewLine())));
+            case EQUAL -> diff.add(Component.literal(" §7" + diffRow.getNewLine()));
         }
     }
 
