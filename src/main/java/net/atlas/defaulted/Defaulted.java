@@ -12,6 +12,8 @@ import net.atlas.defaulted.enchantment.EnchantmentPatches;
 /*import net.atlas.defaulted.mixin.ItemAccessor;
 *///?}
 import net.atlas.defaulted.mixin.MappedRegistryAccessor;
+import net.atlas.defaulted.mixin.PatchedDataComponentMapAccessor;
+import net.atlas.defaulted.utils.ReferentialDataComponentMap;
 import net.minecraft.core.*;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentType;
@@ -19,6 +21,9 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+//? >=1.21.5
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
@@ -38,6 +43,8 @@ import org.apache.logging.log4j.Logger;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.mojang.serialization.MapCodec;
+//? >=1.21.5
+import org.jspecify.annotations.NonNull;
 
 public final class Defaulted {
     public static boolean hasOwo = false;
@@ -70,7 +77,6 @@ public final class Defaulted {
      * {@link ArrayList} of {@link Consumer}s for the initial map of all enchantment patches, empty by default, and will be overridden if data is loaded for these.
      */
     static final List<BiConsumer<RegistryAccess, Map<Identifier, EnchantmentPatches>>> ADD_DEFAULT_ENCHANT_PATCHES = new ArrayList<>();
-	public static final Set<ItemStack> ALL_STACKS = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>()));
 
     public static void init() {
         // Write common init code here.
@@ -127,12 +133,43 @@ public final class Defaulted {
             /*((ItemAccessor) item).setComponents(newMap);
             *///?}
         }
-        synchronized (ALL_STACKS) {
-			ALL_STACKS.forEach(ItemStack::defaulted$updatePrototype);
-		}
     }
     public static boolean isOnClientNetworkingThread() {
         return Thread.currentThread().getName().startsWith("Netty") && Thread.currentThread().getName().contains("Client");
+    }
+
+    //? >=1.21.5 {
+    public static StreamCodec<RegistryFriendlyByteBuf, ItemStack> wrapStreamCodec(StreamCodec<RegistryFriendlyByteBuf, ItemStack> original) {
+        return new StreamCodec<>() {
+            @Override
+            public @NonNull ItemStack decode(RegistryFriendlyByteBuf buffer) {
+                return original.decode(buffer);
+            }
+
+            @Override
+            public void encode(RegistryFriendlyByteBuf buffer, ItemStack stack) {
+                Defaulted.encode(original::encode, buffer, stack);
+            }
+        };
+    }
+    //?}
+
+    public static void encode(BiConsumer<RegistryFriendlyByteBuf, ItemStack> original, RegistryFriendlyByteBuf buffer, ItemStack stack) {
+        if (DefaultedPlatform.INSTANCE.isOnClientNetworkingThread()) {
+            original.accept(buffer, stack);
+            return;
+        }
+        ItemStack newStack = stack.copy();
+        if (!stack.isEmpty()) {
+            DataComponentMap prototype = PatchedDataComponentMapAccessor.class.cast(stack.getComponents()).defaulted$getPrototype();
+            if (prototype instanceof ReferentialDataComponentMap referentialDataComponentMap && (referentialDataComponentMap.get() instanceof PatchedDataComponentMap prototypeDataComponentMap)) {
+                if (newStack.getComponents() instanceof PatchedDataComponentMap patchedDataComponentMap) {
+                    patchedDataComponentMap.restorePatch(prototypeDataComponentMap.asPatch());
+                    patchedDataComponentMap.applyPatch(stack.getComponentsPatch());
+                }
+            }
+        }
+        original.accept(buffer, newStack);
     }
     /**
      * Attaches a {@link Consumer} to run on the intermediary map of item patches (before they get resorted and applied).

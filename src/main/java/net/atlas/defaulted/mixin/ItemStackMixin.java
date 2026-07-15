@@ -1,15 +1,14 @@
 package net.atlas.defaulted.mixin;
 
 import net.atlas.defaulted.Defaulted;
-//? >=1.21.5 {
-import net.atlas.defaulted.DefaultedPlatform;
-//?}
 import net.atlas.defaulted.compat.OwoCompat;
 import net.atlas.defaulted.extension.ItemStackExtensions;
+import net.atlas.defaulted.utils.ReferentialDataComponentMap;
 //? >=26.1 {
 import net.minecraft.core.Holder;
 //?}
 import net.minecraft.core.component.DataComponentMap;
+//? >=1.21.5
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.PatchedDataComponentMap;
 //? >=1.21.5 {
@@ -26,8 +25,6 @@ import java.lang.reflect.Field;
 //? <26.1 {
 /*import net.minecraft.world.level.ItemLike;
 *///?}
-//? >=1.21.5
-import org.jspecify.annotations.NonNull;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -37,6 +34,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 //?}
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin implements ItemStackExtensions {
@@ -47,44 +45,13 @@ public abstract class ItemStackMixin implements ItemStackExtensions {
     @Final
     PatchedDataComponentMap components;
 
-    @Shadow public abstract DataComponentPatch getComponentsPatch();
-
     @Shadow public abstract DataComponentMap getPrototype();
 
     //? >=1.21.5 {
     @WrapMethod(method = "createOptionalStreamCodec")
     private static StreamCodec<RegistryFriendlyByteBuf, ItemStack> wrapCodec(StreamCodec<RegistryFriendlyByteBuf, DataComponentPatch> streamCodec, Operation<StreamCodec<RegistryFriendlyByteBuf, ItemStack>> original) {
         StreamCodec<RegistryFriendlyByteBuf, ItemStack> result = original.call(streamCodec);
-        return defaulted$wrapStreamCodec(result);
-    }
-
-    @Unique
-    private static StreamCodec<RegistryFriendlyByteBuf, ItemStack> defaulted$wrapStreamCodec(StreamCodec<RegistryFriendlyByteBuf, ItemStack> original) {
-        return new StreamCodec<>() {
-            @Override
-            public @NonNull ItemStack decode(RegistryFriendlyByteBuf buffer) {
-                return original.decode(buffer);
-            }
-
-            @Override
-            public void encode(RegistryFriendlyByteBuf buffer, ItemStack stack) {
-                if (DefaultedPlatform.INSTANCE.isOnClientNetworkingThread()) {
-                    original.encode(buffer, stack);
-                    return;
-                }
-                ItemStack newStack = stack.copy();
-                if (!stack.isEmpty()) {
-                    DataComponentMap prototype = PatchedDataComponentMapAccessor.class.cast(stack.getComponents()).getPrototype();
-                    if (prototype instanceof PatchedDataComponentMap prototypeDataComponentMap) {
-                        if (newStack.getComponents() instanceof PatchedDataComponentMap patchedDataComponentMap) {
-                            patchedDataComponentMap.restorePatch(prototypeDataComponentMap.asPatch());
-                            patchedDataComponentMap.applyPatch(stack.getComponentsPatch());
-                        }
-                    }
-                }
-                original.encode(buffer, newStack);
-            }
-        };
+        return Defaulted.wrapStreamCodec(result);
     }
     //?}
 
@@ -95,19 +62,33 @@ public abstract class ItemStackMixin implements ItemStackExtensions {
     /*@Inject(method = "<init>(Lnet/minecraft/world/level/ItemLike;ILnet/minecraft/core/component/PatchedDataComponentMap;)V", at = @At("RETURN"))
     public void appendStack(ItemLike itemLike, int count, PatchedDataComponentMap patchedDataComponentMap, CallbackInfo ci) {
     *///?}
-        Defaulted.ALL_STACKS.add(ItemStack.class.cast(this));
+        PatchedDataComponentMapAccessor accessor = PatchedDataComponentMapAccessor.class.cast(this.components);
+        boolean mustWrap = false;
+        if (Defaulted.hasOwo) {
+            DataComponentMap prototype = accessor.defaulted$getPrototype();
+            mustWrap = OwoCompat.isDerived(prototype) && !(OwoCompat.unwrapDerivedComponentMap(prototype) instanceof ReferentialDataComponentMap); // If this is false, OwO is going to do this for us, as it is running after us.
+        }
+        ReferentialDataComponentMap newPrototype = new ReferentialDataComponentMap(this::getPrototype);
+        newPrototype.setOriginal(this.components);
+        accessor.defaulted$setPrototype(mustWrap ? defaulted$wrapAsDerivedComponentMap(newPrototype) : newPrototype);
+    }
+
+    @Inject(method = "getComponents", at = @At(value = "HEAD"))
+    public void validateReferentialPrototype0(CallbackInfoReturnable<DataComponentMap> cir) {
+        this.defaulted$updatePrototype();
     }
 
     @Override
     public void defaulted$updatePrototype() {
         if (!isEmpty()) {
-            DataComponentMap prototype = PatchedDataComponentMapAccessor.class.cast(components).getPrototype(); // Safe dw gang
-            DataComponentMap newPrototype = getPrototype();
-            if (Defaulted.hasOwo) newPrototype = defaulted$wrapAsDerivedComponentMap(newPrototype);
-            if (prototype.equals(newPrototype)) return;
-            PatchedDataComponentMap newMap = new PatchedDataComponentMap(newPrototype);
-            newMap.applyPatch(getComponentsPatch());
-            components = newMap;
+            PatchedDataComponentMapAccessor accessor = PatchedDataComponentMapAccessor.class.cast(this.components);
+            DataComponentMap prototype = accessor.defaulted$getPrototype();
+            if (Defaulted.hasOwo) prototype = OwoCompat.unwrapDerivedComponentMap(prototype);
+            if (!(prototype instanceof ReferentialDataComponentMap)) {
+                ReferentialDataComponentMap newPrototype = new ReferentialDataComponentMap(this::getPrototype);
+                newPrototype.setOriginal(this.components);
+                accessor.defaulted$setPrototype(Defaulted.hasOwo ? defaulted$wrapAsDerivedComponentMap(newPrototype) : newPrototype);
+            }
         }
     }
 

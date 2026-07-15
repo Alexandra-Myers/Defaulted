@@ -1,1 +1,2 @@
-- Added `split-diff` as possible argument value for reading data, produces a split diff rather than unified (changed lines will be merged)
+- Rewrite how prototype data component maps are stored on the item stack, allowing for dynamic changes without storing every single item stack
+- Fixed a bug where entity render state extraction caused immense lag

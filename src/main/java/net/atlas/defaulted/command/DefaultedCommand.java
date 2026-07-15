@@ -15,7 +15,6 @@ import net.atlas.defaulted.base.BasePatches;
 import net.atlas.defaulted.base.BasePatchesBuilder;
 import net.atlas.defaulted.base.PatchType;
 import net.atlas.defaulted.command.argument.PatchTypeArgument;
-import net.atlas.defaulted.mixin.PatchedDataComponentMapAccessor;
 import net.atlas.defaulted.utils.CommonUtils;
 import net.atlas.defaulted.utils.IDUtils;
 import net.minecraft.commands.CommandBuildContext;
@@ -23,8 +22,6 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.ResourceArgument;
 import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -36,6 +33,9 @@ import java.io.*;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
+
+import static net.atlas.defaulted.utils.ComponentMapUtils.components;
+import static net.atlas.defaulted.utils.ComponentMapUtils.prototype;
 
 @SuppressWarnings("NoTranslation")
 public class DefaultedCommand {
@@ -204,20 +204,6 @@ public class DefaultedCommand {
 
     private static Component set(String field, Identifier id, String value) {
         return Component.translatableWithFallback("commands.defaulted.set", "The %s for patch builder %s was set to %s successfully.", field, id.toString(), value);
-    }
-
-    private static DataComponentMap prototype(Holder.Reference<Item> reference) {
-        return (components(reference) instanceof PatchedDataComponentMap patchedDataComponentMap ?
-                PatchedDataComponentMapAccessor.class.cast(patchedDataComponentMap).getPrototype() :
-                components(reference));
-    }
-
-    private static DataComponentMap components(Holder.Reference<Item> reference) {
-        //? >=26.1 {
-        return reference.components();
-        //?} <26.1 {
-        /*return reference.value().components();
-        *///?}
     }
 
     private static int readItemPrototype(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {

@@ -6,6 +6,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.hash.HashCode;
 import com.mojang.serialization.DynamicOps;
+import net.atlas.defaulted.utils.ComponentMapUtils;
 import net.minecraft.core.component.*;
 import net.minecraft.network.HashedPatchMap;
 import net.minecraft.network.HashedStack;
@@ -44,7 +45,7 @@ public class WrapHashedStreamCodec implements StreamCodec<RegistryFriendlyByteBu
         this.registryHashOps = buffer.registryAccess().createSerializationContext(HashOps.CRC32C_INSTANCE);
         HashedStack.ActualItem stack = original.decode(buffer);
         HashedPatchMap components = stack.components();
-        DataComponentMap prototype = stack.item().value().components();
+        DataComponentMap prototype = ComponentMapUtils.components(stack.item());
         if (prototype instanceof PatchedDataComponentMap prototypeDataComponentMap) {
             DataComponentPatch.SplitResult splitResult = prototypeDataComponentMap.asPatch().split();
             Map<DataComponentType<?>, Integer> added = new IdentityHashMap<>(splitResult.added().size());

@@ -15,6 +15,7 @@
     "ItemStackStreamCodecMixin",
     "MappedRegistryAccessor",
     "PatchedDataComponentMapAccessor",
+    "PatchedDataComponentMapMixin",
     "ReferenceHolderMixin",
     "RegistrySyncManagerMixin",
     "StructureTemplateManagerAccessor"
