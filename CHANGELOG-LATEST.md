@@ -1,2 +1,1 @@
-- Rewrite how prototype data component maps are stored on the item stack, allowing for dynamic changes without storing every single item stack
-- Fixed a bug where entity render state extraction caused immense lag
+- Fixed owo-lib incompatibility again

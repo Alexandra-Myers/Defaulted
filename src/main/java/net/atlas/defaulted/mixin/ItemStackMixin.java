@@ -94,15 +94,27 @@ public abstract class ItemStackMixin implements ItemStackExtensions {
 
 	@Unique
 	private DataComponentMap defaulted$wrapAsDerivedComponentMap(DataComponentMap prototype) {
-		try {
-			Field field = ItemStack.class.getDeclaredField("owo$derivedMap");
-            field.setAccessible(true);
-			DataComponentMap derived = OwoCompat.deriveComponentMap(ItemStack.class.cast(this), prototype);
-			field.set(this, derived);
-			return derived;
-		} catch (Exception e) {
-			Defaulted.LOGGER.error("Failed to wrap as a DerivedComponentMap: ", e);
-			throw new RuntimeException(e);
-		}
+        Field field;
+        try {
+            field = ItemStack.class.getDeclaredField("owo$derivedMap");
+        } catch (NoSuchFieldException e) {
+            Defaulted.LOGGER.error("Failed to locate field owo$derivedMap: ", e);
+            Defaulted.LOGGER.error("Trying to locate field derivedMap instead.");
+            try {
+                field = ItemStack.class.getDeclaredField("derivedMap"); // Fallback other potential field
+            } catch (NoSuchFieldException ex) {
+                Defaulted.LOGGER.error("Failed to locate field derivedMap:", ex);
+                return prototype;
+            }
+        }
+        field.setAccessible(true);
+        DataComponentMap derived = OwoCompat.deriveComponentMap(ItemStack.class.cast(this), prototype);
+        try {
+            field.set(this, derived);
+        } catch (IllegalAccessException e) {
+            Defaulted.LOGGER.error("Failed to store DerivedComponentMap: ", e);
+            return derived;
+        }
+        return derived;
 	}
 }
