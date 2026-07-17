@@ -45,6 +45,9 @@ public abstract class ItemStackMixin implements ItemStackExtensions {
     @Final
     PatchedDataComponentMap components;
 
+    @Unique
+    boolean defaulted$midUpdate = false;
+
     @Shadow public abstract DataComponentMap getPrototype();
 
     //? >=1.21.5 {
@@ -62,6 +65,7 @@ public abstract class ItemStackMixin implements ItemStackExtensions {
     /*@Inject(method = "<init>(Lnet/minecraft/world/level/ItemLike;ILnet/minecraft/core/component/PatchedDataComponentMap;)V", at = @At("RETURN"))
     public void appendStack(ItemLike itemLike, int count, PatchedDataComponentMap patchedDataComponentMap, CallbackInfo ci) {
     *///?}
+        this.defaulted$midUpdate = true;
         PatchedDataComponentMapAccessor accessor = PatchedDataComponentMapAccessor.class.cast(this.components);
         boolean mustWrap = false;
         if (Defaulted.hasOwo) {
@@ -71,6 +75,7 @@ public abstract class ItemStackMixin implements ItemStackExtensions {
         ReferentialDataComponentMap newPrototype = new ReferentialDataComponentMap(this::getPrototype);
         newPrototype.setOriginal(this.components);
         accessor.defaulted$setPrototype(mustWrap ? defaulted$wrapAsDerivedComponentMap(newPrototype) : newPrototype);
+        this.defaulted$midUpdate = false;
     }
 
     @Inject(method = "getComponents", at = @At(value = "HEAD"))
@@ -78,9 +83,15 @@ public abstract class ItemStackMixin implements ItemStackExtensions {
         this.defaulted$updatePrototype();
     }
 
+    @Inject(method = "getComponentsPatch", at = @At(value = "HEAD"))
+    public void validateReferentialPrototype1(CallbackInfoReturnable<DataComponentMap> cir) {
+        this.defaulted$updatePrototype();
+    }
+
     @Override
     public void defaulted$updatePrototype() {
-        if (!isEmpty()) {
+        if (!isEmpty() && !this.defaulted$midUpdate) {
+            this.defaulted$midUpdate = true;
             PatchedDataComponentMapAccessor accessor = PatchedDataComponentMapAccessor.class.cast(this.components);
             DataComponentMap prototype = accessor.defaulted$getPrototype();
             if (Defaulted.hasOwo) prototype = OwoCompat.unwrapDerivedComponentMap(prototype);
@@ -89,6 +100,7 @@ public abstract class ItemStackMixin implements ItemStackExtensions {
                 newPrototype.setOriginal(this.components);
                 accessor.defaulted$setPrototype(Defaulted.hasOwo ? defaulted$wrapAsDerivedComponentMap(newPrototype) : newPrototype);
             }
+            this.defaulted$midUpdate = false;
         }
     }
 
