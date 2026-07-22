@@ -46,6 +46,7 @@ jsonlang {
 }
 
 repositories {
+    mavenLocal()
     maven {
         name = "Something Catchy"
         url = uri("https://registry.somethingcatchy.net/repository/maven-public/")
